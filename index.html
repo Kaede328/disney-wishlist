@@ -80,6 +80,10 @@
       -webkit-tap-highlight-color: transparent;
     }
 
+    html, body {
+      overflow-x: clip;
+    }
+
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "BIZ UDPGothic", Meiryo, sans-serif;
       background-color: var(--bg-cream);
@@ -87,7 +91,6 @@
       font-size: 16px;
       line-height: 1.5;
       min-height: 100vh;
-      overflow-x: hidden;
       padding-bottom: calc(90px + var(--safe-bottom));
       user-select: none;
       -webkit-user-select: none;
@@ -98,16 +101,17 @@
       -webkit-user-select: auto;
     }
 
-    /* Top App Bar */
+    /* Top App Bar (Sticky at Top) */
     header {
+      position: -webkit-sticky;
       position: sticky;
       top: 0;
       z-index: 50;
-      background: rgba(255, 255, 255, 0.94);
+      background: rgba(255, 255, 255, 0.96);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border-soft);
-      padding: 12px 16px;
+      padding: 12px 16px 10px;
       box-shadow: var(--shadow-sm);
     }
 
@@ -365,6 +369,12 @@
       box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
     }
 
+    .card-img-wrap.no-photo {
+      background: #F3F4F6;
+      border: 1px solid #E5E7EB;
+      box-shadow: none;
+    }
+
     .card-img-wrap img {
       width: 100%;
       height: 100%;
@@ -374,6 +384,22 @@
     .card-img-placeholder {
       font-size: 2.2rem;
       user-select: none;
+    }
+
+    .no-photo-icon-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #9CA3AF;
+      user-select: none;
+    }
+
+    .no-photo-svg {
+      width: 38px;
+      height: 38px;
+      color: #9CA3AF;
+      stroke-width: 1.7;
     }
 
     .card-body {
@@ -1323,12 +1349,12 @@
       </div>
 
       <div class="sheet-content">
-        <form id="itemForm" onsubmit="return false;">
+        <form id="itemForm">
           <input type="hidden" id="itemId">
 
-          <!-- Photo Upload & Resize -->
+          <!-- Photo Upload & Resize (Optional) -->
           <div class="form-group">
-            <label class="form-label">写真 <span class="opt">（端末の写真から選ぶ・自動リサイズ保存）</span></label>
+            <label class="form-label">写真 <span class="opt">（任意・なくても保存OK）</span></label>
             <input type="file" id="photoInput" accept="image/*">
             <div class="photo-upload-box" id="photoBox">
               <div id="photoPrompt">
@@ -1509,7 +1535,7 @@
           <div class="settings-section-title">アプリ情報</div>
           <div class="settings-row">
             <span class="settings-label">バージョン</span>
-            <span class="settings-val" id="appVersion">v1.6.0</span>
+            <span class="settings-val" id="appVersion">v1.7.0</span>
           </div>
           <div class="settings-row">
             <span class="settings-label">ストレージ</span>
@@ -1533,7 +1559,13 @@
           <div class="accordion-body" id="versionHistoryBody" style="display: none;">
             <div style="font-size: 0.88rem; color: var(--text-sub); line-height: 1.6; padding-top: 10px;">
               <div style="margin-bottom: 8px;">
-                <strong style="color: var(--theme-primary);">v1.6.0（最新）</strong><br>
+                <strong style="color: var(--theme-primary);">v1.7.0（最新）</strong><br>
+                ・画像の任意入力化＆画像なしカードのグレー種別アイコン表示に対応<br>
+                ・iOS Safari対応のJSONバックアップ書き出し（全文コピー）＆取り込み機能に改善<br>
+                ・スクロール時にヘッダー（タイトル＆タブ）が上部に固定されるよう調整
+              </div>
+              <div style="margin-bottom: 8px;">
+                <strong style="color: var(--text-muted);">v1.6.0</strong><br>
                 ・設定画面の「サンプルデータを追加する」ボタンおよびサンプルデータ定義を削除し、コードと設定をスッキリ整理
               </div>
               <div style="margin-bottom: 8px;">
@@ -1584,14 +1616,13 @@
 
         <!-- Useful tools -->
         <div class="settings-section">
-          <div class="settings-section-title">データと操作</div>
+          <div class="settings-section-title">データとバックアップ</div>
           <button type="button" class="settings-action-btn" id="exportDataBtn">
-            <span>📤 データをJSONで書き出し（バックアップ）</span>
+            <span>📤 JSONバックアップを書き出し</span>
           </button>
-          <label class="settings-action-btn" style="cursor: pointer;">
-            <span>📥 バックアップJSONを取り込み</span>
-            <input type="file" id="importJsonInput" accept=".json" style="display: none;">
-          </label>
+          <button type="button" class="settings-action-btn" id="openImportModalBtn">
+            <span>📥 バックアップを取り込み・復元</span>
+          </button>
         </div>
 
         <!-- PWA Guide -->
@@ -1604,6 +1635,69 @@
             <span>📱 iPhone / Androidの追加手順を見る</span>
           </button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JSON Export Modal (iOS Safari friendly) -->
+  <div class="modal-overlay" id="exportModal">
+    <div class="modal-sheet">
+      <div class="sheet-header">
+        <h2 class="sheet-title">バックアップの書き出し</h2>
+        <button type="button" class="sheet-close-btn" id="closeExportModalBtn">✕</button>
+      </div>
+
+      <div class="sheet-content">
+        <p style="font-size: 0.92rem; color: var(--text-main); font-weight: 600; margin-bottom: 8px; line-height: 1.5;">
+          このテキストをコピーして、メモアプリなどに貼り付けて保存してください
+        </p>
+        <p style="font-size: 0.8rem; color: var(--text-sub); margin-bottom: 12px;">
+          ※iPhoneのSafariでも確実にデータを保管できるよう、テキスト形式で書き出しています。
+        </p>
+
+        <textarea id="exportJsonTextarea" class="form-textarea" readonly rows="8" style="font-family: monospace; font-size: 0.78rem; background: #F8F9FA; word-break: break-all; resize: none; user-select: all; -webkit-user-select: all;"></textarea>
+
+        <div class="form-actions" style="margin-top: 14px; flex-direction: column; gap: 8px;">
+          <button type="button" class="btn-primary" id="copyAllExportJsonBtn" style="width: 100%; padding: 14px;">
+            <span>📋 全部選択してコピー</span>
+          </button>
+          <button type="button" class="btn-secondary" id="dismissExportModalBtn" style="width: 100%;">
+            閉じる
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JSON Import Modal (iOS Safari friendly) -->
+  <div class="modal-overlay" id="importModal">
+    <div class="modal-sheet">
+      <div class="sheet-header">
+        <h2 class="sheet-title">バックアップを取り込み・復元</h2>
+        <button type="button" class="sheet-close-btn" id="closeImportModalBtn">✕</button>
+      </div>
+
+      <div class="sheet-content">
+        <p style="font-size: 0.9rem; color: var(--text-sub); margin-bottom: 12px; line-height: 1.5;">
+          メモアプリなどに保存したバックアップテキストを貼り付けるか、ファイルを選択してください。
+        </p>
+
+        <textarea id="importJsonTextarea" class="form-textarea" rows="6" placeholder="ここにバックアップJSONテキストを貼り付け..." style="font-family: monospace; font-size: 0.78rem; resize: none;"></textarea>
+
+        <button type="button" class="btn-primary" id="applyImportJsonBtn" style="width: 100%; margin-top: 10px; padding: 13px;">
+          <span>📥 貼り付けたテキストから復元</span>
+        </button>
+
+        <div style="text-align: center; margin: 12px 0 8px; font-size: 0.82rem; color: var(--text-muted);">または</div>
+
+        <label class="settings-action-btn" style="cursor: pointer; margin-top: 0; width: 100%;">
+          <span>📁 JSONファイルを選択</span>
+          <input type="file" id="importJsonInput" accept=".json,application/json,text/plain" style="display: none;">
+        </label>
+
+        <button type="button" class="btn-secondary" id="dismissImportModalBtn" style="width: 100%; margin-top: 10px;">
+          キャンセル
+        </button>
       </div>
     </div>
   </div>
@@ -1639,11 +1733,11 @@
     /**
      * @license
      * SPDX-License-Identifier: Apache-2.0
-     * TDRおでかけメモ PWA v1.6.0
+     * TDRおでかけメモ PWA v1.7.0
      */
 
     // --- State Constants ---
-    const APP_VERSION = 'v1.6.0';
+    const APP_VERSION = 'v1.7.0';
     const DB_NAME = 'DisneylandWishlistDB';
     const DB_VERSION = 1;
 
@@ -2196,6 +2290,40 @@
       });
     }
 
+    // Category Icon SVG in Grey for Cards Without Images
+    function getCategoryIconSvg(category) {
+      if (category === 'restaurant') {
+        return `
+          <svg class="no-photo-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 2V21"></path>
+            <path d="M21 14A3 3 0 0 1 18 17A3 3 0 0 1 15 14V2"></path>
+            <path d="M6 2V7C6 8.1 6.9 9 8 9C9.1 9 10 8.1 10 7V2"></path>
+            <path d="M8 9V21"></path>
+          </svg>
+        `;
+      } else if (category === 'attraction') {
+        return `
+          <svg class="no-photo-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 19C6 19 8 7 12 7C16 7 18 19 22 19"></path>
+            <path d="M9 13L11.5 8.5L14 13H9Z"></path>
+            <line x1="6" y1="19" x2="6" y2="15"></line>
+            <line x1="18" y1="19" x2="18" y2="15"></line>
+            <circle cx="10" cy="14" r="1"></circle>
+            <circle cx="13" cy="14" r="1"></circle>
+          </svg>
+        `;
+      } else {
+        // food
+        return `
+          <svg class="no-photo-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M7 10L8.5 21H15.5L17 10"></path>
+            <path d="M5.5 10H18.5"></path>
+            <path d="M8 10C7.2 8.5 7.5 6.5 9 5.5C10.5 4.5 12 5.5 12 7C12 5.5 13.5 4.5 15 5.5C16.5 6.5 16.8 8.5 16 10"></path>
+          </svg>
+        `;
+      }
+    }
+
     // Create Single Card Element
     function createCardElement(item) {
       const priority = item.priority || 'medium';
@@ -2210,12 +2338,17 @@
       const catName = CATEGORY_NAMES[item.category] || '食べたいもの';
       const areaEmoji = ALL_AREA_EMOJIS[item.area] || getCurrentPark().emoji;
 
-      // Image or Placeholder
+      // Image or Category Icon in Grey (Optional photo)
       let imgContent = '';
-      if (item.photoDataUrl) {
+      const hasPhoto = Boolean(item.photoDataUrl && item.photoDataUrl.trim());
+      if (hasPhoto) {
         imgContent = `<img src="${item.photoDataUrl}" alt="${escapeHtml(item.name)}" loading="lazy">`;
       } else {
-        imgContent = `<span class="card-img-placeholder">${catEmoji}</span>`;
+        imgContent = `
+          <div class="no-photo-icon-wrap" title="${catName}">
+            ${getCategoryIconSvg(item.category)}
+          </div>
+        `;
       }
 
       // Location note
@@ -2232,7 +2365,7 @@
 
       card.innerHTML = `
         <div class="card-top">
-          <div class="card-img-wrap" onclick="viewOrEditItem('${item.id}')">
+          <div class="card-img-wrap ${hasPhoto ? '' : 'no-photo'}" onclick="viewOrEditItem('${item.id}')">
             ${imgContent}
           </div>
           <div class="card-body">
@@ -2442,9 +2575,8 @@
         updatePhotoPreviewUI();
       };
 
-      // Save Item (Form Submit)
-      document.getElementById('itemForm').onsubmit = async (e) => {
-        e.preventDefault();
+      // Save Item (Form Submit or Button Click)
+      async function handleSaveItem() {
         const nameInput = document.getElementById('itemName');
         const name = nameInput.value.trim();
         if (!name) {
@@ -2456,8 +2588,12 @@
         const area = document.getElementById('itemArea').value;
         const locationMemo = document.getElementById('itemLocation').value.trim();
         const memo = document.getElementById('itemMemo').value.trim();
-        const category = document.querySelector('input[name="itemCategory"]:checked').value;
-        const priority = document.querySelector('input[name="itemPriority"]:checked')?.value || 'medium';
+        const categoryRadio = document.querySelector('input[name="itemCategory"]:checked');
+        const category = categoryRadio ? categoryRadio.value : 'food';
+        const priorityRadio = document.querySelector('input[name="itemPriority"]:checked');
+        const priority = priorityRadio ? priorityRadio.value : 'medium';
+        // Photo is completely optional
+        const photoData = currentResizedPhotoData || '';
 
         if (itemId) {
           // Update existing
@@ -2469,7 +2605,7 @@
             item.area = area;
             item.locationMemo = locationMemo;
             item.memo = memo;
-            item.photoDataUrl = currentResizedPhotoData;
+            item.photoDataUrl = photoData;
             await dbPut('items', item);
             showToast('更新しました！', '✨');
           }
@@ -2484,7 +2620,7 @@
             area: area,
             locationMemo: locationMemo,
             memo: memo,
-            photoDataUrl: currentResizedPhotoData,
+            photoDataUrl: photoData,
             isDone: false,
             createdAt: Date.now()
           };
@@ -2495,6 +2631,16 @@
 
         closeModal('itemModal');
         renderItems();
+      }
+
+      document.getElementById('itemForm').onsubmit = async (e) => {
+        e.preventDefault();
+        await handleSaveItem();
+      };
+
+      document.getElementById('saveItemBtn').onclick = async (e) => {
+        e.preventDefault();
+        await handleSaveItem();
       };
 
       // List Modal Form Submit
@@ -2581,11 +2727,78 @@
         openCreateListModal();
       };
 
-      // Export JSON
-      document.getElementById('exportDataBtn').onclick = exportAllData;
+      // Export JSON Modal Open
+      document.getElementById('exportDataBtn').onclick = async () => {
+        const allLists = await dbGetAll('lists');
+        const allItems = await dbGetAll('items');
 
-      // Import JSON
-      document.getElementById('importJsonInput').onchange = importAllData;
+        const backup = {
+          version: APP_VERSION,
+          exportedAt: new Date().toISOString(),
+          lists: allLists,
+          items: allItems
+        };
+
+        const jsonStr = JSON.stringify(backup, null, 2);
+        document.getElementById('exportJsonTextarea').value = jsonStr;
+        closeModal('settingsModal');
+        openModal('exportModal');
+      };
+
+      document.getElementById('closeExportModalBtn').onclick = () => closeModal('exportModal');
+      document.getElementById('dismissExportModalBtn').onclick = () => closeModal('exportModal');
+
+      // Copy all text in export JSON modal
+      document.getElementById('copyAllExportJsonBtn').onclick = async () => {
+        const textarea = document.getElementById('exportJsonTextarea');
+        textarea.focus();
+        textarea.select();
+        textarea.setSelectionRange(0, textarea.value.length);
+
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(textarea.value);
+          } else {
+            document.execCommand('copy');
+          }
+          showToast('クリップボードにコピーしました！📋', '📋');
+        } catch (err) {
+          document.execCommand('copy');
+          showToast('クリップボードにコピーしました！📋', '📋');
+        }
+      };
+
+      // Import JSON Modal Open
+      document.getElementById('openImportModalBtn').onclick = () => {
+        document.getElementById('importJsonTextarea').value = '';
+        closeModal('settingsModal');
+        openModal('importModal');
+      };
+
+      document.getElementById('closeImportModalBtn').onclick = () => closeModal('importModal');
+      document.getElementById('dismissImportModalBtn').onclick = () => closeModal('importModal');
+
+      // Import JSON from pasted text
+      document.getElementById('applyImportJsonBtn').onclick = async () => {
+        const text = document.getElementById('importJsonTextarea').value.trim();
+        if (!text) {
+          alert('貼り付けエリアにバックアップのテキストを入力してください。');
+          return;
+        }
+        await processImportData(text);
+      };
+
+      // Import JSON from file input
+      document.getElementById('importJsonInput').onchange = async (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        try {
+          const text = await file.text();
+          await processImportData(text);
+        } catch (err) {
+          alert('ファイルの読み込みに失敗しました。');
+        }
+      };
 
       // PWA Guide buttons
       document.getElementById('openIosGuideBtn').onclick = () => {
@@ -2595,7 +2808,7 @@
       document.getElementById('dismissIosGuideBtn').onclick = () => closeModal('iosGuideModal');
 
       // Close modal on click background overlay
-      ['itemModal', 'listModal', 'settingsModal', 'iosGuideModal'].forEach(id => {
+      ['itemModal', 'listModal', 'settingsModal', 'iosGuideModal', 'exportModal', 'importModal'].forEach(id => {
         document.getElementById(id).onclick = (e) => {
           if (e.target.id === id) {
             closeModal(id);
@@ -2676,42 +2889,16 @@
       }
     };
 
-    // --- Data Export & Import ---
-    async function exportAllData() {
-      const allLists = await dbGetAll('lists');
-      const allItems = await dbGetAll('items');
-
-      const backup = {
-        version: APP_VERSION,
-        exportedAt: new Date().toISOString(),
-        lists: allLists,
-        items: allItems
-      };
-
-      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(backup, null, 2));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute('href', dataStr);
-      downloadAnchor.setAttribute('download', `tdr-wishlist-backup-${new Date().toISOString().slice(0, 10)}.json`);
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
-
-      showToast('バックアップを書き出しました', '💾');
-    }
-
-    async function importAllData(e) {
-      const file = e.target.files && e.target.files[0];
-      if (!file) return;
-
+    // --- Data Import Processing (Text or File) ---
+    async function processImportData(text) {
       try {
-        const text = await file.text();
         const data = JSON.parse(text);
 
-        if (!data.lists || !data.items) {
+        if (!data.lists || !data.items || !Array.isArray(data.lists) || !Array.isArray(data.items)) {
           throw new Error('形式が正しくありません');
         }
 
-        if (window.confirm('取り込みますか？現在のデータに追加・上書き保存されます。')) {
+        if (window.confirm('バックアップを復元しますか？\n（現在のデータに追加・上書き保存されます）')) {
           for (const l of data.lists) {
             await dbPut('lists', l);
           }
@@ -2723,11 +2910,12 @@
           await loadItems();
           renderListBar();
           renderItems();
-          closeModal('settingsModal');
-          showToast('バックアップを取り込みました！', '🎉');
+          closeModal('importModal');
+          showToast('バックアップを復元しました！🎉', '🎉');
         }
       } catch (err) {
-        alert('読み込みに失敗しました。ファイル形式を確認してください。');
+        console.error(err);
+        alert('読み込みに失敗しました。コピーしたバックアップJSONテキストの内容が正しいか確認してください。');
       }
     }
 
