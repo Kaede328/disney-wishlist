@@ -1,8 +1,8 @@
 {
   "id": "./",
-  "name": "ディズニーランド行きたいリスト",
-  "short_name": "TDL行きたい",
-  "description": "ディズニーランド専用の行きたい・食べたい・乗りたいを写真付きで記録するPWAアプリ",
+  "name": "TDRおでかけメモ",
+  "short_name": "おでかけメモ",
+  "description": "東京ディズニーリゾート（ランド・シー）専用の行きたい・食べたい・乗りたいを写真付きで記録するPWAアプリ",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

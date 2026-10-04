@@ -37,8 +37,7 @@ function makeChunk(type, data) {
   return Buffer.concat([lenBuf, typeBuf, data, crcBuf]);
 }
 
-function generatePng(size) {
-  // Pastel gradient with Disney Castle & Mickey silhouette
+function generateSquarePng(size) {
   const width = size;
   const height = size;
   
@@ -48,57 +47,71 @@ function generatePng(size) {
 
   const cx = width / 2;
   const cy = height / 2;
-  const r = width * 0.44;
+
+  // Mickey motif parameters (positioned in safe center)
+  const headCy = cy + size * 0.05;
+  const headR = size * 0.17;
+
+  const earLeftCx = cx - size * 0.14;
+  const earLeftCy = cy - size * 0.11;
+  const earR = size * 0.105;
+
+  const earRightCx = cx + size * 0.14;
+  const earRightCy = cy - size * 0.11;
 
   for (let y = 0; y < height; y++) {
     rawData[offset++] = 0; // Filter byte: None
 
     for (let x = 0; x < width; x++) {
-      const dx = x - cx;
-      const dy = y - cy;
-      const dist = Math.sqrt(dx * dx + dy * dy);
+      // 1. Full-bleed background gradient (top-left #FF7597 to bottom-right #FFA87D)
+      // t varies from 0 (top-left) to 1 (bottom-right)
+      const t = ((x / width) + (y / height)) / 2;
+      const bgR = Math.round(255 - t * 0);
+      const bgG = Math.round(117 + t * 51);
+      const bgB = Math.round(151 - t * 26);
 
-      // Background pastel circle: #FFF8F0 to #FFE8EC
-      if (dist <= r) {
-        // Pastel Disney pink/coral gradient
-        const t = (y / height);
-        // Base pink: 255, 142, 170 (#FF8EAA)
-        // Light pastel: 255, 204, 217
-        const rVal = Math.round(255 - t * 15);
-        const gVal = Math.round(145 + t * 45);
-        const bVal = Math.round(175 + t * 40);
+      // 2. Motif distance check
+      const headDx = x - cx;
+      const headDy = y - headCy;
+      const headDist = Math.sqrt(headDx * headDx + headDy * headDy);
 
-        // Simple Mickey silhouette check in center
-        // Center head: cy + 10%, radius 0.20 * size
-        const headDy = y - (cy + size * 0.04);
-        const headDist = Math.sqrt(dx * dx + headDy * headDy);
-        // Ears:
-        const earLeftDx = x - (cx - size * 0.17);
-        const earLeftDy = y - (cy - size * 0.14);
-        const earLeftDist = Math.sqrt(earLeftDx * earLeftDx + earLeftDy * earLeftDy);
+      const earLDx = x - earLeftCx;
+      const earLDy = y - earLeftCy;
+      const earLDist = Math.sqrt(earLDx * earLDx + earLDy * earLDy);
 
-        const earRightDx = x - (cx + size * 0.17);
-        const earRightDy = y - (cy - size * 0.14);
-        const earRightDist = Math.sqrt(earRightDx * earRightDx + earRightDy * earRightDy);
+      const earRDx = x - earRightCx;
+      const earRDy = y - earRightCy;
+      const earRDist = Math.sqrt(earRDx * earRDx + earRDy * earRDy);
 
-        if (headDist <= size * 0.18 || earLeftDist <= size * 0.11 || earRightDist <= size * 0.11) {
-          // Silhouette: clean soft white #FFFFFF
-          rawData[offset++] = 255;
-          rawData[offset++] = 255;
-          rawData[offset++] = 255;
-          rawData[offset++] = 245;
-        } else {
-          rawData[offset++] = rVal;
-          rawData[offset++] = gVal;
-          rawData[offset++] = bVal;
-          rawData[offset++] = 255;
-        }
+      const isMotif = (headDist <= headR) || (earLDist <= earR) || (earRDist <= earR);
+
+      // Subtle shadow effect (offset: dx=0, dy=+size*0.015)
+      const shadowDy = y - (headCy + size * 0.018);
+      const shadowHeadDist = Math.sqrt(headDx * headDx + shadowDy * shadowDy);
+      const shadowLDy = y - (earLeftCy + size * 0.018);
+      const shadowLDist = Math.sqrt(earLDx * earLDx + shadowLDy * shadowLDy);
+      const shadowRDy = y - (earRightCy + size * 0.018);
+      const shadowRDist = Math.sqrt(earRDx * earRDx + shadowRDy * shadowRDy);
+      const isShadow = (shadowHeadDist <= headR + 2) || (shadowLDist <= earR + 2) || (shadowRDist <= earR + 2);
+
+      if (isMotif) {
+        // Pure crisp white motif
+        rawData[offset++] = 255;
+        rawData[offset++] = 255;
+        rawData[offset++] = 255;
+        rawData[offset++] = 255; // 100% opaque
+      } else if (isShadow && y > cy) {
+        // Soft warm shadow
+        rawData[offset++] = Math.round(bgR * 0.85);
+        rawData[offset++] = Math.round(bgG * 0.78);
+        rawData[offset++] = Math.round(bgB * 0.82);
+        rawData[offset++] = 255; // 100% opaque
       } else {
-        // Outside circle: transparent or corner soft color
-        rawData[offset++] = 255;
-        rawData[offset++] = 255;
-        rawData[offset++] = 255;
-        rawData[offset++] = 0;
+        // Full bleed background: NO transparency, 100% opaque
+        rawData[offset++] = bgR;
+        rawData[offset++] = bgG;
+        rawData[offset++] = bgB;
+        rawData[offset++] = 255; // 100% opaque
       }
     }
   }
@@ -126,9 +139,9 @@ function generatePng(size) {
   return pngBuffer;
 }
 
-// Generate PNGs
-fs.writeFileSync(path.join(publicDir, 'icon-192.png'), generatePng(192));
-fs.writeFileSync(path.join(publicDir, 'icon-512.png'), generatePng(512));
-fs.writeFileSync(path.join(publicDir, 'icon-maskable-512.png'), generatePng(512));
-fs.writeFileSync(path.join(publicDir, 'apple-touch-icon.png'), generatePng(180));
-console.log('PNG icons generated successfully.');
+// Generate full-bleed square PNGs
+fs.writeFileSync(path.join(publicDir, 'icon-192.png'), generateSquarePng(192));
+fs.writeFileSync(path.join(publicDir, 'icon-512.png'), generateSquarePng(512));
+fs.writeFileSync(path.join(publicDir, 'icon-maskable-512.png'), generateSquarePng(512));
+fs.writeFileSync(path.join(publicDir, 'apple-touch-icon.png'), generateSquarePng(180));
+console.log('Square full-bleed PNG icons generated successfully.');
