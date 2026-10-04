@@ -1,0 +1,2517 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>ディズニーランド行きたいリスト</title>
+  <meta name="description" content="ディズニーランド専用の行きたい・食べたい・乗りたいを写真付きで記録するPWAアプリ">
+  <meta property="og:title" content="ディズニーランド行きたいリスト">
+  <meta property="og:description" content="ディズニーランド専用の行きたい・食べたい・乗りたいを写真付きで記録するPWAアプリ">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#FF8EAA">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="TDL行きたい">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+  <link rel="icon" type="image/svg+xml" href="./icon.svg">
+  <style>
+    :root {
+      --bg-cream: #FFF9F5;
+      --bg-card: #FFFFFF;
+      --pink-primary: #FF8EAA;
+      --pink-hover: #F87B99;
+      --pink-light: #FFEBF0;
+      --pink-border: #FFD3DF;
+      --blue-accent: #7BC9FF;
+      --blue-light: #EBF5FF;
+      --purple-light: #F4ECFF;
+      --yellow-light: #FFF8E1;
+      --text-main: #33222B;
+      --text-sub: #7A6973;
+      --text-muted: #A89AA3;
+      --border-soft: #F0E6EC;
+      --shadow-sm: 0 2px 8px rgba(180, 110, 135, 0.08);
+      --shadow-md: 0 4px 16px rgba(180, 110, 135, 0.12);
+      --shadow-lg: 0 8px 28px rgba(180, 110, 135, 0.18);
+      --radius-sm: 10px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+      --safe-bottom: env(safe-area-inset-bottom, 16px);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "BIZ UDPGothic", Meiryo, sans-serif;
+      background-color: var(--bg-cream);
+      color: var(--text-main);
+      font-size: 16px;
+      line-height: 1.5;
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding-bottom: calc(90px + var(--safe-bottom));
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    input, textarea, select {
+      user-select: auto;
+      -webkit-user-select: auto;
+    }
+
+    /* Top App Bar */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-soft);
+      padding: 12px 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+    }
+
+    .brand-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -0.3px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .icon-btn {
+      background: #FFF0F4;
+      border: 1px solid var(--pink-border);
+      border-radius: 12px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--pink-primary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      touch-action: manipulation;
+    }
+
+    .icon-btn:active {
+      transform: scale(0.92);
+      background: #FFE0E8;
+    }
+
+    /* List Switcher Bar */
+    .list-bar {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+
+    .list-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .list-tab {
+      padding: 7px 14px;
+      background: #FFF4F7;
+      border: 1.5px solid var(--pink-border);
+      border-radius: 20px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-sub);
+      white-space: nowrap;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .list-tab.active {
+      background: var(--pink-primary);
+      color: #FFFFFF;
+      border-color: var(--pink-primary);
+      box-shadow: 0 3px 10px rgba(255, 142, 170, 0.4);
+    }
+
+    .list-add-tab {
+      padding: 7px 12px;
+      background: #FFFFFF;
+      border: 1.5px dashed var(--pink-border);
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--pink-primary);
+      white-space: nowrap;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+
+    /* Sub Navigation Controls */
+    .view-controls {
+      max-width: 600px;
+      margin: 14px auto 8px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .toggle-group {
+      background: #F4EAEF;
+      padding: 3px;
+      border-radius: 14px;
+      display: flex;
+      flex: 1;
+    }
+
+    .toggle-btn {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 8px 10px;
+      border-radius: 11px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-sub);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+
+    .toggle-btn.active {
+      background: #FFFFFF;
+      color: var(--text-main);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+
+    .stats-chip {
+      background: #FFF;
+      border: 1px solid var(--border-soft);
+      padding: 6px 12px;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--pink-primary);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Main Container */
+    main {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 8px 16px 20px;
+    }
+
+    /* Group Section */
+    .group-section {
+      margin-bottom: 22px;
+    }
+
+    .group-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 10px;
+      margin-bottom: 10px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.7);
+      border-left: 4px solid var(--pink-primary);
+    }
+
+    .group-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .group-count {
+      font-size: 0.8rem;
+      background: #FFF0F4;
+      color: var(--pink-primary);
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 700;
+    }
+
+    .cards-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* Item Card */
+    .card {
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-soft);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+
+    .card.is-done {
+      opacity: 0.55;
+      background: #FAFAFA;
+      filter: grayscale(0.25);
+    }
+
+    .card.is-done .card-name {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .card-top {
+      display: flex;
+      padding: 12px 14px 10px;
+      gap: 14px;
+    }
+
+    .card-img-wrap {
+      width: 88px;
+      height: 88px;
+      border-radius: 14px;
+      background: #FCE8EE;
+      overflow: hidden;
+      flex-shrink: 0;
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
+    }
+
+    .card-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .card-img-placeholder {
+      font-size: 2.2rem;
+      user-select: none;
+    }
+
+    .card-body {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 2px 7px;
+      border-radius: 6px;
+      line-height: 1.3;
+    }
+
+    .badge-category {
+      background: #FFE8EE;
+      color: #C03E65;
+    }
+
+    .badge-category.restaurant {
+      background: #E8F4FF;
+      color: #1C6EAC;
+    }
+
+    .badge-category.attraction {
+      background: #F1E9FF;
+      color: #6C39A8;
+    }
+
+    .badge-area {
+      background: #F5EFEB;
+      color: #6B5549;
+    }
+
+    /* Priority Badges */
+    .badge-priority-high {
+      background: linear-gradient(135deg, #FFE1E8 0%, #FFD1DC 100%);
+      color: #D81A48;
+      border: 1px solid #FFA6BA;
+      font-weight: 700;
+      box-shadow: 0 1px 4px rgba(216, 26, 72, 0.15);
+    }
+
+    .badge-priority-medium {
+      background: #FFF7E6;
+      color: #9C6000;
+      border: 1px solid #FFE4B3;
+      font-weight: 600;
+    }
+
+    .badge-priority-low {
+      background: #F3EEF5;
+      color: #6C5B73;
+      border: 1px solid #E5DCE8;
+      font-weight: 600;
+    }
+
+    /* Card priority emphasis */
+    .card.priority-high {
+      border: 2px solid #FF7C9C;
+      box-shadow: 0 6px 20px rgba(255, 94, 126, 0.22);
+      background: linear-gradient(180deg, #FFF9FA 0%, #FFFFFF 100%);
+    }
+
+    .card.priority-high::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 5px;
+      background: linear-gradient(180deg, #FF456E 0%, #FF8EAA 100%);
+      border-radius: var(--radius-md) 0 0 var(--radius-md);
+      z-index: 2;
+    }
+
+    .card.priority-high .card-name {
+      color: #221019;
+    }
+
+    .priority-flame-icon {
+      display: inline-block;
+      margin-right: 4px;
+      font-size: 1.05rem;
+      filter: drop-shadow(0 1px 2px rgba(255, 69, 110, 0.3));
+    }
+
+    /* Pill radio styles for priority */
+    .pill-radio input:checked + .pill-priority-high {
+      background: #FFE8EE;
+      border-color: #FF5E7E;
+      color: #D81A48;
+    }
+
+    .pill-radio input:checked + .pill-priority-medium {
+      background: #FFF8E8;
+      border-color: #F8B84E;
+      color: #9C6000;
+    }
+
+    .pill-radio input:checked + .pill-priority-low {
+      background: #F4EEF7;
+      border-color: #BAA6C5;
+      color: #6C5B73;
+    }
+
+    /* Name Tap to Copy */
+    .card-name-btn {
+      background: transparent;
+      border: none;
+      padding: 0;
+      margin: 0;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      width: 100%;
+    }
+
+    .card-name {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.3;
+      word-break: break-word;
+    }
+
+    .copy-hint-icon {
+      font-size: 0.75rem;
+      color: var(--pink-primary);
+      opacity: 0.7;
+      flex-shrink: 0;
+    }
+
+    .card-location {
+      margin-top: 5px;
+      font-size: 0.85rem;
+      color: #925324;
+      background: #FFF5EC;
+      padding: 2px 8px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      max-width: fit-content;
+      font-weight: 500;
+    }
+
+    .card-memo {
+      margin-top: 6px;
+      font-size: 0.88rem;
+      color: var(--text-sub);
+      line-height: 1.4;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    /* Card Bottom Actions */
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 14px 10px;
+      border-top: 1px dashed var(--border-soft);
+      background: #FFFCFA;
+      gap: 8px;
+    }
+
+    .done-toggle {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-sub);
+      user-select: none;
+      padding: 4px 6px;
+      border-radius: 8px;
+      transition: background 0.15s;
+    }
+
+    .done-toggle:active {
+      background: #F0E6EC;
+    }
+
+    .custom-check {
+      width: 24px;
+      height: 24px;
+      border: 2px solid #D5C2CC;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      background: #FFF;
+    }
+
+    .card.is-done .custom-check {
+      background: #4CAF50;
+      border-color: #4CAF50;
+      color: #FFF;
+    }
+
+    .card-action-btns {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .action-icon-btn {
+      background: transparent;
+      border: none;
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-sub);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .action-icon-btn:hover {
+      background: #F5EAEF;
+      color: var(--text-main);
+    }
+
+    .action-icon-btn:active {
+      transform: scale(0.9);
+    }
+
+    .action-icon-btn.delete-btn:hover {
+      color: #D32F2F;
+      background: #FFEBEE;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px 20px;
+      background: #FFFFFF;
+      border-radius: var(--radius-lg);
+      border: 2px dashed #F0D9E2;
+      margin-top: 16px;
+    }
+
+    .empty-emoji {
+      font-size: 3.5rem;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .empty-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .empty-desc {
+      font-size: 0.95rem;
+      color: var(--text-sub);
+      max-width: 320px;
+      margin: 0 auto 18px;
+      line-height: 1.5;
+    }
+
+    .sample-btn {
+      background: #FFF0F4;
+      border: 1.5px solid var(--pink-border);
+      color: var(--pink-primary);
+      font-size: 0.95rem;
+      font-weight: 700;
+      padding: 10px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s;
+    }
+
+    .sample-btn:active {
+      transform: scale(0.96);
+      background: #FFE0E8;
+    }
+
+    /* Floating Add Button (Fixed at Bottom for Single-Hand Use) */
+    .floating-bottom {
+      position: fixed;
+      bottom: calc(16px + var(--safe-bottom));
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: center;
+      padding: 0 16px;
+      z-index: 40;
+      pointer-events: none;
+    }
+
+    .btn-fab {
+      pointer-events: auto;
+      background: linear-gradient(135deg, #FF9EAA 0%, #FF7696 100%);
+      color: #FFFFFF;
+      border: none;
+      padding: 15px 28px;
+      border-radius: 32px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      box-shadow: 0 8px 24px rgba(255, 118, 150, 0.45);
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      touch-action: manipulation;
+    }
+
+    .btn-fab:active {
+      transform: scale(0.94);
+      box-shadow: 0 4px 12px rgba(255, 118, 150, 0.35);
+    }
+
+    .btn-fab svg {
+      width: 24px;
+      height: 24px;
+    }
+
+    /* Modal / Bottom Sheet */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(40, 20, 30, 0.5);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 100;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-sheet {
+      background: #FFFFFF;
+      width: 100%;
+      max-width: 560px;
+      max-height: 90vh;
+      border-radius: 28px 28px 0 0;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      flex-direction: column;
+      transform: translateY(100%);
+      transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+      padding-bottom: var(--safe-bottom);
+    }
+
+    .modal-overlay.active .modal-sheet {
+      transform: translateY(0);
+    }
+
+    .sheet-header {
+      padding: 18px 20px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .sheet-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .sheet-close-btn {
+      background: #F4EAEF;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: var(--text-sub);
+      font-size: 1.1rem;
+    }
+
+    .sheet-content {
+      padding: 16px 20px 24px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .form-label span.req {
+      color: var(--pink-primary);
+      margin-left: 4px;
+    }
+
+    .form-label span.opt {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-left: 6px;
+    }
+
+    .form-input, .form-textarea, .form-select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1.5px solid var(--border-soft);
+      border-radius: var(--radius-sm);
+      font-size: 1rem;
+      color: var(--text-main);
+      background: #FFFDFE;
+      transition: border-color 0.15s;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .form-input:focus, .form-textarea:focus, .form-select:focus {
+      border-color: var(--pink-primary);
+      box-shadow: 0 0 0 3px rgba(255, 142, 170, 0.2);
+    }
+
+    .form-textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    /* Category Pill Selector */
+    .pill-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+
+    .pill-radio {
+      position: relative;
+    }
+
+    .pill-radio input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .pill-label {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 6px;
+      background: #FAF5F7;
+      border: 2px solid transparent;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--text-sub);
+      transition: all 0.15s;
+      text-align: center;
+      gap: 4px;
+    }
+
+    .pill-label .pill-emoji {
+      font-size: 1.3rem;
+    }
+
+    .pill-radio input:checked + .pill-label {
+      background: #FFF0F4;
+      border-color: var(--pink-primary);
+      color: #B82855;
+    }
+
+    /* Photo Upload Area */
+    .photo-upload-box {
+      border: 2px dashed #E5D5DC;
+      border-radius: 16px;
+      padding: 16px;
+      text-align: center;
+      background: #FFFDFE;
+      cursor: pointer;
+      transition: all 0.15s;
+      position: relative;
+    }
+
+    .photo-upload-box:hover {
+      border-color: var(--pink-primary);
+      background: #FFF9FA;
+    }
+
+    .photo-preview-wrap {
+      display: none;
+      position: relative;
+      width: 140px;
+      height: 140px;
+      margin: 0 auto;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .photo-preview-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .photo-remove-btn {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      background: rgba(0, 0, 0, 0.6);
+      color: #FFFFFF;
+      border: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .photo-prompt-text {
+      color: var(--text-sub);
+      font-size: 0.9rem;
+      margin-top: 6px;
+    }
+
+    .photo-hint {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* Form Buttons */
+    .form-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .btn-secondary {
+      flex: 1;
+      padding: 13px;
+      border-radius: 14px;
+      border: 1.5px solid var(--border-soft);
+      background: #FFFFFF;
+      color: var(--text-sub);
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      flex: 2;
+      padding: 13px;
+      border-radius: 14px;
+      border: none;
+      background: var(--pink-primary);
+      color: #FFFFFF;
+      font-size: 1.05rem;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(255, 142, 170, 0.4);
+      transition: all 0.15s;
+    }
+
+    .btn-primary:active {
+      transform: scale(0.97);
+      background: var(--pink-hover);
+    }
+
+    /* Toast Notification */
+    .toast {
+      position: fixed;
+      bottom: calc(85px + var(--safe-bottom));
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(40, 24, 32, 0.92);
+      color: #FFFFFF;
+      padding: 10px 18px;
+      border-radius: 24px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      white-space: nowrap;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Settings Screen Elements */
+    .settings-section {
+      background: #FAF5F7;
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+    }
+
+    .settings-section-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+
+    .settings-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #EFE4EA;
+    }
+
+    .settings-row:last-child {
+      border-bottom: none;
+    }
+
+    .settings-label {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .settings-val {
+      font-size: 0.95rem;
+      color: var(--pink-primary);
+      font-weight: 700;
+    }
+
+    .settings-action-btn {
+      width: 100%;
+      padding: 11px;
+      border-radius: 12px;
+      border: 1px solid var(--pink-border);
+      background: #FFFFFF;
+      color: var(--pink-primary);
+      font-weight: 700;
+      font-size: 0.92rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .settings-action-btn:active {
+      background: #FFF0F4;
+    }
+
+    /* List Management Items in Settings */
+    .manage-list-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      background: #FFFFFF;
+      border-radius: 10px;
+      margin-bottom: 6px;
+      border: 1px solid var(--border-soft);
+    }
+
+    .manage-list-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .manage-list-badge {
+      font-size: 0.75rem;
+      background: #FFE8EE;
+      color: var(--pink-primary);
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+
+    .manage-list-btns {
+      display: flex;
+      gap: 4px;
+    }
+
+    /* PWA Install Banner */
+    .install-banner {
+      background: linear-gradient(135deg, #FFF0F5 0%, #F5ECFF 100%);
+      border: 1.5px solid #FFD8E4;
+      border-radius: 16px;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .install-text {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-main);
+      line-height: 1.3;
+    }
+
+    .install-btn {
+      background: var(--pink-primary);
+      color: #FFFFFF;
+      border: none;
+      padding: 7px 14px;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      white-space: nowrap;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(255, 142, 170, 0.4);
+    }
+
+    /* iOS Guide Modal */
+    .ios-steps {
+      font-size: 0.92rem;
+      color: var(--text-main);
+      line-height: 1.6;
+      margin: 12px 0 16px;
+    }
+
+    .ios-steps li {
+      margin-left: 20px;
+      margin-bottom: 8px;
+    }
+
+    /* Hidden file input */
+    #photoInput {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top App Bar -->
+  <header>
+    <div class="header-top">
+      <div class="brand">
+        <svg class="brand-icon" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect width="512" height="512" rx="128" fill="#FF8EAA"/>
+          <circle cx="175" cy="210" r="65" fill="#FFFFFF"/>
+          <circle cx="337" cy="210" r="65" fill="#FFFFFF"/>
+          <circle cx="256" cy="305" r="105" fill="#FFFFFF"/>
+          <polygon points="256,190 268,230 244,230" fill="#FF8EAA"/>
+          <rect x="251" y="230" width="10" height="40" fill="#FF8EAA"/>
+        </svg>
+        <span class="brand-title">TDL行きたいリスト</span>
+      </div>
+
+      <div class="header-actions">
+        <!-- Settings button -->
+        <button id="settingsBtn" class="icon-btn" aria-label="設定" title="設定・リスト管理">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- List Switcher Tabs -->
+    <div class="list-bar" id="listBar">
+      <!-- Injected dynamically -->
+    </div>
+  </header>
+
+  <!-- Secondary controls (Display mode: Area vs Category) -->
+  <div class="view-controls">
+    <div class="toggle-group" role="tablist">
+      <button class="toggle-btn active" id="viewAreaBtn" role="tab" aria-selected="true">
+        <span>🏰 エリア別</span>
+      </button>
+      <button class="toggle-btn" id="viewCategoryBtn" role="tab" aria-selected="false">
+        <span>🍴 種類別</span>
+      </button>
+    </div>
+
+    <div class="stats-chip" id="statsChip">
+      <span>残り 0 / 全 0件</span>
+    </div>
+  </div>
+
+  <!-- Main Card View Container -->
+  <main id="mainContainer">
+    <!-- PWA Install banner (if installable or iOS) -->
+    <div id="pwaBanner" class="install-banner" style="display: none;">
+      <div class="install-text">📱 ホーム画面に追加すると、電波が不安定なパーク内でも快適に使えます！</div>
+      <button id="pwaInstallBtn" class="install-btn">追加する</button>
+    </div>
+
+    <!-- Cards container -->
+    <div id="itemsContainer">
+      <!-- Injected dynamically -->
+    </div>
+  </main>
+
+  <!-- Bottom Floating Add Button -->
+  <div class="floating-bottom">
+    <button id="openAddModalBtn" class="btn-fab" aria-label="行きたいものを追加">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+      <span>行きたいを追加</span>
+    </button>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast">
+    <span id="toastIcon">✨</span>
+    <span id="toastMsg">クリップボードにコピーしました！</span>
+  </div>
+
+  <!-- Add / Edit Modal -->
+  <div class="modal-overlay" id="itemModal">
+    <div class="modal-sheet">
+      <div class="sheet-header">
+        <h2 class="sheet-title" id="itemModalTitle">行きたいものを追加</h2>
+        <button type="button" class="sheet-close-btn" id="closeItemModalBtn">✕</button>
+      </div>
+
+      <div class="sheet-content">
+        <form id="itemForm" onsubmit="return false;">
+          <input type="hidden" id="itemId">
+
+          <!-- Photo Upload & Resize -->
+          <div class="form-group">
+            <label class="form-label">写真 <span class="opt">（端末の写真から選ぶ・自動リサイズ保存）</span></label>
+            <input type="file" id="photoInput" accept="image/*">
+            <div class="photo-upload-box" id="photoBox">
+              <div id="photoPrompt">
+                <div style="font-size: 2rem;">📷</div>
+                <div class="photo-prompt-text">タップして写真を選択</div>
+                <div class="photo-hint">※保存前に自動で小さくリサイズされます</div>
+              </div>
+              <div class="photo-preview-wrap" id="photoPreviewWrap">
+                <img id="photoPreviewImg" src="" alt="プレビュー">
+                <button type="button" class="photo-remove-btn" id="removePhotoBtn" title="写真を削除">✕</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Name -->
+          <div class="form-group">
+            <label class="form-label" for="itemName">名前 <span class="req">※必須</span></label>
+            <input type="text" id="itemName" class="form-input" placeholder="例：ミッキーワッフル、美女と野獣など" required>
+          </div>
+
+          <!-- Category Selection -->
+          <div class="form-group">
+            <label class="form-label">種類 <span class="req">※必須</span></label>
+            <div class="pill-grid">
+              <label class="pill-radio">
+                <input type="radio" name="itemCategory" value="food" checked>
+                <div class="pill-label">
+                  <span class="pill-emoji">🍿</span>
+                  <span>食べたいもの</span>
+                </div>
+              </label>
+
+              <label class="pill-radio">
+                <input type="radio" name="itemCategory" value="restaurant">
+                <div class="pill-label">
+                  <span class="pill-emoji">🍽️</span>
+                  <span>レストラン</span>
+                </div>
+              </label>
+
+              <label class="pill-radio">
+                <input type="radio" name="itemCategory" value="attraction">
+                <div class="pill-label">
+                  <span class="pill-emoji">🎢</span>
+                  <span>アトラクション</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Priority Selection -->
+          <div class="form-group">
+            <label class="form-label">優先度 <span class="req">※必須</span></label>
+            <div class="pill-grid">
+              <label class="pill-radio">
+                <input type="radio" name="itemPriority" value="high">
+                <div class="pill-label pill-priority-high">
+                  <span class="pill-emoji">🔥</span>
+                  <span>高（絶対！）</span>
+                </div>
+              </label>
+
+              <label class="pill-radio">
+                <input type="radio" name="itemPriority" value="medium" checked>
+                <div class="pill-label pill-priority-medium">
+                  <span class="pill-emoji">✨</span>
+                  <span>中（できれば）</span>
+                </div>
+              </label>
+
+              <label class="pill-radio">
+                <input type="radio" name="itemPriority" value="low">
+                <div class="pill-label pill-priority-low">
+                  <span class="pill-emoji">☕</span>
+                  <span>低（時間あれば）</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Area Selection -->
+          <div class="form-group">
+            <label class="form-label" for="itemArea">エリア <span class="req">※必須</span></label>
+            <select id="itemArea" class="form-select">
+              <option value="ワールドバザール">ワールドバザール</option>
+              <option value="アドベンチャーランド">アドベンチャーランド</option>
+              <option value="ウエスタンランド">ウエスタンランド</option>
+              <option value="クリッターカントリー">クリッターカントリー</option>
+              <option value="ファンタジーランド" selected>ファンタジーランド</option>
+              <option value="トゥーンタウン">トゥーンタウン</option>
+              <option value="トゥモローランド">トゥモローランド</option>
+            </select>
+          </div>
+
+          <!-- Location Note -->
+          <div class="form-group">
+            <label class="form-label" for="itemLocation">場所のメモ <span class="opt">（空でもOK）</span></label>
+            <input type="text" id="itemLocation" class="form-input" placeholder="例：シンデレラ城の裏、射撃場となり など">
+          </div>
+
+          <!-- Memo -->
+          <div class="form-group">
+            <label class="form-label" for="itemMemo">メモ <span class="opt">（自由入力）</span></label>
+            <textarea id="itemMemo" class="form-textarea" placeholder="例：スーベニアランチケース付き、朝イチでDPA取得、ミックスベリー味 など"></textarea>
+          </div>
+
+          <!-- Actions -->
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" id="cancelItemBtn">キャンセル</button>
+            <button type="submit" class="btn-primary" id="saveItemBtn">保存する</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings & List Management Modal -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal-sheet">
+      <div class="sheet-header">
+        <h2 class="sheet-title">設定・リスト管理</h2>
+        <button type="button" class="sheet-close-btn" id="closeSettingsModalBtn">✕</button>
+      </div>
+
+      <div class="sheet-content">
+        <!-- Version Display (As required: 変更がある度にバージョンを追加) -->
+        <div class="settings-section">
+          <div class="settings-section-title">アプリ情報</div>
+          <div class="settings-row">
+            <span class="settings-label">バージョン</span>
+            <span class="settings-val" id="appVersion">v1.2.0</span>
+          </div>
+          <div class="settings-row">
+            <span class="settings-label">ストレージ</span>
+            <span class="settings-val">IndexedDB（端末内保存）</span>
+          </div>
+          <div class="settings-row">
+            <span class="settings-label">オフライン対応</span>
+            <span class="settings-val">PWAキャッシュ有効（相対パス対応）</span>
+          </div>
+        </div>
+
+        <!-- Version History -->
+        <div class="settings-section">
+          <div class="settings-section-title">バージョン履歴</div>
+          <div style="font-size: 0.88rem; color: var(--text-sub); line-height: 1.6;">
+            <div style="margin-bottom: 8px;">
+              <strong style="color: var(--pink-primary);">v1.2.0（最新）</strong><br>
+              ・GitHub Pages（ユーザー名.github.io/リポジトリ名/）公開対応<br>
+              ・manifest / Service Worker / アイコン / start_url / scope をすべて「./」相対パス化
+            </div>
+            <div style="margin-bottom: 8px;">
+              <strong style="color: var(--text-muted);">v1.1.0</strong><br>
+              ・各アイテムに「優先度（高・中・低）」を設定可能に<br>
+              ・優先度「高」カードの視覚的強調（ハイライト枠・炎バッジ・上位ソート表示）
+            </div>
+            <div>
+              <strong style="color: var(--text-muted);">v1.0.0</strong><br>
+              ・ディズニーランド専用「行きたいリスト」PWAアプリの新規作成
+            </div>
+          </div>
+        </div>
+
+        <!-- List Management -->
+        <div class="settings-section">
+          <div class="settings-section-title">マイリスト一覧</div>
+          <div id="manageListsContainer">
+            <!-- Injected dynamically -->
+          </div>
+          <button type="button" class="settings-action-btn" id="addNewListBtn">
+            <span>＋ 新しいリストを作る</span>
+          </button>
+        </div>
+
+        <!-- Useful tools -->
+        <div class="settings-section">
+          <div class="settings-section-title">データと操作</div>
+          <button type="button" class="settings-action-btn" id="addSampleDataBtn">
+            <span>🏰 サンプル行きたいデータを追加</span>
+          </button>
+          <button type="button" class="settings-action-btn" id="exportDataBtn">
+            <span>📤 データをJSONで書き出し（バックアップ）</span>
+          </button>
+          <label class="settings-action-btn" style="cursor: pointer;">
+            <span>📥 バックアップJSONを取り込み</span>
+            <input type="file" id="importJsonInput" accept=".json" style="display: none;">
+          </label>
+        </div>
+
+        <!-- PWA Guide -->
+        <div class="settings-section">
+          <div class="settings-section-title">ホーム画面に追加（PWA）</div>
+          <p style="font-size: 0.88rem; color: var(--text-sub); margin-bottom: 8px;">
+            ホーム画面に追加すると、電波が混雑するパーク内でもアプリとしてサクサク開けます。
+          </p>
+          <button type="button" class="settings-action-btn" id="openIosGuideBtn">
+            <span>📱 iPhone / Androidの追加手順を見る</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- iOS / Mobile PWA Guide Modal -->
+  <div class="modal-overlay" id="iosGuideModal">
+    <div class="modal-sheet">
+      <div class="sheet-header">
+        <h2 class="sheet-title">ホーム画面に追加する方法</h2>
+        <button type="button" class="sheet-close-btn" id="closeIosGuideBtn">✕</button>
+      </div>
+      <div class="sheet-content">
+        <h3 style="font-size: 1rem; font-weight: 700; color: var(--pink-primary); margin-bottom: 6px;">iPhone (Safari) の場合</h3>
+        <ol class="ios-steps">
+          <li>画面下部の<strong>「共有ボタン（四角から上矢印）」</strong>をタップします。</li>
+          <li>メニューを少し下にスクロールして<strong>「ホーム画面に追加」</strong>をタップします。</li>
+          <li>右上の<strong>「追加」</strong>をタップすると完了です！</li>
+        </ol>
+
+        <h3 style="font-size: 1rem; font-weight: 700; color: var(--pink-primary); margin-bottom: 6px;">Android (Chrome) の場合</h3>
+        <ol class="ios-steps">
+          <li>画面右上の<strong>メニュー（縦の3点リーダー）</strong>をタップします。</li>
+          <li><strong>「ホーム画面に追加」</strong>または<strong>「アプリをインストール」</strong>をタップします。</li>
+        </ol>
+
+        <button type="button" class="btn-primary" style="width: 100%;" id="dismissIosGuideBtn">わかりました</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vanilla JavaScript (Single File Logic) -->
+  <script>
+    /**
+     * @license
+     * SPDX-License-Identifier: Apache-2.0
+     * ディズニーランド行きたいリスト PWA v1.2.0
+     */
+
+    // --- State Constants ---
+    const APP_VERSION = 'v1.2.0';
+    const DB_NAME = 'DisneylandWishlistDB';
+    const DB_VERSION = 1;
+
+    const PRIORITY_ORDER = {
+      high: 3,
+      medium: 2,
+      low: 1
+    };
+
+    const PRIORITY_LABELS = {
+      high: '🔥 絶対行きたい！',
+      medium: '✨ できれば',
+      low: '☕ 時間があれば'
+    };
+
+    const AREA_ORDER = [
+      'ワールドバザール',
+      'アドベンチャーランド',
+      'ウエスタンランド',
+      'クリッターカントリー',
+      'ファンタジーランド',
+      'トゥーンタウン',
+      'トゥモローランド'
+    ];
+
+    const AREA_EMOJIS = {
+      'ワールドバザール': '🛍️',
+      'アドベンチャーランド': '🦜',
+      'ウエスタンランド': '🤠',
+      'クリッターカントリー': '🛶',
+      'ファンタジーランド': '🏰',
+      'トゥーンタウン': '🎈',
+      'トゥモローランド': '🚀'
+    };
+
+    const CATEGORY_NAMES = {
+      food: '食べたいもの',
+      restaurant: 'レストラン',
+      attraction: 'アトラクション'
+    };
+
+    const CATEGORY_EMOJIS = {
+      food: '🍿',
+      restaurant: '🍽️',
+      attraction: '🎢'
+    };
+
+    // --- Application State ---
+    let db = null;
+    let currentListId = null;
+    let lists = [];
+    let items = [];
+    let currentViewMode = 'area'; // 'area' | 'category'
+    let currentResizedPhotoData = '';
+    let deferredInstallPrompt = null;
+
+    // --- IndexedDB Management ---
+    function openDatabase() {
+      return new Promise((resolve, reject) => {
+        const req = indexedDB.open(DB_NAME, DB_VERSION);
+
+        req.onupgradeneeded = (e) => {
+          const database = e.target.result;
+          if (!database.objectStoreNames.contains('lists')) {
+            const listStore = database.createObjectStore('lists', { keyPath: 'id' });
+            listStore.createIndex('createdAt', 'createdAt', { unique: false });
+          }
+          if (!database.objectStoreNames.contains('items')) {
+            const itemStore = database.createObjectStore('items', { keyPath: 'id' });
+            itemStore.createIndex('listId', 'listId', { unique: false });
+            itemStore.createIndex('createdAt', 'createdAt', { unique: false });
+          }
+          if (!database.objectStoreNames.contains('settings')) {
+            database.createObjectStore('settings', { keyPath: 'key' });
+          }
+        };
+
+        req.onsuccess = (e) => {
+          db = e.target.result;
+          resolve(db);
+        };
+
+        req.onerror = (e) => {
+          console.error('IndexedDB open error:', e);
+          reject(e);
+        };
+      });
+    }
+
+    function dbGetAll(storeName) {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(storeName, 'readonly');
+        const store = tx.objectStore(storeName);
+        const req = store.getAll();
+        req.onsuccess = () => resolve(req.result || []);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    function dbPut(storeName, value) {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(storeName, 'readwrite');
+        const store = tx.objectStore(storeName);
+        const req = store.put(value);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    function dbDelete(storeName, key) {
+      return new Promise((resolve, reject) => {
+        const tx = db.transaction(storeName, 'readwrite');
+        const store = tx.objectStore(storeName);
+        const req = store.delete(key);
+        req.onsuccess = () => resolve();
+        req.onerror = () => reject(req.error);
+      });
+    }
+
+    // --- Toast Function ---
+    let toastTimeout = null;
+    function showToast(msg, icon = '✨') {
+      const toastEl = document.getElementById('toast');
+      const toastMsgEl = document.getElementById('toastMsg');
+      const toastIconEl = document.getElementById('toastIcon');
+
+      toastMsgEl.textContent = msg;
+      toastIconEl.textContent = icon;
+
+      toastEl.classList.add('show');
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toastEl.classList.remove('show');
+      }, 2400);
+    }
+
+    // --- Image Resize via HTML Canvas ---
+    function resizeImage(file, maxDimension = 800) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            let width = img.width;
+            let height = img.height;
+
+            if (width > height) {
+              if (width > maxDimension) {
+                height = Math.round((height * maxDimension) / width);
+                width = maxDimension;
+              }
+            } else {
+              if (height > maxDimension) {
+                width = Math.round((width * maxDimension) / height);
+                height = maxDimension;
+              }
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // Compress to webp or jpeg at 0.75 quality for small size
+            let dataUrl = '';
+            try {
+              dataUrl = canvas.toDataURL('image/webp', 0.75);
+            } catch (err) {
+              dataUrl = canvas.toDataURL('image/jpeg', 0.75);
+            }
+            resolve(dataUrl);
+          };
+          img.onerror = reject;
+          img.src = e.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // --- Clipboard Copy Helper ---
+    async function copyToClipboard(text) {
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          const textArea = document.createElement('textarea');
+          textArea.value = text;
+          textArea.style.position = 'fixed';
+          textArea.style.opacity = '0';
+          document.body.appendChild(textArea);
+          textArea.focus();
+          textArea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textArea);
+        }
+        showToast(`「${text}」をコピーしました！`, '📋');
+      } catch (err) {
+        showToast(`コピーしました！`, '📋');
+      }
+    }
+
+    // --- Initialization & Data Seeding ---
+    async function initApp() {
+      await openDatabase();
+
+      // Load lists
+      lists = await dbGetAll('lists');
+      if (lists.length === 0) {
+        // Create initial default list
+        const defaultList = {
+          id: 'list-' + Date.now(),
+          name: '11/24 つとさんと',
+          createdAt: Date.now()
+        };
+        await dbPut('lists', defaultList);
+        lists = [defaultList];
+      }
+
+      // Check active list in settings or pick first
+      const savedSetting = await (async () => {
+        try {
+          const tx = db.transaction('settings', 'readonly');
+          const store = tx.objectStore('settings');
+          const req = store.get('currentListId');
+          return new Promise((res) => {
+            req.onsuccess = () => res(req.result ? req.result.value : null);
+            req.onerror = () => res(null);
+          });
+        } catch (e) {
+          return null;
+        }
+      })();
+
+      if (savedSetting && lists.some(l => l.id === savedSetting)) {
+        currentListId = savedSetting;
+      } else {
+        currentListId = lists[0].id;
+      }
+
+      await loadItems();
+      renderListBar();
+      renderItems();
+      setupEventListeners();
+      setupPWA();
+    }
+
+    async function loadItems() {
+      const allItems = await dbGetAll('items');
+      items = allItems.filter(item => item.listId === currentListId);
+    }
+
+    async function setCurrentList(listId) {
+      currentListId = listId;
+      await dbPut('settings', { key: 'currentListId', value: listId });
+      await loadItems();
+      renderListBar();
+      renderItems();
+    }
+
+    // --- Render List Bar ---
+    function renderListBar() {
+      const listBar = document.getElementById('listBar');
+      listBar.innerHTML = '';
+
+      lists.forEach(list => {
+        const btn = document.createElement('button');
+        btn.className = `list-tab ${list.id === currentListId ? 'active' : ''}`;
+        btn.innerHTML = `<span>🏰</span><span>${escapeHtml(list.name)}</span>`;
+        btn.onclick = () => setCurrentList(list.id);
+        listBar.appendChild(btn);
+      });
+
+      // Quick add new list button
+      const addBtn = document.createElement('button');
+      addBtn.className = 'list-add-tab';
+      addBtn.innerHTML = `<span>＋</span><span>リスト追加</span>`;
+      addBtn.onclick = promptCreateNewList;
+      listBar.appendChild(addBtn);
+    }
+
+    function promptCreateNewList() {
+      const name = window.prompt('新しいリストの名前を入力してください\n（例：Dハロ、クリスマス2026 など）');
+      if (name && name.trim()) {
+        createNewList(name.trim());
+      }
+    }
+
+    async function createNewList(name) {
+      const newList = {
+        id: 'list-' + Date.now(),
+        name: name,
+        createdAt: Date.now()
+      };
+      await dbPut('lists', newList);
+      lists.push(newList);
+      await setCurrentList(newList.id);
+      showToast(`リスト「${name}」を作成しました`, '✨');
+    }
+
+    // --- Render Items ---
+    function renderItems() {
+      const container = document.getElementById('itemsContainer');
+      const statsChip = document.getElementById('statsChip');
+
+      const totalCount = items.length;
+      const doneCount = items.filter(i => i.isDone).length;
+      const remainingCount = totalCount - doneCount;
+
+      statsChip.innerHTML = `<span>残り ${remainingCount} / 全 ${totalCount}件</span>`;
+
+      if (totalCount === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <span class="empty-emoji">🏰</span>
+            <h3 class="empty-title">行きたいものがまだありません</h3>
+            <p class="empty-desc">
+              下の「＋ 行きたいを追加」ボタンから、食べたいものや乗りたいアトラクションを登録しましょう！
+            </p>
+            <button class="sample-btn" id="emptySampleBtn">
+              <span>✨ 定番サンプルを入れてみる</span>
+            </button>
+          </div>
+        `;
+        document.getElementById('emptySampleBtn').onclick = addSampleData;
+        return;
+      }
+
+      container.innerHTML = '';
+
+      if (currentViewMode === 'area') {
+        renderByArea(container);
+      } else {
+        renderByCategory(container);
+      }
+    }
+
+    // Item sorting: not done first, then high priority to low priority, then createdAt
+    function sortWishlistItems(a, b) {
+      if (a.isDone !== b.isDone) {
+        return a.isDone ? 1 : -1;
+      }
+      const pA = PRIORITY_ORDER[a.priority || 'medium'] || 2;
+      const pB = PRIORITY_ORDER[b.priority || 'medium'] || 2;
+      if (pA !== pB) {
+        return pB - pA;
+      }
+      return (a.createdAt || 0) - (b.createdAt || 0);
+    }
+
+    // Area-based grouping
+    function renderByArea(container) {
+      AREA_ORDER.forEach(area => {
+        const areaItems = items.filter(i => i.area === area);
+        if (areaItems.length === 0) return; // Only show areas with items
+
+        const section = document.createElement('div');
+        section.className = 'group-section';
+
+        const emoji = AREA_EMOJIS[area] || '🏰';
+        const sectionHeader = document.createElement('div');
+        sectionHeader.className = 'group-header';
+        sectionHeader.innerHTML = `
+          <div class="group-title">
+            <span>${emoji}</span>
+            <span>${area}</span>
+          </div>
+          <span class="group-count">${areaItems.length}件</span>
+        `;
+        section.appendChild(sectionHeader);
+
+        const grid = document.createElement('div');
+        grid.className = 'cards-grid';
+
+        // Sort: not done first, then high priority, then createdAt
+        areaItems.sort(sortWishlistItems);
+
+        areaItems.forEach(item => {
+          grid.appendChild(createCardElement(item));
+        });
+
+        section.appendChild(grid);
+        container.appendChild(section);
+      });
+    }
+
+    // Category-based grouping
+    function renderByCategory(container) {
+      const categories = ['food', 'restaurant', 'attraction'];
+
+      categories.forEach(cat => {
+        const catItems = items.filter(i => i.category === cat);
+        if (catItems.length === 0) return;
+
+        const section = document.createElement('div');
+        section.className = 'group-section';
+
+        const name = CATEGORY_NAMES[cat] || cat;
+        const emoji = CATEGORY_EMOJIS[cat] || '✨';
+
+        const sectionHeader = document.createElement('div');
+        sectionHeader.className = 'group-header';
+        sectionHeader.innerHTML = `
+          <div class="group-title">
+            <span>${emoji}</span>
+            <span>${name}</span>
+          </div>
+          <span class="group-count">${catItems.length}件</span>
+        `;
+        section.appendChild(sectionHeader);
+
+        const grid = document.createElement('div');
+        grid.className = 'cards-grid';
+
+        catItems.sort(sortWishlistItems);
+
+        catItems.forEach(item => {
+          grid.appendChild(createCardElement(item));
+        });
+
+        section.appendChild(grid);
+        container.appendChild(section);
+      });
+    }
+
+    // Create Single Card Element
+    function createCardElement(item) {
+      const priority = item.priority || 'medium';
+      const isHighPriority = priority === 'high';
+      const priLabel = PRIORITY_LABELS[priority] || '✨ できれば';
+
+      const card = document.createElement('div');
+      card.className = `card ${item.isDone ? 'is-done' : ''} priority-${priority}`;
+      card.id = `card-${item.id}`;
+
+      const catEmoji = CATEGORY_EMOJIS[item.category] || '✨';
+      const catName = CATEGORY_NAMES[item.category] || '食べたいもの';
+
+      // Image or Placeholder
+      let imgContent = '';
+      if (item.photoDataUrl) {
+        imgContent = `<img src="${item.photoDataUrl}" alt="${escapeHtml(item.name)}" loading="lazy">`;
+      } else {
+        imgContent = `<span class="card-img-placeholder">${catEmoji}</span>`;
+      }
+
+      // Location note
+      let locationHtml = '';
+      if (item.locationMemo && item.locationMemo.trim()) {
+        locationHtml = `<div class="card-location">📍 ${escapeHtml(item.locationMemo)}</div>`;
+      }
+
+      // Memo
+      let memoHtml = '';
+      if (item.memo && item.memo.trim()) {
+        memoHtml = `<div class="card-memo">${escapeHtml(item.memo)}</div>`;
+      }
+
+      card.innerHTML = `
+        <div class="card-top">
+          <div class="card-img-wrap" onclick="viewOrEditItem('${item.id}')">
+            ${imgContent}
+          </div>
+          <div class="card-body">
+            <div class="card-tags">
+              <span class="badge badge-priority-${priority}">${priLabel}</span>
+              <span class="badge badge-category ${item.category}">${catEmoji} ${catName}</span>
+              <span class="badge badge-area">🏰 ${escapeHtml(item.area)}</span>
+            </div>
+
+            <!-- Tap Name to Copy (公式アプリ検索用) -->
+            <button class="card-name-btn" onclick="copyItemName('${escapeJsString(item.name)}')" title="名前をタップでコピー（公式アプリ検索用）">
+              <span class="card-name">${isHighPriority ? '<span class="priority-flame-icon">🔥</span>' : ''}${escapeHtml(item.name)}</span>
+              <span class="copy-hint-icon">📋</span>
+            </button>
+
+            ${locationHtml}
+            ${memoHtml}
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <div class="done-toggle" onclick="toggleItemDone('${item.id}')">
+            <div class="custom-check">
+              ${item.isDone ? '✓' : ''}
+            </div>
+            <span>${item.isDone ? '行った！' : 'まだ行ってない'}</span>
+          </div>
+
+          <div class="card-action-btns">
+            <button class="action-icon-btn" onclick="openEditItemModal('${item.id}')" title="編集">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+            </button>
+            <button class="action-icon-btn delete-btn" onclick="deleteItemConfirm('${item.id}')" title="削除">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      `;
+
+      return card;
+    }
+
+    // Toggle Done
+    window.toggleItemDone = async function(itemId) {
+      const item = items.find(i => i.id === itemId);
+      if (!item) return;
+
+      item.isDone = !item.isDone;
+      await dbPut('items', item);
+      renderItems();
+
+      if (item.isDone) {
+        showToast(`「${item.name}」を行きました！🎉`, '🎉');
+      }
+    };
+
+    // Copy Name
+    window.copyItemName = function(name) {
+      copyToClipboard(name);
+    };
+
+    // Edit Item
+    window.openEditItemModal = function(itemId) {
+      const item = items.find(i => i.id === itemId);
+      if (!item) return;
+
+      document.getElementById('itemModalTitle').textContent = '行きたいものを編集';
+      document.getElementById('itemId').value = item.id;
+      document.getElementById('itemName').value = item.name;
+      document.getElementById('itemArea').value = item.area;
+      document.getElementById('itemLocation').value = item.locationMemo || '';
+      document.getElementById('itemMemo').value = item.memo || '';
+
+      const catRadios = document.querySelectorAll('input[name="itemCategory"]');
+      catRadios.forEach(radio => {
+        radio.checked = radio.value === item.category;
+      });
+
+      // Priority radio
+      const priRadios = document.querySelectorAll('input[name="itemPriority"]');
+      const curPri = item.priority || 'medium';
+      priRadios.forEach(radio => {
+        radio.checked = radio.value === curPri;
+      });
+
+      // Photo preview
+      currentResizedPhotoData = item.photoDataUrl || '';
+      updatePhotoPreviewUI();
+
+      openModal('itemModal');
+    };
+
+    window.viewOrEditItem = function(itemId) {
+      openEditItemModal(itemId);
+    };
+
+    // Delete Item
+    window.deleteItemConfirm = async function(itemId) {
+      const item = items.find(i => i.id === itemId);
+      if (!item) return;
+
+      if (window.confirm(`「${item.name}」を削除してもよろしいですか？`)) {
+        await dbDelete('items', itemId);
+        items = items.filter(i => i.id !== itemId);
+        renderItems();
+        showToast('削除しました', '🗑️');
+      }
+    };
+
+    // --- Modal Helpers ---
+    function openModal(modalId) {
+      const modal = document.getElementById(modalId);
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(modalId) {
+      const modal = document.getElementById(modalId);
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    // Photo Preview UI
+    function updatePhotoPreviewUI() {
+      const promptEl = document.getElementById('photoPrompt');
+      const previewWrap = document.getElementById('photoPreviewWrap');
+      const previewImg = document.getElementById('photoPreviewImg');
+
+      if (currentResizedPhotoData) {
+        previewImg.src = currentResizedPhotoData;
+        previewWrap.style.display = 'block';
+        promptEl.style.display = 'none';
+      } else {
+        previewImg.src = '';
+        previewWrap.style.display = 'none';
+        promptEl.style.display = 'block';
+      }
+    }
+
+    // --- Setup Event Listeners ---
+    function setupEventListeners() {
+      // View switcher
+      document.getElementById('viewAreaBtn').onclick = () => {
+        currentViewMode = 'area';
+        document.getElementById('viewAreaBtn').classList.add('active');
+        document.getElementById('viewCategoryBtn').classList.remove('active');
+        renderItems();
+      };
+
+      document.getElementById('viewCategoryBtn').onclick = () => {
+        currentViewMode = 'category';
+        document.getElementById('viewCategoryBtn').classList.add('active');
+        document.getElementById('viewAreaBtn').classList.remove('active');
+        renderItems();
+      };
+
+      // Add item modal open
+      document.getElementById('openAddModalBtn').onclick = () => {
+        document.getElementById('itemModalTitle').textContent = '行きたいものを追加';
+        document.getElementById('itemForm').reset();
+        document.getElementById('itemId').value = '';
+        document.getElementById('itemArea').value = 'ファンタジーランド';
+        const defaultPriRadio = document.querySelector('input[name="itemPriority"][value="medium"]');
+        if (defaultPriRadio) defaultPriRadio.checked = true;
+        currentResizedPhotoData = '';
+        updatePhotoPreviewUI();
+        openModal('itemModal');
+      };
+
+      // Close Item Modal
+      document.getElementById('closeItemModalBtn').onclick = () => closeModal('itemModal');
+      document.getElementById('cancelItemBtn').onclick = () => closeModal('itemModal');
+
+      // Photo upload click
+      document.getElementById('photoBox').onclick = (e) => {
+        if (e.target.id === 'removePhotoBtn') return;
+        document.getElementById('photoInput').click();
+      };
+
+      // Photo input change (Canvas resize automatically)
+      document.getElementById('photoInput').onchange = async (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+
+        showToast('写真をリサイズ中...', '⏳');
+        try {
+          currentResizedPhotoData = await resizeImage(file, 800);
+          updatePhotoPreviewUI();
+          showToast('写真をセットしました！', '📷');
+        } catch (err) {
+          console.error(err);
+          showToast('写真の読み込みに失敗しました', '⚠️');
+        }
+      };
+
+      // Remove photo
+      document.getElementById('removePhotoBtn').onclick = (e) => {
+        e.stopPropagation();
+        currentResizedPhotoData = '';
+        document.getElementById('photoInput').value = '';
+        updatePhotoPreviewUI();
+      };
+
+      // Save Item (Form Submit)
+      document.getElementById('itemForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const nameInput = document.getElementById('itemName');
+        const name = nameInput.value.trim();
+        if (!name) {
+          nameInput.focus();
+          return;
+        }
+
+        const itemId = document.getElementById('itemId').value;
+        const area = document.getElementById('itemArea').value;
+        const locationMemo = document.getElementById('itemLocation').value.trim();
+        const memo = document.getElementById('itemMemo').value.trim();
+        const category = document.querySelector('input[name="itemCategory"]:checked').value;
+        const priority = document.querySelector('input[name="itemPriority"]:checked')?.value || 'medium';
+
+        if (itemId) {
+          // Update existing
+          const item = items.find(i => i.id === itemId);
+          if (item) {
+            item.name = name;
+            item.category = category;
+            item.priority = priority;
+            item.area = area;
+            item.locationMemo = locationMemo;
+            item.memo = memo;
+            item.photoDataUrl = currentResizedPhotoData;
+            await dbPut('items', item);
+            showToast('更新しました！', '✨');
+          }
+        } else {
+          // Create new item
+          const newItem = {
+            id: 'item-' + Date.now(),
+            listId: currentListId,
+            name: name,
+            category: category,
+            priority: priority,
+            area: area,
+            locationMemo: locationMemo,
+            memo: memo,
+            photoDataUrl: currentResizedPhotoData,
+            isDone: false,
+            createdAt: Date.now()
+          };
+          await dbPut('items', newItem);
+          items.push(newItem);
+          showToast('行きたいリストに追加しました！', '🎉');
+        }
+
+        closeModal('itemModal');
+        renderItems();
+      };
+
+      // Settings modal
+      document.getElementById('settingsBtn').onclick = () => {
+        renderManageLists();
+        openModal('settingsModal');
+      };
+      document.getElementById('closeSettingsModalBtn').onclick = () => closeModal('settingsModal');
+
+      // Add new list inside settings
+      document.getElementById('addNewListBtn').onclick = () => {
+        closeModal('settingsModal');
+        promptCreateNewList();
+      };
+
+      // Add sample data button
+      document.getElementById('addSampleDataBtn').onclick = async () => {
+        await addSampleData();
+        closeModal('settingsModal');
+      };
+
+      // Export JSON
+      document.getElementById('exportDataBtn').onclick = exportAllData;
+
+      // Import JSON
+      document.getElementById('importJsonInput').onchange = importAllData;
+
+      // PWA Guide buttons
+      document.getElementById('openIosGuideBtn').onclick = () => {
+        openModal('iosGuideModal');
+      };
+      document.getElementById('closeIosGuideBtn').onclick = () => closeModal('iosGuideModal');
+      document.getElementById('dismissIosGuideBtn').onclick = () => closeModal('iosGuideModal');
+
+      // Close modal on click background overlay
+      ['itemModal', 'settingsModal', 'iosGuideModal'].forEach(id => {
+        document.getElementById(id).onclick = (e) => {
+          if (e.target.id === id) {
+            closeModal(id);
+          }
+        };
+      });
+    }
+
+    // --- Manage Lists in Settings ---
+    function renderManageLists() {
+      const container = document.getElementById('manageListsContainer');
+      container.innerHTML = '';
+
+      lists.forEach(list => {
+        const row = document.createElement('div');
+        row.className = 'manage-list-item';
+
+        const isCurrent = list.id === currentListId;
+        row.innerHTML = `
+          <div class="manage-list-name">
+            <span>🏰</span>
+            <span>${escapeHtml(list.name)}</span>
+            ${isCurrent ? '<span class="manage-list-badge">選択中</span>' : ''}
+          </div>
+          <div class="manage-list-btns">
+            <button class="action-icon-btn" onclick="renameList('${list.id}')" title="名前を変更">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              </svg>
+            </button>
+            ${lists.length > 1 ? `
+              <button class="action-icon-btn delete-btn" onclick="deleteListConfirm('${list.id}')" title="リストを削除">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+              </button>
+            ` : ''}
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    window.renameList = async function(listId) {
+      const list = lists.find(l => l.id === listId);
+      if (!list) return;
+
+      const newName = window.prompt('新しいリスト名を入力してください', list.name);
+      if (newName && newName.trim() && newName.trim() !== list.name) {
+        list.name = newName.trim();
+        await dbPut('lists', list);
+        renderListBar();
+        renderManageLists();
+        showToast('リスト名を変更しました', '✨');
+      }
+    };
+
+    window.deleteListConfirm = async function(listId) {
+      if (lists.length <= 1) {
+        alert('リストは最低1つ必要です。');
+        return;
+      }
+
+      const list = lists.find(l => l.id === listId);
+      if (!list) return;
+
+      if (window.confirm(`リスト「${list.name}」と、中に登録されているすべての行きたい項目を削除しますか？`)) {
+        // Delete all items of this list
+        const allItems = await dbGetAll('items');
+        for (const item of allItems) {
+          if (item.listId === listId) {
+            await dbDelete('items', item.id);
+          }
+        }
+
+        // Delete list
+        await dbDelete('lists', listId);
+        lists = lists.filter(l => l.id !== listId);
+
+        if (currentListId === listId) {
+          currentListId = lists[0].id;
+        }
+
+        await setCurrentList(currentListId);
+        renderManageLists();
+        showToast(`リスト「${list.name}」を削除しました`, '🗑️');
+      }
+    };
+
+    // --- Sample Data Injection ---
+    async function addSampleData() {
+      const samples = [
+        {
+          name: 'ミッキーワッフル（メイプルソース）',
+          priority: 'high',
+          category: 'food',
+          area: 'ワールドバザール',
+          locationMemo: 'グレートアメリカン・ワッフルカンパニー',
+          memo: '焼き立てサクサク！朝イチか午後の空いている時間が狙い目🧇'
+        },
+        {
+          name: '美女と野獣“魔法のものがたり”',
+          priority: 'high',
+          category: 'attraction',
+          area: 'ファンタジーランド',
+          locationMemo: 'お城の中',
+          memo: 'できれば朝イチでDPAを取得する！夜のライトアップも素敵🌹'
+        },
+        {
+          name: 'ブルーバイユー・レストラン',
+          priority: 'medium',
+          category: 'restaurant',
+          area: 'アドベンチャーランド',
+          locationMemo: 'カリブの海賊の乗り場となり',
+          memo: 'ホタルが飛ぶ夜空の雰囲気。コース料理予約済み🍽️'
+        },
+        {
+          name: 'ビッグサンダー・マウンテン',
+          priority: 'medium',
+          category: 'attraction',
+          area: 'ウエスタンランド',
+          locationMemo: '鉱山前',
+          memo: '夕暮れ時に乗ると景色が最高！🎢'
+        },
+        {
+          name: 'チュロス（シナモン味）',
+          priority: 'low',
+          category: 'food',
+          area: 'クリッターカントリー',
+          locationMemo: 'ラケッティのラクーンサルーン',
+          memo: 'スプラッシュマウンテン降り口近く。ミックスベリー味もチェック✨'
+        }
+      ];
+
+      for (const s of samples) {
+        const item = {
+          id: 'sample-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6),
+          listId: currentListId,
+          name: s.name,
+          category: s.category,
+          priority: s.priority || 'medium',
+          area: s.area,
+          locationMemo: s.locationMemo,
+          memo: s.memo,
+          photoDataUrl: '',
+          isDone: false,
+          createdAt: Date.now()
+        };
+        await dbPut('items', item);
+        items.push(item);
+      }
+
+      renderItems();
+      showToast('サンプルデータを追加しました！', '🏰');
+    }
+
+    // --- Data Export & Import ---
+    async function exportAllData() {
+      const allLists = await dbGetAll('lists');
+      const allItems = await dbGetAll('items');
+
+      const backup = {
+        version: APP_VERSION,
+        exportedAt: new Date().toISOString(),
+        lists: allLists,
+        items: allItems
+      };
+
+      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(backup, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute('href', dataStr);
+      downloadAnchor.setAttribute('download', `tdl-wishlist-backup-${new Date().toISOString().slice(0, 10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+
+      showToast('バックアップを書き出しました', '💾');
+    }
+
+    async function importAllData(e) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+
+      try {
+        const text = await file.text();
+        const data = JSON.parse(text);
+
+        if (!data.lists || !data.items) {
+          throw new Error('形式が正しくありません');
+        }
+
+        if (window.confirm('取り込みますか？現在のデータに追加・上書き保存されます。')) {
+          for (const l of data.lists) {
+            await dbPut('lists', l);
+          }
+          for (const it of data.items) {
+            await dbPut('items', it);
+          }
+
+          lists = await dbGetAll('lists');
+          await loadItems();
+          renderListBar();
+          renderItems();
+          closeModal('settingsModal');
+          showToast('バックアップを取り込みました！', '🎉');
+        }
+      } catch (err) {
+        alert('読み込みに失敗しました。ファイル形式を確認してください。');
+      }
+    }
+
+    // --- PWA Setup ---
+    function setupPWA() {
+      // Register Service Worker
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+            .then((reg) => {
+              console.log('ServiceWorker registered with scope:', reg.scope);
+            })
+            .catch((err) => {
+              console.log('ServiceWorker registration error:', err);
+            });
+        });
+      }
+
+      // Check if standalone (already installed)
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches ||
+        (window.navigator.standalone === true);
+
+      const pwaBanner = document.getElementById('pwaBanner');
+      const pwaInstallBtn = document.getElementById('pwaInstallBtn');
+
+      // BeforeInstallPrompt
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredInstallPrompt = e;
+        if (!isStandalone) {
+          pwaBanner.style.display = 'flex';
+        }
+      });
+
+      // Installed event
+      window.addEventListener('appinstalled', () => {
+        deferredInstallPrompt = null;
+        pwaBanner.style.display = 'none';
+        showToast('ホーム画面に追加されました！', '🎉');
+      });
+
+      // iOS detection
+      const isIOS = /iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
+      if (!isStandalone && isIOS) {
+        pwaBanner.style.display = 'flex';
+        pwaInstallBtn.textContent = '追加方法';
+      }
+
+      pwaInstallBtn.onclick = async () => {
+        if (deferredInstallPrompt) {
+          deferredInstallPrompt.prompt();
+          const { outcome } = await deferredInstallPrompt.userChoice;
+          if (outcome === 'accepted') {
+            pwaBanner.style.display = 'none';
+          }
+          deferredInstallPrompt = null;
+        } else {
+          openModal('iosGuideModal');
+        }
+      };
+    }
+
+    // Utilities
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    function escapeJsString(str) {
+      if (!str) return '';
+      return String(str).replace(/'/g, "\\'").replace(/"/g, '\\"');
+    }
+
+    // Boot
+    document.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>

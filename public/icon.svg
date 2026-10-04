@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFB5C5"/>
+      <stop offset="50%" stop-color="#FF9EAA"/>
+      <stop offset="100%" stop-color="#FF8EAA"/>
+    </linearGradient>
+    <linearGradient id="castle-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#FFF0F5"/>
+    </linearGradient>
+    <filter id="soft-shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#803050" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Background rounded squircle / circle -->
+  <rect width="512" height="512" rx="128" fill="url(#bg-grad)"/>
+
+  <!-- Magical sparkles & stars -->
+  <circle cx="110" cy="130" r="6" fill="#FFF9D2" opacity="0.9"/>
+  <path d="M 110 110 Q 110 130 90 130 Q 110 130 110 150 Q 110 130 130 130 Q 110 130 110 110 Z" fill="#FFFBE6" opacity="0.85"/>
+  <path d="M 390 140 Q 390 155 375 155 Q 390 155 390 170 Q 390 155 405 155 Q 390 155 390 140 Z" fill="#FFFBE6" opacity="0.85"/>
+  <circle cx="410" cy="220" r="4" fill="#FFF" opacity="0.7"/>
+  <circle cx="95" cy="270" r="5" fill="#FFF" opacity="0.7"/>
+
+  <!-- Disney Mickey Silhouette Shape with Castle Motif -->
+  <g filter="url(#soft-shadow)">
+    <!-- Mickey Ears -->
+    <circle cx="175" cy="210" r="65" fill="url(#castle-grad)"/>
+    <circle cx="337" cy="210" r="65" fill="url(#castle-grad)"/>
+    <!-- Head / Base -->
+    <circle cx="256" cy="305" r="105" fill="url(#castle-grad)"/>
+
+    <!-- Castle Spire silhouette inside -->
+    <polygon points="256,190 268,230 244,230" fill="#FF8EAA"/>
+    <rect x="251" y="230" width="10" height="40" fill="#FF8EAA"/>
+    <!-- Side towers -->
+    <polygon points="226,225 234,250 218,250" fill="#FFA3BA"/>
+    <rect x="222" y="250" width="8" height="25" fill="#FFA3BA"/>
+    <polygon points="286,225 294,250 278,250" fill="#FFA3BA"/>
+    <rect x="282" y="250" width="8" height="25" fill="#FFA3BA"/>
+
+    <!-- Castle arched doorway -->
+    <path d="M 244 330 A 12 12 0 0 1 268 330 L 268 355 L 244 355 Z" fill="#FF8EAA"/>
+  </g>
+
+  <!-- Small floating heart / star badge -->
+  <circle cx="360" cy="340" r="14" fill="#FFE27A"/>
+  <polygon points="360,330 363.5,337 371,338 365.5,343 367,350 360,346 353,350 354.5,343 349,338 356.5,337" fill="#FFF"/>
+</svg>

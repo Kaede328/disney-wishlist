@@ -1,0 +1,6 @@
+{
+  "name": "ディズニーランド行きたいリスト",
+  "description": "ディズニーランド専用の行きたい・食べたい・乗りたいを写真付きで記録するPWAアプリ",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
