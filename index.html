@@ -17,12 +17,26 @@
   <link rel="icon" type="image/svg+xml" href="./icon.svg">
   <style>
     :root {
+      /* Dynamic Theme Variables - Land (Default Pink) */
+      --theme-primary: #FF8EAA;
+      --theme-hover: #F87B99;
+      --theme-light: #FFF0F4;
+      --theme-light-active: #FFE0E8;
+      --theme-border: #FFD3DF;
+      --theme-shadow: rgba(255, 142, 170, 0.4);
+      --theme-fab-grad: linear-gradient(135deg, #FF9EAA 0%, #FF7696 100%);
+      --theme-fab-shadow: rgba(255, 118, 150, 0.45);
+      --theme-toggle-bg: #F4EAEF;
+      --theme-dashed-border: #F0D9E2;
       --bg-cream: #FFF9F5;
+
+      /* Direct aliases for existing references */
+      --pink-primary: var(--theme-primary);
+      --pink-hover: var(--theme-hover);
+      --pink-light: var(--theme-light);
+      --pink-border: var(--theme-border);
+
       --bg-card: #FFFFFF;
-      --pink-primary: #FF8EAA;
-      --pink-hover: #F87B99;
-      --pink-light: #FFEBF0;
-      --pink-border: #FFD3DF;
       --blue-accent: #7BC9FF;
       --blue-light: #EBF5FF;
       --purple-light: #F4ECFF;
@@ -38,6 +52,25 @@
       --radius-md: 16px;
       --radius-lg: 24px;
       --safe-bottom: env(safe-area-inset-bottom, 16px);
+    }
+
+    /* Dynamic Theme Variables - Sea (Refreshing Sky & Ocean Blue) */
+    [data-theme="sea"] {
+      --theme-primary: #1E90E8;
+      --theme-hover: #1178C7;
+      --theme-light: #EDF6FF;
+      --theme-light-active: #D6EBFF;
+      --theme-border: #B8DEF8;
+      --theme-shadow: rgba(30, 144, 232, 0.38);
+      --theme-fab-grad: linear-gradient(135deg, #48ABFC 0%, #1882D6 100%);
+      --theme-fab-shadow: rgba(24, 130, 214, 0.42);
+      --theme-toggle-bg: #E3EFF9;
+      --theme-dashed-border: #CBE4F8;
+      --bg-cream: #F4F9FD;
+      --border-soft: #E2EEF7;
+      --shadow-sm: 0 2px 8px rgba(90, 140, 185, 0.09);
+      --shadow-md: 0 4px 16px rgba(90, 140, 185, 0.13);
+      --shadow-lg: 0 8px 28px rgba(90, 140, 185, 0.19);
     }
 
     * {
@@ -111,15 +144,15 @@
     }
 
     .icon-btn {
-      background: #FFF0F4;
-      border: 1px solid var(--pink-border);
+      background: var(--theme-light);
+      border: 1px solid var(--theme-border);
       border-radius: 12px;
       width: 40px;
       height: 40px;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--pink-primary);
+      color: var(--theme-primary);
       cursor: pointer;
       transition: all 0.15s ease;
       touch-action: manipulation;
@@ -127,7 +160,7 @@
 
     .icon-btn:active {
       transform: scale(0.92);
-      background: #FFE0E8;
+      background: var(--theme-light-active);
     }
 
     /* List Switcher Bar */
@@ -147,8 +180,8 @@
 
     .list-tab {
       padding: 7px 14px;
-      background: #FFF4F7;
-      border: 1.5px solid var(--pink-border);
+      background: var(--theme-light);
+      border: 1.5px solid var(--theme-border);
       border-radius: 20px;
       font-size: 0.95rem;
       font-weight: 600;
@@ -163,20 +196,20 @@
     }
 
     .list-tab.active {
-      background: var(--pink-primary);
+      background: var(--theme-primary);
       color: #FFFFFF;
-      border-color: var(--pink-primary);
-      box-shadow: 0 3px 10px rgba(255, 142, 170, 0.4);
+      border-color: var(--theme-primary);
+      box-shadow: 0 3px 10px var(--theme-shadow);
     }
 
     .list-add-tab {
       padding: 7px 12px;
       background: #FFFFFF;
-      border: 1.5px dashed var(--pink-border);
+      border: 1.5px dashed var(--theme-border);
       border-radius: 20px;
       font-size: 0.9rem;
       font-weight: 600;
-      color: var(--pink-primary);
+      color: var(--theme-primary);
       white-space: nowrap;
       cursor: pointer;
       display: flex;
@@ -197,7 +230,7 @@
     }
 
     .toggle-group {
-      background: #F4EAEF;
+      background: var(--theme-toggle-bg);
       padding: 3px;
       border-radius: 14px;
       display: flex;
@@ -274,8 +307,8 @@
 
     .group-count {
       font-size: 0.8rem;
-      background: #FFF0F4;
-      color: var(--pink-primary);
+      background: var(--theme-light);
+      color: var(--theme-primary);
       padding: 2px 8px;
       border-radius: 10px;
       font-weight: 700;
@@ -662,7 +695,7 @@
       padding: 40px 20px 20px;
       background: #FFFFFF;
       border-radius: var(--radius-lg);
-      border: 2px dashed #F0D9E2;
+      border: 2px dashed var(--theme-dashed-border);
       margin-top: 16px;
     }
 
@@ -683,28 +716,8 @@
       font-size: 0.95rem;
       color: var(--text-sub);
       max-width: 320px;
-      margin: 0 auto 18px;
+      margin: 0 auto;
       line-height: 1.5;
-    }
-
-    .sample-btn {
-      background: #FFF0F4;
-      border: 1.5px solid var(--pink-border);
-      color: var(--pink-primary);
-      font-size: 0.95rem;
-      font-weight: 700;
-      padding: 10px 20px;
-      border-radius: 20px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: all 0.15s;
-    }
-
-    .sample-btn:active {
-      transform: scale(0.96);
-      background: #FFE0E8;
     }
 
     /* Floating Add Button (Fixed at Bottom for Single-Hand Use) */
@@ -722,7 +735,7 @@
 
     .btn-fab {
       pointer-events: auto;
-      background: linear-gradient(135deg, #FF9EAA 0%, #FF7696 100%);
+      background: var(--theme-fab-grad);
       color: #FFFFFF;
       border: none;
       padding: 15px 28px;
@@ -732,7 +745,7 @@
       display: flex;
       align-items: center;
       gap: 9px;
-      box-shadow: 0 8px 24px rgba(255, 118, 150, 0.45);
+      box-shadow: 0 8px 24px var(--theme-fab-shadow);
       cursor: pointer;
       transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
       touch-action: manipulation;
@@ -740,7 +753,7 @@
 
     .btn-fab:active {
       transform: scale(0.94);
-      box-shadow: 0 4px 12px rgba(255, 118, 150, 0.35);
+      box-shadow: 0 4px 12px var(--theme-fab-shadow);
     }
 
     .btn-fab svg {
@@ -1088,9 +1101,9 @@
       width: 100%;
       padding: 11px;
       border-radius: 12px;
-      border: 1px solid var(--pink-border);
+      border: 1px solid var(--theme-border);
       background: #FFFFFF;
-      color: var(--pink-primary);
+      color: var(--theme-primary);
       font-weight: 700;
       font-size: 0.92rem;
       cursor: pointer;
@@ -1102,7 +1115,37 @@
     }
 
     .settings-action-btn:active {
-      background: #FFF0F4;
+      background: var(--theme-light);
+    }
+
+    /* Accordion styles for Version History */
+    .accordion-header {
+      width: 100%;
+      background: transparent;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      padding: 0;
+      text-align: left;
+      font-family: inherit;
+    }
+
+    .accordion-header:hover .settings-section-title {
+      color: var(--theme-primary);
+    }
+
+    .accordion-arrow {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      transition: transform 0.2s ease, color 0.2s ease;
+      font-weight: 700;
+      padding: 4px;
+    }
+
+    .accordion-header[aria-expanded="true"] .accordion-arrow {
+      color: var(--theme-primary);
     }
 
     /* List Management Items in Settings */
@@ -1197,12 +1240,12 @@
     <div class="header-top">
       <div class="brand">
         <svg class="brand-icon" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect width="512" height="512" rx="128" fill="#FF8EAA"/>
+          <rect width="512" height="512" rx="128" fill="var(--theme-primary)"/>
           <circle cx="175" cy="210" r="65" fill="#FFFFFF"/>
           <circle cx="337" cy="210" r="65" fill="#FFFFFF"/>
           <circle cx="256" cy="305" r="105" fill="#FFFFFF"/>
-          <polygon points="256,190 268,230 244,230" fill="#FF8EAA"/>
-          <rect x="251" y="230" width="10" height="40" fill="#FF8EAA"/>
+          <polygon points="256,190 268,230 244,230" fill="var(--theme-primary)"/>
+          <rect x="251" y="230" width="10" height="40" fill="var(--theme-primary)"/>
         </svg>
         <span class="brand-title">TDRおでかけメモ</span>
       </div>
@@ -1466,7 +1509,7 @@
           <div class="settings-section-title">アプリ情報</div>
           <div class="settings-row">
             <span class="settings-label">バージョン</span>
-            <span class="settings-val" id="appVersion">v1.4.0</span>
+            <span class="settings-val" id="appVersion">v1.6.0</span>
           </div>
           <div class="settings-row">
             <span class="settings-label">ストレージ</span>
@@ -1476,40 +1519,54 @@
             <span class="settings-label">オフライン対応</span>
             <span class="settings-val">PWAキャッシュ有効（相対パス対応）</span>
           </div>
-          <button type="button" class="settings-action-btn" id="checkForUpdateBtn" style="margin-top: 10px; background: #FFF0F4; border-color: var(--pink-border);">
+          <button type="button" class="settings-action-btn" id="checkForUpdateBtn" style="margin-top: 10px;">
             <span>🔄 最新版に更新</span>
           </button>
         </div>
 
-        <!-- Version History -->
-        <div class="settings-section">
-          <div class="settings-section-title">バージョン履歴</div>
-          <div style="font-size: 0.88rem; color: var(--text-sub); line-height: 1.6;">
-            <div style="margin-bottom: 8px;">
-              <strong style="color: var(--pink-primary);">v1.4.0（最新）</strong><br>
-              ・アプリ名を「TDRおでかけメモ」に変更（短縮名「おでかけメモ」）<br>
-              ・リストごとに「ランド／シー」のパーク選択機能を追加<br>
-              ・パークに応じたエリア自動切り替え（ファンタジースプリングス等シー全8エリア対応）<br>
-              ・ホーム画面アイコンを四隅まで塗りつぶした四角形（full-bleed）に刷新
-            </div>
-            <div style="margin-bottom: 8px;">
-              <strong style="color: var(--text-muted);">v1.3.0</strong><br>
-              ・設定画面に「最新版に更新」ボタンを追加<br>
-              ・Service Workerの更新チェックと即時反映に対応（データ完全保持）
-            </div>
-            <div style="margin-bottom: 8px;">
-              <strong style="color: var(--text-muted);">v1.2.0</strong><br>
-              ・GitHub Pages（ユーザー名.github.io/リポジトリ名/）公開対応<br>
-              ・manifest / Service Worker / アイコン / start_url / scope をすべて「./」相対パス化
-            </div>
-            <div style="margin-bottom: 8px;">
-              <strong style="color: var(--text-muted);">v1.1.0</strong><br>
-              ・各アイテムに「優先度（高・中・低）」を設定可能に<br>
-              ・優先度「高」カードの視覚的強調（ハイライト枠・炎バッジ・上位ソート表示）
-            </div>
-            <div>
-              <strong style="color: var(--text-muted);">v1.0.0</strong><br>
-              ・アプリの新規作成
+        <!-- Version History (Accordion) -->
+        <div class="settings-section accordion-section">
+          <button type="button" class="accordion-header" id="versionHistoryToggle" aria-expanded="false">
+            <span class="settings-section-title" style="margin-bottom: 0;">バージョン履歴</span>
+            <span class="accordion-arrow" id="versionHistoryArrow">▼</span>
+          </button>
+          <div class="accordion-body" id="versionHistoryBody" style="display: none;">
+            <div style="font-size: 0.88rem; color: var(--text-sub); line-height: 1.6; padding-top: 10px;">
+              <div style="margin-bottom: 8px;">
+                <strong style="color: var(--theme-primary);">v1.6.0（最新）</strong><br>
+                ・設定画面の「サンプルデータを追加する」ボタンおよびサンプルデータ定義を削除し、コードと設定をスッキリ整理
+              </div>
+              <div style="margin-bottom: 8px;">
+                <strong style="color: var(--text-muted);">v1.5.0</strong><br>
+                ・設定画面のバージョン履歴をタップ開閉アコーディオン形式に変更（初期状態は閉じた状態）<br>
+                ・ディズニーシー選択時のテーマカラーを爽やかな水色・青系に自動切り替え対応
+              </div>
+              <div style="margin-bottom: 8px;">
+                <strong style="color: var(--text-muted);">v1.4.0</strong><br>
+                ・アプリ名を「TDRおでかけメモ」に変更（短縮名「おでかけメモ」）<br>
+                ・リストごとに「ランド／シー」のパーク選択機能を追加<br>
+                ・パークに応じたエリア自動切り替え（ファンタジースプリングス等シー全8エリア対応）<br>
+                ・ホーム画面アイコンを四隅まで塗りつぶした四角形（full-bleed）に刷新
+              </div>
+              <div style="margin-bottom: 8px;">
+                <strong style="color: var(--text-muted);">v1.3.0</strong><br>
+                ・設定画面に「最新版に更新」ボタンを追加<br>
+                ・Service Workerの更新チェックと即時反映に対応（データ完全保持）
+              </div>
+              <div style="margin-bottom: 8px;">
+                <strong style="color: var(--text-muted);">v1.2.0</strong><br>
+                ・GitHub Pages（ユーザー名.github.io/リポジトリ名/）公開対応<br>
+                ・manifest / Service Worker / アイコン / start_url / scope をすべて「./」相対パス化
+              </div>
+              <div style="margin-bottom: 8px;">
+                <strong style="color: var(--text-muted);">v1.1.0</strong><br>
+                ・各アイテムに「優先度（高・中・低）」を設定可能に<br>
+                ・優先度「高」カードの視覚的強調（ハイライト枠・炎バッジ・上位ソート表示）
+              </div>
+              <div>
+                <strong style="color: var(--text-muted);">v1.0.0</strong><br>
+                ・アプリの新規作成
+              </div>
             </div>
           </div>
         </div>
@@ -1528,9 +1585,6 @@
         <!-- Useful tools -->
         <div class="settings-section">
           <div class="settings-section-title">データと操作</div>
-          <button type="button" class="settings-action-btn" id="addSampleDataBtn">
-            <span>🏰 サンプル行きたいデータを追加</span>
-          </button>
           <button type="button" class="settings-action-btn" id="exportDataBtn">
             <span>📤 データをJSONで書き出し（バックアップ）</span>
           </button>
@@ -1585,11 +1639,11 @@
     /**
      * @license
      * SPDX-License-Identifier: Apache-2.0
-     * TDRおでかけメモ PWA v1.4.0
+     * TDRおでかけメモ PWA v1.6.0
      */
 
     // --- State Constants ---
-    const APP_VERSION = 'v1.4.0';
+    const APP_VERSION = 'v1.6.0';
     const DB_NAME = 'DisneylandWishlistDB';
     const DB_VERSION = 1;
 
@@ -1875,11 +1929,30 @@
         currentListId = lists[0].id;
       }
 
+      applyTheme();
       await loadItems();
       renderListBar();
       renderItems();
       setupEventListeners();
       setupPWA();
+    }
+
+    function applyTheme() {
+      const park = getCurrentPark();
+      const isSea = park.id === 'sea';
+
+      if (isSea) {
+        document.documentElement.setAttribute('data-theme', 'sea');
+        document.body.setAttribute('data-theme', 'sea');
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+        document.body.removeAttribute('data-theme');
+      }
+
+      const metaTheme = document.querySelector('meta[name="theme-color"]');
+      if (metaTheme) {
+        metaTheme.setAttribute('content', isSea ? '#1E90E8' : '#FF8EAA');
+      }
     }
 
     function getCurrentList() {
@@ -1926,6 +1999,7 @@
     async function setCurrentList(listId) {
       currentListId = listId;
       await dbPut('settings', { key: 'currentListId', value: listId });
+      applyTheme();
       await loadItems();
       renderListBar();
       renderItems();
@@ -2003,12 +2077,8 @@
             <p class="empty-desc">
               下の「＋ 行きたいを追加」ボタンから、${park.name}で食べたいものや乗りたいアトラクションを登録しましょう！
             </p>
-            <button class="sample-btn" id="emptySampleBtn">
-              <span>✨ ${park.name}の定番サンプルを入れてみる</span>
-            </button>
           </div>
         `;
-        document.getElementById('emptySampleBtn').onclick = addSampleData;
         return;
       }
 
@@ -2463,6 +2533,7 @@
         }
 
         closeModal('listModal');
+        applyTheme();
         await loadItems();
         renderListBar();
         renderItems();
@@ -2471,6 +2542,25 @@
 
       document.getElementById('closeListModalBtn').onclick = () => closeModal('listModal');
       document.getElementById('cancelListBtn').onclick = () => closeModal('listModal');
+
+      // Version History Accordion Toggle
+      const versionToggle = document.getElementById('versionHistoryToggle');
+      const versionBody = document.getElementById('versionHistoryBody');
+      const versionArrow = document.getElementById('versionHistoryArrow');
+      if (versionToggle && versionBody && versionArrow) {
+        versionToggle.onclick = () => {
+          const isHidden = versionBody.style.display === 'none';
+          if (isHidden) {
+            versionBody.style.display = 'block';
+            versionArrow.textContent = '▲';
+            versionToggle.setAttribute('aria-expanded', 'true');
+          } else {
+            versionBody.style.display = 'none';
+            versionArrow.textContent = '▼';
+            versionToggle.setAttribute('aria-expanded', 'false');
+          }
+        };
+      }
 
       // Settings modal
       document.getElementById('settingsBtn').onclick = () => {
@@ -2489,12 +2579,6 @@
       document.getElementById('addNewListBtn').onclick = () => {
         closeModal('settingsModal');
         openCreateListModal();
-      };
-
-      // Add sample data button
-      document.getElementById('addSampleDataBtn').onclick = async () => {
-        await addSampleData();
-        closeModal('settingsModal');
       };
 
       // Export JSON
@@ -2592,117 +2676,6 @@
       }
     };
 
-    // --- Sample Data Injection ---
-    async function addSampleData() {
-      const park = getCurrentPark();
-      const isSea = park.id === 'sea';
-
-      const samples = isSea ? [
-        {
-          name: 'ギョウザドッグ',
-          priority: 'high',
-          category: 'food',
-          area: 'ミステリアスアイランド',
-          locationMemo: 'ノーチラスギャレー',
-          memo: 'ほかほかジューシー！海底2万マイルのあとのおやつに最高🥟'
-        },
-        {
-          name: 'ソアリン：ファンタスティック・フライト',
-          priority: 'high',
-          category: 'attraction',
-          area: 'メディテレーニアンハーバー',
-          locationMemo: '丘の上の博物館',
-          memo: '世界中の大空を旅する感動体験！DPAか朝イチ推奨🕊️'
-        },
-        {
-          name: 'リストランテ・ディ・カナレット',
-          priority: 'medium',
-          category: 'restaurant',
-          area: 'メディテレーニアンハーバー',
-          locationMemo: 'パラッツォ・カナル運河沿い',
-          memo: 'ゴンドラを眺めながら本格窯焼きピッツァとパスタ🍕'
-        },
-        {
-          name: 'タワー・オブ・テラー',
-          priority: 'medium',
-          category: 'attraction',
-          area: 'アメリカンウォーターフロント',
-          locationMemo: 'ホテルハイタワー',
-          memo: '最上階からの景色と落下スリル！夜景も絶景🏢⚡'
-        },
-        {
-          name: 'うきわまん（エビ）',
-          priority: 'low',
-          category: 'food',
-          area: 'ポートディスカバリー',
-          locationMemo: 'シーサイドスナック',
-          memo: 'ドナルドの浮き輪デザインが可愛い定番スナック🛟'
-        }
-      ] : [
-        {
-          name: 'ミッキーワッフル（メイプルソース）',
-          priority: 'high',
-          category: 'food',
-          area: 'ワールドバザール',
-          locationMemo: 'グレートアメリカン・ワッフルカンパニー',
-          memo: '焼き立てサクサク！朝イチか午後の空いている時間が狙い目🧇'
-        },
-        {
-          name: '美女と野獣“魔法のものがたり”',
-          priority: 'high',
-          category: 'attraction',
-          area: 'ファンタジーランド',
-          locationMemo: 'お城の中',
-          memo: 'できれば朝イチでDPAを取得する！夜のライトアップも素敵🌹'
-        },
-        {
-          name: 'ブルーバイユー・レストラン',
-          priority: 'medium',
-          category: 'restaurant',
-          area: 'アドベンチャーランド',
-          locationMemo: 'カリブの海賊の乗り場となり',
-          memo: 'ホタルが飛ぶ夜空の雰囲気。コース料理予約済み🍽️'
-        },
-        {
-          name: 'ビッグサンダー・マウンテン',
-          priority: 'medium',
-          category: 'attraction',
-          area: 'ウエスタンランド',
-          locationMemo: '鉱山前',
-          memo: '夕暮れ時に乗ると景色が最高！🎢'
-        },
-        {
-          name: 'チュロス（シナモン味）',
-          priority: 'low',
-          category: 'food',
-          area: 'クリッターカントリー',
-          locationMemo: 'ラケッティのラクーンサルーン',
-          memo: 'スプラッシュマウンテン降り口近く。ミックスベリー味もチェック✨'
-        }
-      ];
-
-      for (const s of samples) {
-        const item = {
-          id: 'sample-' + Date.now() + '-' + Math.random().toString(36).substring(2, 6),
-          listId: currentListId,
-          name: s.name,
-          category: s.category,
-          priority: s.priority || 'medium',
-          area: s.area,
-          locationMemo: s.locationMemo,
-          memo: s.memo,
-          photoDataUrl: '',
-          isDone: false,
-          createdAt: Date.now()
-        };
-        await dbPut('items', item);
-        items.push(item);
-      }
-
-      renderItems();
-      showToast(`${park.name}のサンプルデータを追加しました！`, park.emoji);
-    }
-
     // --- Data Export & Import ---
     async function exportAllData() {
       const allLists = await dbGetAll('lists');
@@ -2718,7 +2691,7 @@
       const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(backup, null, 2));
       const downloadAnchor = document.createElement('a');
       downloadAnchor.setAttribute('href', dataStr);
-      downloadAnchor.setAttribute('download', `tdl-wishlist-backup-${new Date().toISOString().slice(0, 10)}.json`);
+      downloadAnchor.setAttribute('download', `tdr-wishlist-backup-${new Date().toISOString().slice(0, 10)}.json`);
       document.body.appendChild(downloadAnchor);
       downloadAnchor.click();
       downloadAnchor.remove();
