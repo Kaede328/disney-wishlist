@@ -1348,12 +1348,12 @@
       </div>
 
       <div class="sheet-content">
-        <!-- Version Display (As required: 変更がある度にバージョンを追加) -->
+        <!-- Version Display & Update (As required: 変更がある度にバージョンを追加) -->
         <div class="settings-section">
           <div class="settings-section-title">アプリ情報</div>
           <div class="settings-row">
             <span class="settings-label">バージョン</span>
-            <span class="settings-val" id="appVersion">v1.2.0</span>
+            <span class="settings-val" id="appVersion">v1.3.0</span>
           </div>
           <div class="settings-row">
             <span class="settings-label">ストレージ</span>
@@ -1363,6 +1363,9 @@
             <span class="settings-label">オフライン対応</span>
             <span class="settings-val">PWAキャッシュ有効（相対パス対応）</span>
           </div>
+          <button type="button" class="settings-action-btn" id="checkForUpdateBtn" style="margin-top: 10px; background: #FFF0F4; border-color: var(--pink-border);">
+            <span>🔄 最新版に更新</span>
+          </button>
         </div>
 
         <!-- Version History -->
@@ -1370,7 +1373,12 @@
           <div class="settings-section-title">バージョン履歴</div>
           <div style="font-size: 0.88rem; color: var(--text-sub); line-height: 1.6;">
             <div style="margin-bottom: 8px;">
-              <strong style="color: var(--pink-primary);">v1.2.0（最新）</strong><br>
+              <strong style="color: var(--pink-primary);">v1.3.0（最新）</strong><br>
+              ・設定画面に「最新版に更新」ボタンを追加<br>
+              ・Service Workerの更新チェックと即時反映に対応（データ完全保持）
+            </div>
+            <div style="margin-bottom: 8px;">
+              <strong style="color: var(--text-muted);">v1.2.0</strong><br>
               ・GitHub Pages（ユーザー名.github.io/リポジトリ名/）公開対応<br>
               ・manifest / Service Worker / アイコン / start_url / scope をすべて「./」相対パス化
             </div>
@@ -1457,11 +1465,11 @@
     /**
      * @license
      * SPDX-License-Identifier: Apache-2.0
-     * ディズニーランド行きたいリスト PWA v1.2.0
+     * ディズニーランド行きたいリスト PWA v1.3.0
      */
 
     // --- State Constants ---
-    const APP_VERSION = 'v1.2.0';
+    const APP_VERSION = 'v1.3.0';
     const DB_NAME = 'DisneylandWishlistDB';
     const DB_VERSION = 1;
 
@@ -2195,6 +2203,12 @@
       };
       document.getElementById('closeSettingsModalBtn').onclick = () => closeModal('settingsModal');
 
+      // Check for update button in settings
+      const checkUpdateBtn = document.getElementById('checkForUpdateBtn');
+      if (checkUpdateBtn) {
+        checkUpdateBtn.onclick = checkForAppUpdate;
+      }
+
       // Add new list inside settings
       document.getElementById('addNewListBtn').onclick = () => {
         closeModal('settingsModal');
@@ -2432,6 +2446,86 @@
         }
       } catch (err) {
         alert('読み込みに失敗しました。ファイル形式を確認してください。');
+      }
+    }
+
+    // --- Manual Update Check from Settings ---
+    async function checkForAppUpdate() {
+      if (!('serviceWorker' in navigator)) {
+        showToast('最新版です（更新はありません）', '✨');
+        return;
+      }
+
+      showToast('最新版を確認中...', '⏳');
+
+      try {
+        const registration = await navigator.serviceWorker.getRegistration();
+        if (!registration) {
+          showToast('最新版です（更新はありません）', '✨');
+          return;
+        }
+
+        // 1. If a worker is already waiting to activate
+        if (registration.waiting) {
+          showToast('最新版に更新しています...', '🔄');
+          registration.waiting.postMessage({ type: 'SKIP_WAITING' });
+          navigator.serviceWorker.addEventListener('controllerchange', () => {
+            window.location.reload();
+          }, { once: true });
+          setTimeout(() => window.location.reload(), 1000);
+          return;
+        }
+
+        // 2. If a worker is currently installing
+        if (registration.installing) {
+          showToast('最新版をダウンロード中...', '🔄');
+          const worker = registration.installing;
+          worker.addEventListener('statechange', () => {
+            if (worker.state === 'installed') {
+              worker.postMessage({ type: 'SKIP_WAITING' });
+              navigator.serviceWorker.addEventListener('controllerchange', () => {
+                window.location.reload();
+              }, { once: true });
+              setTimeout(() => window.location.reload(), 1000);
+            }
+          });
+          return;
+        }
+
+        // 3. Trigger Service Worker update check
+        let updateFound = false;
+
+        const handleUpdateFound = () => {
+          updateFound = true;
+          const newWorker = registration.installing;
+          if (newWorker) {
+            showToast('最新版が見つかりました！更新中...', '🔄');
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed') {
+                newWorker.postMessage({ type: 'SKIP_WAITING' });
+                navigator.serviceWorker.addEventListener('controllerchange', () => {
+                  window.location.reload();
+                }, { once: true });
+                setTimeout(() => window.location.reload(), 1000);
+              }
+            });
+          }
+        };
+
+        registration.addEventListener('updatefound', handleUpdateFound, { once: true });
+
+        await registration.update();
+
+        // If no new worker was found after update()
+        setTimeout(() => {
+          if (!updateFound && !registration.waiting && !registration.installing) {
+            showToast('最新版です（更新はありません）', '✨');
+          }
+        }, 1500);
+
+      } catch (err) {
+        console.error('Update check failed:', err);
+        showToast('最新版です（更新はありません）', '✨');
       }
     }
 
