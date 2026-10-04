@@ -962,6 +962,10 @@
       gap: 8px;
     }
 
+    .pill-grid-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
     .pill-radio {
       position: relative;
     }
@@ -1487,23 +1491,15 @@
             <textarea id="itemName" class="form-textarea" rows="2" placeholder="例：ミッキーワッフル、美女と野獣など" required></textarea>
           </div>
 
-          <!-- Category Selection -->
+          <!-- Category Selection (Only Food and Attraction as requested) -->
           <div class="form-group">
             <label class="form-label">種類 <span class="req">※必須</span></label>
-            <div class="pill-grid">
+            <div class="pill-grid pill-grid-2">
               <label class="pill-radio">
                 <input type="radio" name="itemCategory" value="food" checked>
                 <div class="pill-label">
                   <span class="pill-emoji">🍿</span>
                   <span>食べたいもの</span>
-                </div>
-              </label>
-
-              <label class="pill-radio">
-                <input type="radio" name="itemCategory" value="restaurant">
-                <div class="pill-label">
-                  <span class="pill-emoji">🍽️</span>
-                  <span>レストラン</span>
                 </div>
               </label>
 
@@ -1667,7 +1663,7 @@
           <div class="settings-section-title">アプリ情報</div>
           <div class="settings-row">
             <span class="settings-label">バージョン</span>
-            <span class="settings-val" id="appVersion">v2.0.0</span>
+            <span class="settings-val" id="appVersion">v2.1.0</span>
           </div>
           <div class="settings-row">
             <span class="settings-label">ストレージ</span>
@@ -1691,7 +1687,11 @@
           <div class="accordion-body" id="versionHistoryBody" style="display: none;">
             <div style="font-size: 0.88rem; color: var(--text-sub); line-height: 1.6; padding-top: 10px;">
               <div style="margin-bottom: 8px;">
-                <strong style="color: var(--theme-primary);">v2.0.0（最新）</strong><br>
+                <strong style="color: var(--theme-primary);">v2.1.0（最新）</strong><br>
+                ・種類の選択肢から「レストラン」を削除し、「食べたいもの」と「アトラクション」の2択に整理（既存カードデータは安全に保持）
+              </div>
+              <div style="margin-bottom: 8px;">
+                <strong style="color: var(--text-muted);">v2.0.0</strong><br>
                 ・カード表示の省スペース化（画像下の余白・画像サイズをコンパクト化）<br>
                 ・優先度と種類のバッジを絵文字のみ（🔥/✨/☕、🍿/🍽️/🎢）に変更して横幅スリム化<br>
                 ・バッジ行から🔗アイコンを削除（フッターの🔗ボタンに統一）<br>
@@ -1836,11 +1836,11 @@
     /**
      * @license
      * SPDX-License-Identifier: Apache-2.0
-     * TDRおでかけメモ PWA v2.0.0
+     * TDRおでかけメモ PWA v2.1.0
      */
 
     // --- State Constants ---
-    const APP_VERSION = 'v2.0.0';
+    const APP_VERSION = 'v2.1.0';
     const DB_NAME = 'DisneylandWishlistDB';
     const DB_VERSION = 1;
 
@@ -2568,9 +2568,19 @@
       document.getElementById('itemUrl').value = item.url || '';
 
       const catRadios = document.querySelectorAll('input[name="itemCategory"]');
+      let matchedCategory = false;
       catRadios.forEach(radio => {
-        radio.checked = radio.value === item.category;
+        if (radio.value === item.category) {
+          radio.checked = true;
+          matchedCategory = true;
+        } else {
+          radio.checked = false;
+        }
       });
+      // If legacy item was 'restaurant', default to 'food' in the form
+      if (!matchedCategory && catRadios.length > 0) {
+        catRadios[0].checked = true;
+      }
 
       // Priority radio
       const priRadios = document.querySelectorAll('input[name="itemPriority"]');
