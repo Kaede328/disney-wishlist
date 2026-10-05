@@ -378,6 +378,52 @@
       justify-content: center;
       box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05);
       margin-bottom: 0;
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .card-img-layer {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.22s ease, transform 0.22s ease;
+    }
+
+    .card-img-layer img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .card-img-photo {
+      opacity: 1;
+      transform: scale(1);
+      z-index: 1;
+    }
+
+    .card-img-map {
+      opacity: 0;
+      transform: scale(0.92);
+      z-index: 2;
+      background: #FAF8F5;
+    }
+
+    .card.showing-map .card-img-photo {
+      opacity: 0;
+      transform: scale(0.92);
+      pointer-events: none;
+    }
+
+    .card.showing-map .card-img-map {
+      opacity: 1;
+      transform: scale(1);
+      pointer-events: auto;
     }
 
     .card-img-wrap.no-photo {
@@ -386,10 +432,36 @@
       box-shadow: none;
     }
 
-    .card-img-wrap img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    /* Small badge at bottom corner when map is available */
+    .map-toggle-indicator {
+      position: absolute;
+      bottom: 2px;
+      right: 2px;
+      background: rgba(30, 25, 28, 0.72);
+      color: #FFFFFF;
+      border-radius: 5px;
+      font-size: 0.65rem;
+      padding: 1px 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 4;
+      pointer-events: none;
+      line-height: 1.1;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    }
+
+    /* Gentle bounce animation when no map is registered */
+    @keyframes gentleBounce {
+      0% { transform: scale(1); }
+      40% { transform: scale(0.92); }
+      100% { transform: scale(1); }
+    }
+
+    .card-img-wrap.no-map-bounce {
+      animation: gentleBounce 0.28s ease;
     }
 
     .card-img-placeholder {
@@ -1396,7 +1468,7 @@
     }
 
     /* Hidden file input */
-    #photoInput {
+    #photoInput, #mapPhotoInput {
       display: none;
     }
   </style>
@@ -1507,6 +1579,23 @@
               <div class="photo-preview-wrap" id="photoPreviewWrap">
                 <img id="photoPreviewImg" src="" alt="プレビュー">
                 <button type="button" class="photo-remove-btn" id="removePhotoBtn" title="写真を削除">✕</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Map Image Upload (Optional, High-Res Map/Screenshot) -->
+          <div class="form-group">
+            <label class="form-label">マップ <span class="opt">（任意・地図スクショやミニマップ）</span></label>
+            <input type="file" id="mapPhotoInput" accept="image/*">
+            <div class="photo-upload-box" id="mapPhotoBox">
+              <div id="mapPhotoPrompt">
+                <div style="font-size: 2rem;">🗺️</div>
+                <div class="photo-prompt-text">タップしてマップ画像を選択</div>
+                <div class="photo-hint">※地図スクショをそのまま鮮明に保存できます</div>
+              </div>
+              <div class="photo-preview-wrap" id="mapPhotoPreviewWrap">
+                <img id="mapPhotoPreviewImg" src="" alt="マッププレビュー">
+                <button type="button" class="photo-remove-btn" id="removeMapPhotoBtn" title="マップ画像を削除">✕</button>
               </div>
             </div>
           </div>
@@ -1689,7 +1778,7 @@
           <div class="settings-section-title">アプリ情報</div>
           <div class="settings-row">
             <span class="settings-label">バージョン</span>
-            <span class="settings-val" id="appVersion">v2.2.0</span>
+            <span class="settings-val" id="appVersion">v2.3.0</span>
           </div>
           <div class="settings-row">
             <span class="settings-label">ストレージ</span>
@@ -1713,7 +1802,12 @@
           <div class="accordion-body" id="versionHistoryBody" style="display: none;">
             <div style="font-size: 0.88rem; color: var(--text-sub); line-height: 1.6; padding-top: 10px;">
               <div style="margin-bottom: 8px;">
-                <strong style="color: var(--theme-primary);">v2.2.0（最新）</strong><br>
+                <strong style="color: var(--theme-primary);">v2.3.0（最新）</strong><br>
+                ・「場所の画像（マップ）」登録機能を追加（地図スクショ等をリサイズせず高画質保存）<br>
+                ・カードの画像エリアをタップすると「通常写真」と「場所の画像」をスムーズに切替表示可能に（未登録時は優しくバウンス）
+              </div>
+              <div style="margin-bottom: 8px;">
+                <strong style="color: var(--text-muted);">v2.2.0</strong><br>
                 ・ヘッダーをposition: fixedに変更し画面上部に完全固定（iPhoneのノッチ・セーフエリア対応＆コンテンツ被り防止padding設定）<br>
                 ・場所名を1行表示に統一し、17文字以上（例：キャンプ・ウッドチャック・キッチン等）の場合は文字サイズを自動縮小
               </div>
@@ -1867,11 +1961,11 @@
     /**
      * @license
      * SPDX-License-Identifier: Apache-2.0
-     * TDRおでかけメモ PWA v2.2.0
+     * TDRおでかけメモ PWA v2.3.0
      */
 
     // --- State Constants ---
-    const APP_VERSION = 'v2.2.0';
+    const APP_VERSION = 'v2.3.0';
     const DB_NAME = 'DisneylandWishlistDB';
     const DB_VERSION = 1;
 
@@ -1970,6 +2064,7 @@
     let items = [];
     let currentViewMode = 'area'; // 'area' | 'category'
     let currentResizedPhotoData = '';
+    let currentMapPhotoData = '';
     let deferredInstallPrompt = null;
 
     // --- IndexedDB Management ---
@@ -2491,17 +2586,28 @@
       const areaEmoji = ALL_AREA_EMOJIS[item.area] || getCurrentPark().emoji;
 
       // Image or Category Icon in Grey (Optional photo)
-      let imgContent = '';
+      let photoLayerContent = '';
       const hasPhoto = Boolean(item.photoDataUrl && item.photoDataUrl.trim());
       if (hasPhoto) {
-        imgContent = `<img src="${item.photoDataUrl}" alt="${escapeHtml(item.name)}" loading="lazy">`;
+        photoLayerContent = `<img src="${item.photoDataUrl}" alt="${escapeHtml(item.name)}" loading="lazy">`;
       } else {
-        imgContent = `
+        photoLayerContent = `
           <div class="no-photo-icon-wrap" title="${catName}">
             ${getCategoryIconSvg(item.category)}
           </div>
         `;
       }
+
+      // Map image layer (Optional map screenshot)
+      const hasMap = Boolean(item.mapPhotoDataUrl && item.mapPhotoDataUrl.trim());
+      let mapLayerContent = '';
+      if (hasMap) {
+        mapLayerContent = `<img src="${item.mapPhotoDataUrl}" alt="${escapeHtml(item.name)}のマップ" loading="lazy">`;
+      }
+
+      const mapIndicatorHtml = hasMap
+        ? `<div class="map-toggle-indicator" title="タップで写真とマップを切替">🗺️</div>`
+        : '';
 
       // Location note (1 line, reduced font size if >= 17 characters like キャンプ・ウッドチャック・キッチン)
       let locationHtml = '';
@@ -2530,8 +2636,16 @@
 
       card.innerHTML = `
         <div class="card-top">
-          <div class="card-img-wrap ${hasPhoto ? '' : 'no-photo'}" onclick="viewOrEditItem('${item.id}')">
-            ${imgContent}
+          <div class="card-img-wrap ${hasPhoto ? '' : 'no-photo'}" onclick="toggleCardImage(event, '${item.id}')" title="${hasMap ? 'タップで写真とマップを切替' : ''}">
+            <div class="card-img-layer card-img-photo">
+              ${photoLayerContent}
+            </div>
+            ${hasMap ? `
+              <div class="card-img-layer card-img-map">
+                ${mapLayerContent}
+              </div>
+            ` : ''}
+            ${mapIndicatorHtml}
           </div>
           <div class="card-body">
             <div class="card-tags">
@@ -2638,11 +2752,41 @@
       currentResizedPhotoData = item.photoDataUrl || '';
       updatePhotoPreviewUI();
 
+      // Map photo preview
+      currentMapPhotoData = item.mapPhotoDataUrl || '';
+      updateMapPhotoPreviewUI();
+
       openModal('itemModal');
     };
 
     window.viewOrEditItem = function(itemId) {
       openEditItemModal(itemId);
+    };
+
+    // Toggle between Normal Photo and Map Photo on Image Area Tap
+    window.toggleCardImage = function(event, itemId) {
+      if (event) event.stopPropagation();
+      const card = document.getElementById(`card-${itemId}`);
+      if (!card) return;
+      const item = items.find(i => i.id === itemId);
+      if (!item || !item.mapPhotoDataUrl || !item.mapPhotoDataUrl.trim()) {
+        // No map photo: gentle bounce animation
+        const imgWrap = card.querySelector('.card-img-wrap');
+        if (imgWrap) {
+          imgWrap.classList.remove('no-map-bounce');
+          void imgWrap.offsetWidth; // Force reflow
+          imgWrap.classList.add('no-map-bounce');
+        }
+        return;
+      }
+
+      // Has map photo: toggle between photo and map
+      const isShowingMap = card.classList.toggle('showing-map');
+      const indicator = card.querySelector('.map-toggle-indicator');
+      if (indicator) {
+        indicator.textContent = isShowingMap ? '📷' : '🗺️';
+        indicator.title = isShowingMap ? 'タップで写真に切替' : 'タップでマップに切替';
+      }
     };
 
     // Delete Item
@@ -2688,6 +2832,23 @@
       }
     }
 
+    // Map Photo Preview UI
+    function updateMapPhotoPreviewUI() {
+      const promptEl = document.getElementById('mapPhotoPrompt');
+      const previewWrap = document.getElementById('mapPhotoPreviewWrap');
+      const previewImg = document.getElementById('mapPhotoPreviewImg');
+
+      if (currentMapPhotoData) {
+        previewImg.src = currentMapPhotoData;
+        previewWrap.style.display = 'block';
+        promptEl.style.display = 'none';
+      } else {
+        previewImg.src = '';
+        previewWrap.style.display = 'none';
+        promptEl.style.display = 'block';
+      }
+    }
+
     // --- Setup Event Listeners ---
     function setupEventListeners() {
       // View switcher
@@ -2716,6 +2877,8 @@
         if (defaultPriRadio) defaultPriRadio.checked = true;
         currentResizedPhotoData = '';
         updatePhotoPreviewUI();
+        currentMapPhotoData = '';
+        updateMapPhotoPreviewUI();
         openModal('itemModal');
       };
 
@@ -2753,6 +2916,39 @@
         updatePhotoPreviewUI();
       };
 
+      // Map photo upload click
+      document.getElementById('mapPhotoBox').onclick = (e) => {
+        if (e.target.id === 'removeMapPhotoBtn') return;
+        document.getElementById('mapPhotoInput').click();
+      };
+
+      // Map photo input change (no resizing as requested: keep high-res map screenshot)
+      document.getElementById('mapPhotoInput').onchange = (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+
+        showToast('マップ画像を読み込み中...', '🗺️');
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          currentMapPhotoData = event.target.result || '';
+          updateMapPhotoPreviewUI();
+          showToast('マップ画像をセットしました！', '🗺️');
+        };
+        reader.onerror = (err) => {
+          console.error(err);
+          showToast('マップ画像の読み込みに失敗しました', '⚠️');
+        };
+        reader.readAsDataURL(file);
+      };
+
+      // Remove map photo
+      document.getElementById('removeMapPhotoBtn').onclick = (e) => {
+        e.stopPropagation();
+        currentMapPhotoData = '';
+        document.getElementById('mapPhotoInput').value = '';
+        updateMapPhotoPreviewUI();
+      };
+
       // Save Item (Form Submit or Button Click)
       async function handleSaveItem() {
         const nameInput = document.getElementById('itemName');
@@ -2771,8 +2967,9 @@
         const category = categoryRadio ? categoryRadio.value : 'food';
         const priorityRadio = document.querySelector('input[name="itemPriority"]:checked');
         const priority = priorityRadio ? priorityRadio.value : 'medium';
-        // Photo is completely optional
+        // Photos are completely optional
         const photoData = currentResizedPhotoData || '';
+        const mapPhotoData = currentMapPhotoData || '';
 
         if (itemId) {
           // Update existing
@@ -2786,6 +2983,7 @@
             item.memo = memo;
             item.url = url;
             item.photoDataUrl = photoData;
+            item.mapPhotoDataUrl = mapPhotoData;
             await dbPut('items', item);
             showToast('更新しました！', '✨');
           }
@@ -2802,6 +3000,7 @@
             memo: memo,
             url: url,
             photoDataUrl: photoData,
+            mapPhotoDataUrl: mapPhotoData,
             isDone: false,
             createdAt: Date.now()
           };
