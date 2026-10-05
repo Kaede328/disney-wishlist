@@ -383,74 +383,16 @@
       -webkit-user-select: none;
     }
 
-    .card-img-layer {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: opacity 0.22s ease, transform 0.22s ease;
-    }
-
-    .card-img-layer img {
+    .card-img-wrap img {
       width: 100%;
       height: 100%;
       object-fit: cover;
-    }
-
-    .card-img-photo {
-      opacity: 1;
-      transform: scale(1);
-      z-index: 1;
-    }
-
-    .card-img-map {
-      opacity: 0;
-      transform: scale(0.92);
-      z-index: 2;
-      background: #FAF8F5;
-    }
-
-    .card.showing-map .card-img-photo {
-      opacity: 0;
-      transform: scale(0.92);
-      pointer-events: none;
-    }
-
-    .card.showing-map .card-img-map {
-      opacity: 1;
-      transform: scale(1);
-      pointer-events: auto;
     }
 
     .card-img-wrap.no-photo {
       background: #F3F4F6;
       border: 1px solid #E5E7EB;
       box-shadow: none;
-    }
-
-    /* Small badge at bottom corner when map is available */
-    .map-toggle-indicator {
-      position: absolute;
-      bottom: 2px;
-      right: 2px;
-      background: rgba(30, 25, 28, 0.72);
-      color: #FFFFFF;
-      border-radius: 5px;
-      font-size: 0.65rem;
-      padding: 1px 3px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      z-index: 4;
-      pointer-events: none;
-      line-height: 1.1;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.25);
     }
 
     /* Gentle bounce animation when no map is registered */
@@ -462,6 +404,76 @@
 
     .card-img-wrap.no-map-bounce {
       animation: gentleBounce 0.28s ease;
+    }
+
+    /* Large Map Viewer Lightbox (Tap map to return to cards) */
+    .map-viewer-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1000;
+      background: rgba(10, 8, 12, 0.88);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      padding-top: calc(16px + env(safe-area-inset-top, 0px));
+      padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+      touch-action: manipulation;
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      animation: mapFadeIn 0.18s ease-out;
+    }
+
+    @keyframes mapFadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .map-viewer-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      max-width: 100%;
+      max-height: 100%;
+      cursor: pointer;
+    }
+
+    .map-viewer-img {
+      max-width: min(94vw, 720px);
+      max-height: 80vh;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      border-radius: 14px;
+      box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55);
+      background: #FFFFFF;
+      transition: transform 0.12s ease;
+      cursor: pointer;
+    }
+
+    .map-viewer-content:active .map-viewer-img {
+      transform: scale(0.98);
+    }
+
+    .map-viewer-hint {
+      margin-top: 14px;
+      color: rgba(255, 255, 255, 0.82);
+      font-size: 0.85rem;
+      font-weight: 600;
+      background: rgba(255, 255, 255, 0.18);
+      padding: 6px 16px;
+      border-radius: 20px;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .card-img-placeholder {
@@ -1554,6 +1566,16 @@
     <span id="toastMsg">クリップボードにコピーしました！</span>
   </div>
 
+  <!-- Large Map Image Lightbox (Tap map to return to cards) -->
+  <div id="mapViewerOverlay" class="map-viewer-overlay" onclick="closeMapViewer()" style="display: none;" title="タップして元のカード表示に戻る">
+    <div class="map-viewer-content">
+      <img id="mapViewerImg" src="" alt="マップ画像" class="map-viewer-img">
+      <div class="map-viewer-hint">
+        <span>👆 タップで閉じる</span>
+      </div>
+    </div>
+  </div>
+
   <!-- Add / Edit Modal -->
   <div class="modal-overlay" id="itemModal">
     <div class="modal-sheet">
@@ -1778,7 +1800,7 @@
           <div class="settings-section-title">アプリ情報</div>
           <div class="settings-row">
             <span class="settings-label">バージョン</span>
-            <span class="settings-val" id="appVersion">v2.3.0</span>
+            <span class="settings-val" id="appVersion">v2.4.0</span>
           </div>
           <div class="settings-row">
             <span class="settings-label">ストレージ</span>
@@ -1802,9 +1824,13 @@
           <div class="accordion-body" id="versionHistoryBody" style="display: none;">
             <div style="font-size: 0.88rem; color: var(--text-sub); line-height: 1.6; padding-top: 10px;">
               <div style="margin-bottom: 8px;">
-                <strong style="color: var(--theme-primary);">v2.3.0（最新）</strong><br>
-                ・「場所の画像（マップ）」登録機能を追加（地図スクショ等をリサイズせず高画質保存）<br>
-                ・カードの画像エリアをタップすると「通常写真」と「場所の画像」をスムーズに切替表示可能に（未登録時は優しくバウンス）
+                <strong style="color: var(--theme-primary);">v2.4.0（最新）</strong><br>
+                ・マップ画像の切替インジケーターを削除し、カードデザインをすっきり整理<br>
+                ・カードの画像タップでマップ画像だけを元のサイズ（高解像度）で画面いっぱいに大きく表示し、マップ画像タップで元のカード表示に戻る直感操作に対応
+              </div>
+              <div style="margin-bottom: 8px;">
+                <strong style="color: var(--text-muted);">v2.3.0</strong><br>
+                ・「場所の画像（マップ）」登録機能を追加（地図スクショ等をリサイズせず高画質保存）
               </div>
               <div style="margin-bottom: 8px;">
                 <strong style="color: var(--text-muted);">v2.2.0</strong><br>
@@ -1961,11 +1987,11 @@
     /**
      * @license
      * SPDX-License-Identifier: Apache-2.0
-     * TDRおでかけメモ PWA v2.3.0
+     * TDRおでかけメモ PWA v2.4.0
      */
 
     // --- State Constants ---
-    const APP_VERSION = 'v2.3.0';
+    const APP_VERSION = 'v2.4.0';
     const DB_NAME = 'DisneylandWishlistDB';
     const DB_VERSION = 1;
 
@@ -2598,16 +2624,7 @@
         `;
       }
 
-      // Map image layer (Optional map screenshot)
       const hasMap = Boolean(item.mapPhotoDataUrl && item.mapPhotoDataUrl.trim());
-      let mapLayerContent = '';
-      if (hasMap) {
-        mapLayerContent = `<img src="${item.mapPhotoDataUrl}" alt="${escapeHtml(item.name)}のマップ" loading="lazy">`;
-      }
-
-      const mapIndicatorHtml = hasMap
-        ? `<div class="map-toggle-indicator" title="タップで写真とマップを切替">🗺️</div>`
-        : '';
 
       // Location note (1 line, reduced font size if >= 17 characters like キャンプ・ウッドチャック・キッチン)
       let locationHtml = '';
@@ -2636,16 +2653,8 @@
 
       card.innerHTML = `
         <div class="card-top">
-          <div class="card-img-wrap ${hasPhoto ? '' : 'no-photo'}" onclick="toggleCardImage(event, '${item.id}')" title="${hasMap ? 'タップで写真とマップを切替' : ''}">
-            <div class="card-img-layer card-img-photo">
-              ${photoLayerContent}
-            </div>
-            ${hasMap ? `
-              <div class="card-img-layer card-img-map">
-                ${mapLayerContent}
-              </div>
-            ` : ''}
-            ${mapIndicatorHtml}
+          <div class="card-img-wrap ${hasPhoto ? '' : 'no-photo'}" onclick="handleCardImageClick(event, '${item.id}')" title="${hasMap ? 'タップでマップ画像を大きく表示' : ''}">
+            ${photoLayerContent}
           </div>
           <div class="card-body">
             <div class="card-tags">
@@ -2763,31 +2772,59 @@
       openEditItemModal(itemId);
     };
 
-    // Toggle between Normal Photo and Map Photo on Image Area Tap
-    window.toggleCardImage = function(event, itemId) {
+    // Card Image Click: If map registered, show map large; otherwise gentle bounce
+    window.handleCardImageClick = function(event, itemId) {
       if (event) event.stopPropagation();
-      const card = document.getElementById(`card-${itemId}`);
-      if (!card) return;
       const item = items.find(i => i.id === itemId);
       if (!item || !item.mapPhotoDataUrl || !item.mapPhotoDataUrl.trim()) {
-        // No map photo: gentle bounce animation
-        const imgWrap = card.querySelector('.card-img-wrap');
-        if (imgWrap) {
-          imgWrap.classList.remove('no-map-bounce');
-          void imgWrap.offsetWidth; // Force reflow
-          imgWrap.classList.add('no-map-bounce');
+        // No map photo: gentle bounce animation on image thumbnail
+        const card = document.getElementById(`card-${itemId}`);
+        if (card) {
+          const imgWrap = card.querySelector('.card-img-wrap');
+          if (imgWrap) {
+            imgWrap.classList.remove('no-map-bounce');
+            void imgWrap.offsetWidth; // Force reflow
+            imgWrap.classList.add('no-map-bounce');
+          }
         }
         return;
       }
 
-      // Has map photo: toggle between photo and map
-      const isShowingMap = card.classList.toggle('showing-map');
-      const indicator = card.querySelector('.map-toggle-indicator');
-      if (indicator) {
-        indicator.textContent = isShowingMap ? '📷' : '🗺️';
-        indicator.title = isShowingMap ? 'タップで写真に切替' : 'タップでマップに切替';
-      }
+      // Show map image large (in its original size/proportions)
+      openMapViewer(item.mapPhotoDataUrl);
     };
+
+    // Open Large Map Viewer (Lightbox)
+    window.openMapViewer = function(imgSrc) {
+      const overlay = document.getElementById('mapViewerOverlay');
+      const img = document.getElementById('mapViewerImg');
+      if (!overlay || !img) return;
+
+      img.src = imgSrc;
+      overlay.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    };
+
+    // Close Large Map Viewer (Returns back to original cards view)
+    window.closeMapViewer = function() {
+      const overlay = document.getElementById('mapViewerOverlay');
+      const img = document.getElementById('mapViewerImg');
+      if (!overlay) return;
+
+      overlay.style.display = 'none';
+      if (img) img.src = '';
+      document.body.style.overflow = '';
+    };
+
+    // Close on Escape key
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const overlay = document.getElementById('mapViewerOverlay');
+        if (overlay && overlay.style.display !== 'none') {
+          closeMapViewer();
+        }
+      }
+    });
 
     // Delete Item
     window.deleteItemConfirm = async function(itemId) {
