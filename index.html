@@ -254,17 +254,20 @@
       flex: 1;
       border: none;
       background: transparent;
-      padding: 8px 10px;
+      padding: 7px 6px;
       border-radius: 11px;
-      font-size: 0.9rem;
-      font-weight: 600;
+      font-size: 0.88rem;
+      font-weight: 700;
       color: var(--text-sub);
       cursor: pointer;
       transition: all 0.2s ease;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 5px;
+      gap: 4px;
+      white-space: nowrap;
+      user-select: none;
+      -webkit-user-select: none;
     }
 
     .toggle-btn.active {
@@ -276,15 +279,18 @@
     .stats-chip {
       background: #FFF;
       border: 1px solid var(--border-soft);
-      padding: 6px 12px;
+      padding: 6px 10px;
       border-radius: 12px;
       font-size: 0.85rem;
-      font-weight: 600;
+      font-weight: 700;
       color: var(--pink-primary);
       white-space: nowrap;
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 3px;
+      flex-shrink: 0;
+      min-width: 44px;
+      justify-content: center;
     }
 
     /* Main Container */
@@ -557,18 +563,52 @@
       gap: 2px;
     }
 
+    .badge-area.clickable {
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      transition: all 0.18s ease;
+      touch-action: manipulation;
+    }
+
+    .badge-area.clickable:hover {
+      background: #EADECE;
+      color: #4C3B32;
+      transform: translateY(-1px);
+    }
+
+    .badge-area.clickable:active {
+      transform: scale(0.95);
+    }
+
     .badge-mo {
       background: #E0F2FE;
       color: #0284C7;
       border: 1px solid #BAE6FD;
-      font-size: 0.72rem;
-      font-weight: 700;
-      padding: 1px 6px;
+      font-size: 0.74rem;
+      padding: 1px 4px;
       border-radius: 6px;
       display: inline-flex;
       align-items: center;
-      gap: 2px;
-      line-height: 1.2;
+      justify-content: center;
+      line-height: 1.1;
+    }
+
+    @keyframes highlightPulse {
+      0% {
+        background-color: rgba(255, 142, 170, 0.45);
+        border-radius: 12px;
+        box-shadow: 0 0 12px rgba(255, 142, 170, 0.5);
+      }
+      100% {
+        background-color: transparent;
+        box-shadow: none;
+      }
+    }
+
+    .group-section.highlight-pulse {
+      animation: highlightPulse 1.4s ease-out;
+      border-radius: 12px;
     }
 
     .checkbox-toggle-label {
@@ -804,25 +844,18 @@
       justify-content: center;
     }
 
-    /* Name Tap to Copy */
-    .card-name-btn {
-      background: transparent;
-      border: none;
-      padding: 0;
-      margin: 0;
-      text-align: left;
-      cursor: pointer;
-      display: flex;
-      align-items: baseline;
-      gap: 4px;
+    /* Card Item Name */
+    .card-name-title {
+      display: block;
       width: 100%;
+      margin: 2px 0;
     }
 
     .card-name {
       font-size: 0.98rem;
       font-weight: 700;
       color: var(--text-main);
-      line-height: 1.3;
+      line-height: 1.35;
       word-break: break-word;
       white-space: pre-wrap;
       letter-spacing: -0.2px;
@@ -1601,19 +1634,22 @@
     </div>
   </header>
 
-  <!-- Secondary controls (Display mode: Area vs Category) -->
+  <!-- Secondary controls (Display mode: Area vs Food vs Attraction) -->
   <div class="view-controls">
     <div class="toggle-group" role="tablist">
       <button class="toggle-btn active" id="viewAreaBtn" role="tab" aria-selected="true">
-        <span>🏰 エリア別</span>
+        <span>エリア</span>
       </button>
-      <button class="toggle-btn" id="viewCategoryBtn" role="tab" aria-selected="false">
-        <span>🍴 種類別</span>
+      <button class="toggle-btn" id="viewFoodBtn" role="tab" aria-selected="false">
+        <span>食べたい</span>
+      </button>
+      <button class="toggle-btn" id="viewAttractionBtn" role="tab" aria-selected="false">
+        <span>乗りたい</span>
       </button>
     </div>
 
-    <div class="stats-chip" id="statsChip">
-      <span>残り 0 / 全 0件</span>
+    <div class="stats-chip" id="statsChip" title="未完了 / 全件数">
+      <span>0/0</span>
     </div>
   </div>
 
@@ -1895,11 +1931,11 @@
           <div class="settings-section-title">アプリ情報</div>
           <div class="settings-row">
             <span class="settings-label">バージョン</span>
-            <span class="settings-val" id="appVersion">v2.6.0</span>
+            <span class="settings-val" id="appVersion">v2.8.0</span>
           </div>
           <div class="settings-row">
             <span class="settings-label">ストレージ</span>
-            <span class="settings-val">IndexedDB（端末内保存）</span>
+            <span class="settings-val" id="storageTypeVal">IndexedDB（端末内保存）</span>
           </div>
           <div class="settings-row">
             <span class="settings-label">オフライン対応</span>
@@ -1919,7 +1955,19 @@
           <div class="accordion-body" id="versionHistoryBody" style="display: none;">
             <div style="font-size: 0.88rem; color: var(--text-sub); line-height: 1.6; padding-top: 10px;">
               <div style="margin-bottom: 8px;">
-                <strong style="color: var(--theme-primary);">v2.6.0（最新）</strong><br>
+                <strong style="color: var(--theme-primary);">v2.8.0（最新）</strong><br>
+                ・タブを「エリア」「食べたい」「乗りたい」の3タブ構成にリニューアル<br>
+                ・「食べたい」「乗りたい」カードのエリアタグをタップすると、エリアタブの該当エリアへスムーズに移動する機能を追加<br>
+                ・モバイルオーダーのバッジを絵文字のみ（📱）にスッキリ変更<br>
+                ・タスク数を「未完了/全体」（例: 3/8）のコンパクト表示に変更<br>
+                ・カード名のタップによるコピー機能を削除
+              </div>
+              <div style="margin-bottom: 8px;">
+                <strong style="color: var(--text-muted);">v2.7.0</strong><br>
+                ・ブラウザ制限やプライベート閲覧時でもエラーで停止しない安全なストレージフォールバック（自動退避・保護）機能を搭載
+              </div>
+              <div style="margin-bottom: 8px;">
+                <strong style="color: var(--text-muted);">v2.6.0</strong><br>
                 ・チェックボックス横の文言を「行った！」に統一し、完了カードの薄さ（opacity: 0.5）を調整<br>
                 ・カードに「モバイルオーダー対応（📱 MO）」フラグおよびバッジ表示機能を追加
               </div>
@@ -2092,11 +2140,11 @@
     /**
      * @license
      * SPDX-License-Identifier: Apache-2.0
-     * TDRおでかけメモ PWA v2.6.0
+     * TDRおでかけメモ PWA v2.8.0
      */
 
     // --- State Constants ---
-    const APP_VERSION = 'v2.6.0';
+    const APP_VERSION = 'v2.8.0';
     const DB_NAME = 'DisneylandWishlistDB';
     const DB_VERSION = 1;
 
@@ -2193,71 +2241,251 @@
     let currentListId = null;
     let lists = [];
     let items = [];
-    let currentViewMode = 'area'; // 'area' | 'category'
+    let currentViewMode = 'area'; // 'area' | 'food' | 'attraction'
     let currentResizedPhotoData = '';
     let currentMapPhotoData = '';
     let deferredInstallPrompt = null;
 
-    // --- IndexedDB Management ---
+    // --- Safe Storage Management (IndexedDB with LocalStorage / Memory Fallback) ---
+    let useFallbackStorage = false;
+    const fallbackStore = {
+      lists: [],
+      items: [],
+      settings: {}
+    };
+
+    function loadFromLocalStorage() {
+      try {
+        const savedLists = localStorage.getItem('disney_lists');
+        if (savedLists) fallbackStore.lists = JSON.parse(savedLists);
+        const savedItems = localStorage.getItem('disney_items');
+        if (savedItems) fallbackStore.items = JSON.parse(savedItems);
+        const savedSettings = localStorage.getItem('disney_settings');
+        if (savedSettings) fallbackStore.settings = JSON.parse(savedSettings);
+      } catch (err) {
+        console.warn('LocalStorage load notice:', err);
+      }
+    }
+
+    function saveToLocalStorage(type) {
+      try {
+        if (type === 'lists') {
+          localStorage.setItem('disney_lists', JSON.stringify(fallbackStore.lists));
+        } else if (type === 'items') {
+          localStorage.setItem('disney_items', JSON.stringify(fallbackStore.items));
+        } else if (type === 'settings') {
+          localStorage.setItem('disney_settings', JSON.stringify(fallbackStore.settings));
+        }
+      } catch (err) {
+        console.warn('LocalStorage save notice:', err);
+      }
+    }
+
+    function updateStorageUI() {
+      const storageEl = document.getElementById('storageTypeVal');
+      if (storageEl) {
+        storageEl.textContent = useFallbackStorage
+          ? 'ブラウザ内保存（安全保護モード）'
+          : 'IndexedDB（端末内保存）';
+      }
+    }
+
     function openDatabase() {
-      return new Promise((resolve, reject) => {
-        const req = indexedDB.open(DB_NAME, DB_VERSION);
+      return new Promise((resolve) => {
+        loadFromLocalStorage();
 
-        req.onupgradeneeded = (e) => {
-          const database = e.target.result;
-          if (!database.objectStoreNames.contains('lists')) {
-            const listStore = database.createObjectStore('lists', { keyPath: 'id' });
-            listStore.createIndex('createdAt', 'createdAt', { unique: false });
-          }
-          if (!database.objectStoreNames.contains('items')) {
-            const itemStore = database.createObjectStore('items', { keyPath: 'id' });
-            itemStore.createIndex('listId', 'listId', { unique: false });
-            itemStore.createIndex('createdAt', 'createdAt', { unique: false });
-          }
-          if (!database.objectStoreNames.contains('settings')) {
-            database.createObjectStore('settings', { keyPath: 'key' });
-          }
+        let isDone = false;
+        const activateFallback = (reason) => {
+          if (isDone) return;
+          isDone = true;
+          console.warn('IndexedDB unavailable or blocked (' + reason + '). Using safe local storage fallback.');
+          useFallbackStorage = true;
+          db = null;
+          updateStorageUI();
+          resolve(null);
         };
 
-        req.onsuccess = (e) => {
-          db = e.target.result;
-          resolve(db);
-        };
+        if (typeof window === 'undefined' || !window.indexedDB) {
+          activateFallback('IndexedDB API missing');
+          return;
+        }
 
-        req.onerror = (e) => {
-          console.error('IndexedDB open error:', e);
-          reject(e);
-        };
+        try {
+          const req = indexedDB.open(DB_NAME, DB_VERSION);
+
+          req.onupgradeneeded = (e) => {
+            try {
+              const database = e.target.result;
+              if (!database.objectStoreNames.contains('lists')) {
+                const listStore = database.createObjectStore('lists', { keyPath: 'id' });
+                listStore.createIndex('createdAt', 'createdAt', { unique: false });
+              }
+              if (!database.objectStoreNames.contains('items')) {
+                const itemStore = database.createObjectStore('items', { keyPath: 'id' });
+                itemStore.createIndex('listId', 'listId', { unique: false });
+                itemStore.createIndex('createdAt', 'createdAt', { unique: false });
+              }
+              if (!database.objectStoreNames.contains('settings')) {
+                database.createObjectStore('settings', { keyPath: 'key' });
+              }
+            } catch (upgradeErr) {
+              console.warn('IndexedDB upgradeneeded notice:', upgradeErr);
+            }
+          };
+
+          req.onsuccess = (e) => {
+            if (isDone) return;
+            isDone = true;
+            db = e.target.result;
+            useFallbackStorage = false;
+            updateStorageUI();
+            resolve(db);
+          };
+
+          req.onerror = (e) => {
+            const errName = e?.target?.error?.name || 'OpenError';
+            if (errName === 'VersionError') {
+              try {
+                const fallbackReq = indexedDB.open(DB_NAME);
+                fallbackReq.onsuccess = (ev) => {
+                  if (isDone) return;
+                  isDone = true;
+                  db = ev.target.result;
+                  useFallbackStorage = false;
+                  updateStorageUI();
+                  resolve(db);
+                };
+                fallbackReq.onerror = () => {
+                  activateFallback('Version fallback failed');
+                };
+                return;
+              } catch (_) {
+                activateFallback(errName);
+                return;
+              }
+            }
+            activateFallback(errName);
+          };
+
+          req.onblocked = () => {
+            setTimeout(() => {
+              if (!isDone) activateFallback('Blocked timeout');
+            }, 500);
+          };
+        } catch (err) {
+          activateFallback(err?.message || 'Synchronous error');
+        }
       });
     }
 
     function dbGetAll(storeName) {
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction(storeName, 'readonly');
-        const store = tx.objectStore(storeName);
-        const req = store.getAll();
-        req.onsuccess = () => resolve(req.result || []);
-        req.onerror = () => reject(req.error);
+      if (useFallbackStorage || !db) {
+        return Promise.resolve(Array.isArray(fallbackStore[storeName]) ? [...fallbackStore[storeName]] : []);
+      }
+      return new Promise((resolve) => {
+        try {
+          const tx = db.transaction(storeName, 'readonly');
+          const store = tx.objectStore(storeName);
+          const req = store.getAll();
+          req.onsuccess = () => resolve(req.result || []);
+          req.onerror = () => {
+            console.warn(`IndexedDB dbGetAll(${storeName}) failed, using fallback data`);
+            resolve(fallbackStore[storeName] || []);
+          };
+        } catch (err) {
+          console.warn(`IndexedDB dbGetAll(${storeName}) exception:`, err);
+          resolve(fallbackStore[storeName] || []);
+        }
       });
     }
 
     function dbPut(storeName, value) {
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction(storeName, 'readwrite');
-        const store = tx.objectStore(storeName);
-        const req = store.put(value);
-        req.onsuccess = () => resolve(req.result);
-        req.onerror = () => reject(req.error);
+      if (useFallbackStorage || !db) {
+        if (storeName === 'settings') {
+          fallbackStore.settings[value.key] = value;
+          saveToLocalStorage('settings');
+        } else {
+          if (!Array.isArray(fallbackStore[storeName])) fallbackStore[storeName] = [];
+          const idx = fallbackStore[storeName].findIndex(i => i.id === value.id);
+          if (idx >= 0) {
+            fallbackStore[storeName][idx] = value;
+          } else {
+            fallbackStore[storeName].push(value);
+          }
+          saveToLocalStorage(storeName);
+        }
+        return Promise.resolve(value.id || value.key);
+      }
+      return new Promise((resolve) => {
+        try {
+          const tx = db.transaction(storeName, 'readwrite');
+          const store = tx.objectStore(storeName);
+          const req = store.put(value);
+          req.onsuccess = () => resolve(req.result);
+          req.onerror = () => {
+            console.warn(`IndexedDB put(${storeName}) notice, mirrored to fallback`);
+            if (storeName === 'settings') {
+              fallbackStore.settings[value.key] = value;
+              saveToLocalStorage('settings');
+            } else {
+              const idx = fallbackStore[storeName].findIndex(i => i.id === value.id);
+              if (idx >= 0) fallbackStore[storeName][idx] = value;
+              else fallbackStore[storeName].push(value);
+              saveToLocalStorage(storeName);
+            }
+            resolve(value.id || value.key);
+          };
+        } catch (err) {
+          console.warn(`IndexedDB put(${storeName}) exception:`, err);
+          resolve(value.id || value.key);
+        }
       });
     }
 
     function dbDelete(storeName, key) {
-      return new Promise((resolve, reject) => {
-        const tx = db.transaction(storeName, 'readwrite');
-        const store = tx.objectStore(storeName);
-        const req = store.delete(key);
-        req.onsuccess = () => resolve();
-        req.onerror = () => reject(req.error);
+      if (useFallbackStorage || !db) {
+        if (storeName === 'settings') {
+          delete fallbackStore.settings[key];
+          saveToLocalStorage('settings');
+        } else {
+          if (Array.isArray(fallbackStore[storeName])) {
+            fallbackStore[storeName] = fallbackStore[storeName].filter(i => i.id !== key);
+            saveToLocalStorage(storeName);
+          }
+        }
+        return Promise.resolve();
+      }
+      return new Promise((resolve) => {
+        try {
+          const tx = db.transaction(storeName, 'readwrite');
+          const store = tx.objectStore(storeName);
+          const req = store.delete(key);
+          req.onsuccess = () => resolve();
+          req.onerror = () => resolve();
+        } catch (err) {
+          console.warn(`IndexedDB delete(${storeName}) exception:`, err);
+          resolve();
+        }
+      });
+    }
+
+    function dbGet(storeName, key) {
+      if (useFallbackStorage || !db) {
+        if (storeName === 'settings') {
+          return Promise.resolve(fallbackStore.settings[key] || null);
+        }
+        return Promise.resolve(fallbackStore[storeName]?.find(i => i.id === key) || null);
+      }
+      return new Promise((resolve) => {
+        try {
+          const tx = db.transaction(storeName, 'readonly');
+          const store = tx.objectStore(storeName);
+          const req = store.get(key);
+          req.onsuccess = () => resolve(req.result || null);
+          req.onerror = () => resolve(null);
+        } catch (err) {
+          resolve(null);
+        }
       });
     }
 
@@ -2369,19 +2597,8 @@
       }
 
       // Check active list in settings or pick first
-      const savedSetting = await (async () => {
-        try {
-          const tx = db.transaction('settings', 'readonly');
-          const store = tx.objectStore('settings');
-          const req = store.get('currentListId');
-          return new Promise((res) => {
-            req.onsuccess = () => res(req.result ? req.result.value : null);
-            req.onerror = () => res(null);
-          });
-        } catch (e) {
-          return null;
-        }
-      })();
+      const savedSettingRecord = await dbGet('settings', 'currentListId');
+      const savedSetting = savedSettingRecord ? savedSettingRecord.value : null;
 
       if (savedSetting && lists.some(l => l.id === savedSetting)) {
         currentListId = savedSetting;
@@ -2536,10 +2753,10 @@
       const park = getCurrentPark();
 
       const totalCount = items.length;
-      const doneCount = items.filter(i => i.isDone).length;
-      const remainingCount = totalCount - doneCount;
+      const undoneCount = items.filter(i => !i.isDone).length;
 
-      statsChip.innerHTML = `<span>残り ${remainingCount} / 全 ${totalCount}件</span>`;
+      // 【タスク数の表示変更】分子：isDoneがfalseのカード数、分母：全カード数
+      statsChip.innerHTML = `<span>${undoneCount}/${totalCount}</span>`;
 
       if (totalCount === 0) {
         container.innerHTML = `
@@ -2558,10 +2775,58 @@
 
       if (currentViewMode === 'area') {
         renderByArea(container);
-      } else {
-        renderByCategory(container);
+      } else if (currentViewMode === 'food') {
+        renderFilteredCards(container, 'food');
+      } else if (currentViewMode === 'attraction') {
+        renderFilteredCards(container, 'attraction');
       }
     }
+
+    // View switch helper (3 tabs)
+    function switchViewMode(mode) {
+      currentViewMode = mode;
+      const areaBtn = document.getElementById('viewAreaBtn');
+      const foodBtn = document.getElementById('viewFoodBtn');
+      const attractionBtn = document.getElementById('viewAttractionBtn');
+
+      if (areaBtn) {
+        areaBtn.classList.toggle('active', mode === 'area');
+        areaBtn.setAttribute('aria-selected', mode === 'area');
+      }
+      if (foodBtn) {
+        foodBtn.classList.toggle('active', mode === 'food');
+        foodBtn.setAttribute('aria-selected', mode === 'food');
+      }
+      if (attractionBtn) {
+        attractionBtn.classList.toggle('active', mode === 'attraction');
+        attractionBtn.setAttribute('aria-selected', mode === 'attraction');
+      }
+      renderItems();
+    }
+
+    // Jump from card's area tag to Area tab and scroll to that area
+    window.jumpToArea = function(areaName) {
+      if (!areaName) return;
+      switchViewMode('area');
+      setTimeout(() => {
+        const areaSection = document.getElementById(`area-group-${encodeURIComponent(areaName)}`) ||
+          document.querySelector(`.group-section[data-area="${areaName}"]`);
+        if (areaSection) {
+          const headerEl = document.querySelector('header');
+          const headerOffset = (headerEl ? headerEl.offsetHeight : 64) + 65;
+          const elementPosition = areaSection.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+          window.scrollTo({
+            top: Math.max(0, offsetPosition),
+            behavior: 'smooth'
+          });
+
+          areaSection.classList.add('highlight-pulse');
+          setTimeout(() => areaSection.classList.remove('highlight-pulse'), 1500);
+        }
+      }, 70);
+    };
 
     // Item sorting: not done first, then high priority to low priority, then createdAt
     function sortWishlistItems(a, b) {
@@ -2602,6 +2867,8 @@
     function renderAreaGroupSection(container, area, areaItems) {
       const section = document.createElement('div');
       section.className = 'group-section';
+      section.id = `area-group-${encodeURIComponent(area)}`;
+      section.setAttribute('data-area', area);
 
       const emoji = ALL_AREA_EMOJIS[area] || '📍';
       const sectionHeader = document.createElement('div');
@@ -2629,43 +2896,37 @@
       container.appendChild(section);
     }
 
-    // Category-based grouping
-    function renderByCategory(container) {
-      const categories = ['food', 'restaurant', 'attraction'];
+    // Category-filtered cards ("食べたい" or "乗りたい")
+    function renderFilteredCards(container, categoryType) {
+      const isFood = categoryType === 'food';
+      const filtered = isFood
+        ? items.filter(i => i.category === 'food' || i.category === 'restaurant')
+        : items.filter(i => i.category === 'attraction');
 
-      categories.forEach(cat => {
-        const catItems = items.filter(i => i.category === cat);
-        if (catItems.length === 0) return;
-
-        const section = document.createElement('div');
-        section.className = 'group-section';
-
-        const name = CATEGORY_NAMES[cat] || cat;
-        const emoji = CATEGORY_EMOJIS[cat] || '✨';
-
-        const sectionHeader = document.createElement('div');
-        sectionHeader.className = 'group-header';
-        sectionHeader.innerHTML = `
-          <div class="group-title">
-            <span>${emoji}</span>
-            <span>${name}</span>
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <span class="empty-emoji">${isFood ? '🍴' : '🎢'}</span>
+            <h3 class="empty-title">${isFood ? '食べたいもの' : '乗りたいもの'}はまだありません</h3>
+            <p class="empty-desc">
+              下の「＋ 行きたいを追加」ボタンから${isFood ? '食べたいメニューやレストラン' : '乗りたいアトラクション'}を登録しましょう！
+            </p>
           </div>
-          <span class="group-count">${catItems.length}件</span>
         `;
-        section.appendChild(sectionHeader);
+        return;
+      }
 
-        const grid = document.createElement('div');
-        grid.className = 'cards-grid';
+      const grid = document.createElement('div');
+      grid.className = 'cards-grid';
 
-        catItems.sort(sortWishlistItems);
+      // Sort: not done first, then high priority, then createdAt
+      filtered.sort(sortWishlistItems);
 
-        catItems.forEach(item => {
-          grid.appendChild(createCardElement(item));
-        });
-
-        section.appendChild(grid);
-        container.appendChild(section);
+      filtered.forEach(item => {
+        grid.appendChild(createCardElement(item));
       });
+
+      container.appendChild(grid);
     }
 
     // Category Icon SVG in Grey for Cards Without Images
@@ -2731,9 +2992,9 @@
 
       const hasMap = Boolean(item.mapPhotoDataUrl && item.mapPhotoDataUrl.trim());
 
-      // Mobile Order badge (if enabled)
+      // Mobile Order badge (if enabled, emoji only as requested)
       const moBadgeHtml = item.isMobileOrder
-        ? '<span class="badge badge-mo" title="モバイルオーダー対応">📱 MO</span>'
+        ? '<span class="badge badge-mo" title="モバイルオーダー対応">📱</span>'
         : '';
 
       // Location note (1 line, reduced font size if >= 17 characters like キャンプ・ウッドチャック・キッチン)
@@ -2770,15 +3031,14 @@
             <div class="card-tags">
               <span class="badge badge-icon-only badge-priority-${priority}" title="${priLabel}">${PRIORITY_EMOJIS[priority] || '✨'}</span>
               <span class="badge badge-icon-only badge-category ${item.category}" title="${catName}">${catEmoji}</span>
-              <span class="badge badge-area">${areaEmoji} ${escapeHtml(item.area)}</span>
+              <span class="badge badge-area clickable" onclick="jumpToArea('${escapeJsString(item.area)}')" title="「${escapeHtml(item.area)}」エリアに移動">${areaEmoji} ${escapeHtml(item.area)}</span>
               ${moBadgeHtml}
             </div>
 
-            <!-- Tap Name to Copy (公式アプリ検索用) -->
-            <button class="card-name-btn" onclick="copyItemName('${escapeJsString(item.name)}')" title="名前をタップでコピー（公式アプリ検索用）">
+            <!-- Card Item Name (Tap copy removed) -->
+            <div class="card-name-title">
               <span class="card-name">${escapeHtml(item.name)}</span>
-              <span class="copy-hint-icon">📋</span>
-            </button>
+            </div>
 
             ${locationHtml}
             ${memoHtml}
@@ -3002,19 +3262,17 @@
 
     // --- Setup Event Listeners ---
     function setupEventListeners() {
-      // View switcher
+      // View switcher (3 tabs: area | food | attraction)
       document.getElementById('viewAreaBtn').onclick = () => {
-        currentViewMode = 'area';
-        document.getElementById('viewAreaBtn').classList.add('active');
-        document.getElementById('viewCategoryBtn').classList.remove('active');
-        renderItems();
+        switchViewMode('area');
       };
 
-      document.getElementById('viewCategoryBtn').onclick = () => {
-        currentViewMode = 'category';
-        document.getElementById('viewCategoryBtn').classList.add('active');
-        document.getElementById('viewAreaBtn').classList.remove('active');
-        renderItems();
+      document.getElementById('viewFoodBtn').onclick = () => {
+        switchViewMode('food');
+      };
+
+      document.getElementById('viewAttractionBtn').onclick = () => {
+        switchViewMode('attraction');
       };
 
       // Add item modal open
