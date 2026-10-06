@@ -406,6 +406,292 @@
       animation: gentleBounce 0.28s ease;
     }
 
+    /* Spot Card (Parent Accordion Card) */
+    .spot-card {
+      background: var(--bg-card, #FFFFFF);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border-soft);
+      overflow: hidden;
+      margin-bottom: 14px;
+      transition: all 0.2s ease;
+    }
+
+    .spot-card.priority-high {
+      border: 2px solid #FF7C9C;
+      box-shadow: 0 4px 16px rgba(255, 94, 126, 0.18);
+    }
+
+    .spot-card.all-done {
+      opacity: 0.6;
+      background: #F9FAFB;
+    }
+
+    /* Spot Header (Tappable Accordion Header) */
+    .spot-header {
+      padding: 12px 14px;
+      background: linear-gradient(180deg, #FFFFFF 0%, #FDF9FB 100%);
+      cursor: pointer;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+      border-bottom: 1px solid transparent;
+      transition: background 0.15s ease;
+    }
+
+    .spot-card:not(.collapsed) .spot-header {
+      border-bottom-color: #F0E6EC;
+    }
+
+    .spot-header:active {
+      background: #FFF5F7;
+    }
+
+    .spot-header-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .spot-title-area {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .spot-name {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.35;
+      word-break: break-word;
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .spot-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .spot-map-btn {
+      background: #F3F4F6;
+      border: 1px solid #E5E7EB;
+      color: #374151;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: all 0.15s ease;
+    }
+
+    .spot-map-btn:active {
+      transform: scale(0.95);
+      background: #E5E7EB;
+    }
+
+    .spot-chevron {
+      font-size: 0.78rem;
+      color: var(--text-sub);
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: #F3EEF1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.22s ease;
+    }
+
+    .spot-card.collapsed .spot-chevron {
+      transform: rotate(-90deg);
+    }
+
+    .spot-meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 5px;
+      margin-top: 6px;
+    }
+
+    .badge-seats {
+      background: #F5EFEB;
+      color: #5D493E;
+      font-size: 0.72rem;
+      padding: 1px 6px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .badge-count {
+      background: #EEF2F6;
+      color: #475569;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    /* Accordion Body & Child Menu List */
+    .spot-body {
+      display: block;
+      transition: all 0.2s ease;
+    }
+
+    .spot-card.collapsed .spot-body {
+      display: none;
+    }
+
+    .child-items-list {
+      padding: 4px 12px 10px;
+    }
+
+    .child-item-row {
+      display: flex;
+      align-items: center;
+      padding: 10px 2px;
+      border-bottom: 1px dashed #F0E6EC;
+      gap: 10px;
+      transition: opacity 0.2s ease;
+    }
+
+    .child-item-row:last-child {
+      border-bottom: none;
+    }
+
+    .child-item-row.is-done {
+      opacity: 0.5;
+    }
+
+    .child-item-row.is-done .child-item-title {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .child-item-img {
+      width: 52px;
+      height: 52px;
+      border-radius: 10px;
+      background: #FDF2F4;
+      flex-shrink: 0;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #F3E6EC;
+    }
+
+    .child-item-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .child-item-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .child-item-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.35;
+      word-break: break-word;
+    }
+
+    .child-item-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 3px;
+      flex-wrap: wrap;
+    }
+
+    .child-item-price {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--theme-primary);
+      background: #FFF0F4;
+      padding: 1px 6px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .child-item-actions {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+
+    .spot-add-menu-btn {
+      width: 100%;
+      margin-top: 8px;
+      padding: 9px 12px;
+      background: #FFFDFE;
+      border: 1.5px dashed #FFCCD7;
+      border-radius: 10px;
+      color: var(--theme-primary);
+      font-size: 0.86rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: all 0.15s ease;
+    }
+
+    .spot-add-menu-btn:hover, .spot-add-menu-btn:active {
+      background: #FFF0F4;
+      border-color: var(--theme-primary);
+    }
+
+    /* Form section cards for spot vs item input */
+    .form-section-card {
+      background: #FAFAFA;
+      border: 1px solid #ECECEC;
+      border-radius: 14px;
+      padding: 14px 12px;
+      margin-bottom: 14px;
+    }
+
+    .form-section-title {
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-bottom: 1.5px solid #F0E6EC;
+      padding-bottom: 6px;
+    }
+
+    .form-row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      align-items: flex-end;
+    }
+
     /* Large Map Viewer Lightbox (Tap map to return to cards) */
     .map-viewer-overlay {
       position: fixed;
@@ -1668,143 +1954,156 @@
 
       <div class="sheet-content">
         <form id="itemForm">
-          <input type="hidden" id="itemId">
+          <input type="hidden" id="editItemId" value="">
+          <input type="hidden" id="editSpotId" value="">
 
-          <!-- Photo Upload & Resize (Optional) -->
-          <div class="form-group">
-            <label class="form-label">写真 <span class="opt">（任意・なくても保存OK）</span></label>
-            <input type="file" id="photoInput" accept="image/*">
-            <div class="photo-upload-box" id="photoBox">
-              <div id="photoPrompt">
-                <div style="font-size: 2rem;">📷</div>
-                <div class="photo-prompt-text">タップして写真を選択</div>
-                <div class="photo-hint">※保存前に自動で小さくリサイズされます</div>
+          <!-- Section 1: Spot (Restaurant / Place) Information -->
+          <div class="form-section-card" id="spotInfoSection">
+            <div class="form-section-title">📍 場所・レストラン情報</div>
+
+            <!-- Existing Spot Selector -->
+            <div class="form-group" id="spotSelectGroup">
+              <label class="form-label" for="spotSelect">場所を選ぶ <span class="opt">（登録済みの場所、または新規入力）</span></label>
+              <select id="spotSelect" class="form-select">
+                <option value="new">＋ 新しい場所を入力する</option>
+              </select>
+            </div>
+
+            <!-- Location Name -->
+            <div class="form-group">
+              <label class="form-label" for="spotLocationName">場所名・レストラン名 <span class="req">※必須</span></label>
+              <input type="text" id="spotLocationName" class="form-input" placeholder="例：キャンプ・ウッドチャック・キッチン、美女と野獣など" required>
+            </div>
+
+            <!-- Area Selection -->
+            <div class="form-group">
+              <label class="form-label" for="itemArea">エリア <span class="req">※必須</span></label>
+              <select id="itemArea" class="form-select">
+                <!-- Dynamically populated based on park -->
+              </select>
+            </div>
+
+            <!-- Mobile Order & Seats Row -->
+            <div class="form-row-2">
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="checkbox-toggle-label" for="itemMobileOrder">
+                  <input type="checkbox" id="itemMobileOrder" class="custom-checkbox-input">
+                  <span class="custom-checkbox-box"></span>
+                  <span class="checkbox-toggle-text">
+                    <span>📱</span>
+                    <strong>モバイルオーダー</strong>
+                  </span>
+                </label>
               </div>
-              <div class="photo-preview-wrap" id="photoPreviewWrap">
-                <img id="photoPreviewImg" src="" alt="プレビュー">
-                <button type="button" class="photo-remove-btn" id="removePhotoBtn" title="写真を削除">✕</button>
+
+              <div class="form-group" style="margin-bottom: 0;">
+                <label class="form-label" for="spotSeats">席数 <span class="opt">（任意）</span></label>
+                <input type="text" id="spotSeats" class="form-input" placeholder="例：約440席">
+              </div>
+            </div>
+
+            <!-- Map Image Upload (High-Res Map Screenshot) -->
+            <div class="form-group" style="margin-top: 10px;">
+              <label class="form-label">マップ画像 <span class="opt">（任意・周辺地図スクショ）</span></label>
+              <input type="file" id="mapPhotoInput" accept="image/*">
+              <div class="photo-upload-box" id="mapPhotoBox">
+                <div id="mapPhotoPrompt">
+                  <div style="font-size: 1.6rem;">🗺️</div>
+                  <div class="photo-prompt-text">タップしてマップ画像を選択</div>
+                  <div class="photo-hint">※地図スクショを鮮明に保存できます</div>
+                </div>
+                <div class="photo-preview-wrap" id="mapPhotoPreviewWrap">
+                  <img id="mapPhotoPreviewImg" src="" alt="マッププレビュー">
+                  <button type="button" class="photo-remove-btn" id="removeMapPhotoBtn" title="マップ画像を削除">✕</button>
+                </div>
               </div>
             </div>
           </div>
 
-          <!-- Map Image Upload (Optional, High-Res Map/Screenshot) -->
-          <div class="form-group">
-            <label class="form-label">マップ <span class="opt">（任意・地図スクショやミニマップ）</span></label>
-            <input type="file" id="mapPhotoInput" accept="image/*">
-            <div class="photo-upload-box" id="mapPhotoBox">
-              <div id="mapPhotoPrompt">
-                <div style="font-size: 2rem;">🗺️</div>
-                <div class="photo-prompt-text">タップしてマップ画像を選択</div>
-                <div class="photo-hint">※地図スクショをそのまま鮮明に保存できます</div>
+          <!-- Section 2: Menu / Attraction Item Information -->
+          <div class="form-section-card" id="menuInfoSection">
+            <div class="form-section-title">🍴 メニュー・アトラクション情報</div>
+
+            <!-- Title / Name -->
+            <div class="form-group">
+              <label class="form-label" for="itemTitle">メニュー名 / アトラクション名 <span class="opt">（※メニュー追加時は必須）</span></label>
+              <textarea id="itemTitle" class="form-textarea" rows="2" placeholder="例：おにぎりサンド（牛カルビ）、スモークチキンレッグなど"></textarea>
+            </div>
+
+            <!-- Category Selection -->
+            <div class="form-group">
+              <label class="form-label">種類 <span class="req">※必須</span></label>
+              <div class="pill-grid pill-grid-2">
+                <label class="pill-radio">
+                  <input type="radio" name="itemCategory" value="food" checked>
+                  <div class="pill-label">
+                    <span class="pill-emoji">🍿</span>
+                    <span>食べたいもの</span>
+                  </div>
+                </label>
+
+                <label class="pill-radio">
+                  <input type="radio" name="itemCategory" value="attraction">
+                  <div class="pill-label">
+                    <span class="pill-emoji">🎢</span>
+                    <span>アトラクション</span>
+                  </div>
+                </label>
               </div>
-              <div class="photo-preview-wrap" id="mapPhotoPreviewWrap">
-                <img id="mapPhotoPreviewImg" src="" alt="マッププレビュー">
-                <button type="button" class="photo-remove-btn" id="removeMapPhotoBtn" title="マップ画像を削除">✕</button>
+            </div>
+
+            <!-- Priority Selection -->
+            <div class="form-group">
+              <label class="form-label">優先度 <span class="req">※必須</span></label>
+              <div class="pill-grid">
+                <label class="pill-radio">
+                  <input type="radio" name="itemPriority" value="high">
+                  <div class="pill-label pill-priority-high">
+                    <span class="pill-emoji">🔥</span>
+                    <span>高（絶対！）</span>
+                  </div>
+                </label>
+
+                <label class="pill-radio">
+                  <input type="radio" name="itemPriority" value="medium" checked>
+                  <div class="pill-label pill-priority-medium">
+                    <span class="pill-emoji">✨</span>
+                    <span>中（できれば）</span>
+                  </div>
+                </label>
+
+                <label class="pill-radio">
+                  <input type="radio" name="itemPriority" value="low">
+                  <div class="pill-label pill-priority-low">
+                    <span class="pill-emoji">☕</span>
+                    <span>低（時間あれば）</span>
+                  </div>
+                </label>
               </div>
             </div>
-          </div>
 
-          <!-- Name (Multiline textarea for line breaks) -->
-          <div class="form-group">
-            <label class="form-label" for="itemName">名前 <span class="req">※必須</span></label>
-            <textarea id="itemName" class="form-textarea" rows="2" placeholder="例：ミッキーワッフル、美女と野獣など" required></textarea>
-          </div>
-
-          <!-- Category Selection (Only Food and Attraction as requested) -->
-          <div class="form-group">
-            <label class="form-label">種類 <span class="req">※必須</span></label>
-            <div class="pill-grid pill-grid-2">
-              <label class="pill-radio">
-                <input type="radio" name="itemCategory" value="food" checked>
-                <div class="pill-label">
-                  <span class="pill-emoji">🍿</span>
-                  <span>食べたいもの</span>
-                </div>
-              </label>
-
-              <label class="pill-radio">
-                <input type="radio" name="itemCategory" value="attraction">
-                <div class="pill-label">
-                  <span class="pill-emoji">🎢</span>
-                  <span>アトラクション</span>
-                </div>
-              </label>
+            <!-- Price -->
+            <div class="form-group">
+              <label class="form-label" for="itemPrice">価格 <span class="opt">（任意）</span></label>
+              <input type="text" id="itemPrice" class="form-input" placeholder="例：¥750、800円など">
             </div>
-          </div>
 
-          <!-- Priority Selection -->
-          <div class="form-group">
-            <label class="form-label">優先度 <span class="req">※必須</span></label>
-            <div class="pill-grid">
-              <label class="pill-radio">
-                <input type="radio" name="itemPriority" value="high">
-                <div class="pill-label pill-priority-high">
-                  <span class="pill-emoji">🔥</span>
-                  <span>高（絶対！）</span>
+            <!-- Product Photo -->
+            <div class="form-group">
+              <label class="form-label">商品・アトラクション写真 <span class="opt">（任意）</span></label>
+              <input type="file" id="photoInput" accept="image/*">
+              <div class="photo-upload-box" id="photoBox">
+                <div id="photoPrompt">
+                  <div style="font-size: 1.6rem;">📷</div>
+                  <div class="photo-prompt-text">タップして写真を選択</div>
+                  <div class="photo-hint">※保存前に自動で小さくリサイズされます</div>
                 </div>
-              </label>
-
-              <label class="pill-radio">
-                <input type="radio" name="itemPriority" value="medium" checked>
-                <div class="pill-label pill-priority-medium">
-                  <span class="pill-emoji">✨</span>
-                  <span>中（できれば）</span>
+                <div class="photo-preview-wrap" id="photoPreviewWrap">
+                  <img id="photoPreviewImg" src="" alt="プレビュー">
+                  <button type="button" class="photo-remove-btn" id="removePhotoBtn" title="写真を削除">✕</button>
                 </div>
-              </label>
-
-              <label class="pill-radio">
-                <input type="radio" name="itemPriority" value="low">
-                <div class="pill-label pill-priority-low">
-                  <span class="pill-emoji">☕</span>
-                  <span>低（時間あれば）</span>
-                </div>
-              </label>
+              </div>
             </div>
-          </div>
-
-          <!-- Area Selection -->
-          <div class="form-group">
-            <label class="form-label" for="itemArea">エリア <span class="req">※必須</span></label>
-            <select id="itemArea" class="form-select">
-              <option value="ワールドバザール">ワールドバザール</option>
-              <option value="アドベンチャーランド">アドベンチャーランド</option>
-              <option value="ウエスタンランド">ウエスタンランド</option>
-              <option value="クリッターカントリー">クリッターカントリー</option>
-              <option value="ファンタジーランド" selected>ファンタジーランド</option>
-              <option value="トゥーンタウン">トゥーンタウン</option>
-              <option value="トゥモローランド">トゥモローランド</option>
-            </select>
-          </div>
-
-          <!-- Mobile Order Support Toggle -->
-          <div class="form-group">
-            <label class="checkbox-toggle-label" for="itemMobileOrder">
-              <input type="checkbox" id="itemMobileOrder" class="custom-checkbox-input">
-              <span class="custom-checkbox-box"></span>
-              <span class="checkbox-toggle-text">
-                <span>📱</span>
-                <strong>モバイルオーダー対応</strong>
-                <span class="opt">（MO対象メニュー・店舗）</span>
-              </span>
-            </label>
-          </div>
-
-          <!-- Location Note (Multiline textarea for line breaks) -->
-          <div class="form-group">
-            <label class="form-label" for="itemLocation">場所のメモ <span class="opt">（空でもOK）</span></label>
-            <textarea id="itemLocation" class="form-textarea" rows="2" placeholder="例：シンデレラ城の裏、射撃場となり など"></textarea>
-          </div>
-
-          <!-- Memo -->
-          <div class="form-group">
-            <label class="form-label" for="itemMemo">メモ <span class="opt">（自由入力）</span></label>
-            <textarea id="itemMemo" class="form-textarea" rows="3" placeholder="例：スーベニアランチケース付き、朝イチでDPA取得、ミックスベリー味 など"></textarea>
-          </div>
-
-          <!-- Reference URL -->
-          <div class="form-group">
-            <label class="form-label" for="itemUrl">参考URL <span class="opt">（公式アプリやサイトのリンク・空でもOK）</span></label>
-            <input type="url" id="itemUrl" class="form-input" placeholder="https://www.tokyodisneyresort.jp/..." inputmode="url">
           </div>
 
           <!-- Actions -->
@@ -1895,7 +2194,7 @@
           <div class="settings-section-title">アプリ情報</div>
           <div class="settings-row">
             <span class="settings-label">バージョン</span>
-            <span class="settings-val" id="appVersion">v2.6.0</span>
+            <span class="settings-val" id="appVersion">v3.0.0</span>
           </div>
           <div class="settings-row">
             <span class="settings-label">ストレージ</span>
@@ -1919,9 +2218,14 @@
           <div class="accordion-body" id="versionHistoryBody" style="display: none;">
             <div style="font-size: 0.88rem; color: var(--text-sub); line-height: 1.6; padding-top: 10px;">
               <div style="margin-bottom: 8px;">
-                <strong style="color: var(--theme-primary);">v2.6.0（最新）</strong><br>
+                <strong style="color: var(--theme-primary);">v3.0.0（最新）</strong><br>
+                ・レストラン/スポット（親）とメニュー/アトラクション（子）のデータ構造に刷新し、アコーディオン形式で折りたたみ可能なUIを実装<br>
+                ・親カードに最高優先度・エリア・📱（絵文字のみ）・席数・品数バッジを表示し、配下の最高優先度順に自動ソート
+              </div>
+              <div style="margin-bottom: 8px;">
+                <strong style="color: var(--text-muted);">v2.6.0</strong><br>
                 ・チェックボックス横の文言を「行った！」に統一し、完了カードの薄さ（opacity: 0.5）を調整<br>
-                ・カードに「モバイルオーダー対応（📱 MO）」フラグおよびバッジ表示機能を追加
+                ・カードに「モバイルオーダー対応」フラグ機能を追加
               </div>
               <div style="margin-bottom: 8px;">
                 <strong style="color: var(--text-muted);">v2.5.0</strong><br>
@@ -2092,13 +2396,13 @@
     /**
      * @license
      * SPDX-License-Identifier: Apache-2.0
-     * TDRおでかけメモ PWA v2.6.0
+     * TDRおでかけメモ PWA v3.0.0
      */
 
     // --- State Constants ---
-    const APP_VERSION = 'v2.6.0';
+    const APP_VERSION = 'v3.0.0';
     const DB_NAME = 'DisneylandWishlistDB';
-    const DB_VERSION = 1;
+    const DB_VERSION = 3;
 
     const PRIORITY_ORDER = {
       high: 3,
@@ -2192,7 +2496,9 @@
     let db = null;
     let currentListId = null;
     let lists = [];
+    let spots = [];
     let items = [];
+    let collapsedSpotIds = new Set();
     let currentViewMode = 'area'; // 'area' | 'category'
     let currentResizedPhotoData = '';
     let currentMapPhotoData = '';
@@ -2209,9 +2515,15 @@
             const listStore = database.createObjectStore('lists', { keyPath: 'id' });
             listStore.createIndex('createdAt', 'createdAt', { unique: false });
           }
+          if (!database.objectStoreNames.contains('spots')) {
+            const spotStore = database.createObjectStore('spots', { keyPath: 'id' });
+            spotStore.createIndex('listId', 'listId', { unique: false });
+            spotStore.createIndex('createdAt', 'createdAt', { unique: false });
+          }
           if (!database.objectStoreNames.contains('items')) {
             const itemStore = database.createObjectStore('items', { keyPath: 'id' });
             itemStore.createIndex('listId', 'listId', { unique: false });
+            itemStore.createIndex('spotId', 'spotId', { unique: false });
             itemStore.createIndex('createdAt', 'createdAt', { unique: false });
           }
           if (!database.objectStoreNames.contains('settings')) {
@@ -2390,7 +2702,7 @@
       }
 
       applyTheme();
-      await loadItems();
+      await loadData();
       renderListBar();
       renderItems();
       setupEventListeners();
@@ -2451,16 +2763,69 @@
       }
     }
 
-    async function loadItems() {
+    // Populate spot selector dropdown in item modal
+    function populateSpotSelect(selectedSpotId = 'new') {
+      const select = document.getElementById('spotSelect');
+      if (!select) return;
+      select.innerHTML = '<option value="new">＋ 新しい場所を入力する</option>';
+
+      spots.forEach(s => {
+        const opt = document.createElement('option');
+        opt.value = s.id;
+        opt.textContent = `📍 ${s.locationName} (${s.area})`;
+        if (s.id === selectedSpotId) opt.selected = true;
+        select.appendChild(opt);
+      });
+
+      if (selectedSpotId === 'new') {
+        select.value = 'new';
+      }
+    }
+
+    async function loadData() {
+      const allSpots = await dbGetAll('spots');
       const allItems = await dbGetAll('items');
-      items = allItems.filter(item => item.listId === currentListId);
+
+      // Auto-migrate legacy items that do not have spotId
+      for (const item of allItems) {
+        if (!item.spotId) {
+          const spotName = (item.locationMemo && item.locationMemo.trim()) || item.name || 'スポット';
+          let matchedSpot = allSpots.find(s => s.listId === item.listId && s.locationName === spotName);
+          if (!matchedSpot) {
+            matchedSpot = {
+              id: 'spot-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
+              listId: item.listId,
+              locationName: spotName,
+              area: item.area || 'ファンタジーランド',
+              isMobileOrder: Boolean(item.isMobileOrder),
+              seats: '',
+              mapPhotoDataUrl: item.mapPhotoDataUrl || '',
+              createdAt: item.createdAt || Date.now()
+            };
+            await dbPut('spots', matchedSpot);
+            allSpots.push(matchedSpot);
+          }
+          item.spotId = matchedSpot.id;
+          item.title = item.title || item.name;
+          item.price = item.price || '';
+          await dbPut('items', item);
+        } else {
+          if (!item.title && item.name) {
+            item.title = item.name;
+            await dbPut('items', item);
+          }
+        }
+      }
+
+      spots = allSpots.filter(s => s.listId === currentListId);
+      items = allItems.filter(i => i.listId === currentListId);
     }
 
     async function setCurrentList(listId) {
       currentListId = listId;
       await dbPut('settings', { key: 'currentListId', value: listId });
       applyTheme();
-      await loadItems();
+      await loadData();
       renderListBar();
       renderItems();
     }
@@ -2529,42 +2894,36 @@
       setTimeout(() => document.getElementById('listNameInput').focus(), 100);
     };
 
-    // --- Render Items ---
-    function renderItems() {
-      const container = document.getElementById('itemsContainer');
-      const statsChip = document.getElementById('statsChip');
-      const park = getCurrentPark();
+    // --- Render Items & Accordion Spots ---
+    function sortSpots(a, b) {
+      const itemsA = items.filter(i => i.spotId === a.id);
+      const itemsB = items.filter(i => i.spotId === b.id);
 
-      const totalCount = items.length;
-      const doneCount = items.filter(i => i.isDone).length;
-      const remainingCount = totalCount - doneCount;
+      const doneA = itemsA.length > 0 && itemsA.every(i => i.isDone);
+      const doneB = itemsB.length > 0 && itemsB.every(i => i.isDone);
 
-      statsChip.innerHTML = `<span>残り ${remainingCount} / 全 ${totalCount}件</span>`;
-
-      if (totalCount === 0) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <span class="empty-emoji">${park.emoji}</span>
-            <h3 class="empty-title">行きたいものがまだありません</h3>
-            <p class="empty-desc">
-              下の「＋ 行きたいを追加」ボタンから、${park.name}で食べたいものや乗りたいアトラクションを登録しましょう！
-            </p>
-          </div>
-        `;
-        return;
+      // Uncompleted spots come first
+      if (doneA !== doneB) {
+        return doneA ? 1 : -1;
       }
 
-      container.innerHTML = '';
+      // Priority calculation: highest priority among uncompleted items (or all items if done)
+      const uncompletedA = itemsA.filter(i => !i.isDone);
+      const uncompletedB = itemsB.filter(i => !i.isDone);
+      const targetA = uncompletedA.length > 0 ? uncompletedA : itemsA;
+      const targetB = uncompletedB.length > 0 ? uncompletedB : itemsB;
 
-      if (currentViewMode === 'area') {
-        renderByArea(container);
-      } else {
-        renderByCategory(container);
+      const priA = targetA.reduce((max, it) => Math.max(max, PRIORITY_ORDER[it.priority || 'medium'] || 2), 0);
+      const priB = targetB.reduce((max, it) => Math.max(max, PRIORITY_ORDER[it.priority || 'medium'] || 2), 0);
+
+      if (priA !== priB) {
+        return priB - priA;
       }
+
+      return (a.createdAt || 0) - (b.createdAt || 0);
     }
 
-    // Item sorting: not done first, then high priority to low priority, then createdAt
-    function sortWishlistItems(a, b) {
+    function sortSpotChildItems(a, b) {
       if (a.isDone !== b.isDone) {
         return a.isDone ? 1 : -1;
       }
@@ -2574,98 +2933,6 @@
         return pB - pA;
       }
       return (a.createdAt || 0) - (b.createdAt || 0);
-    }
-
-    // Area-based grouping
-    function renderByArea(container) {
-      const park = getCurrentPark();
-      const areaOrder = park.areas;
-      const renderedAreas = new Set();
-
-      areaOrder.forEach(area => {
-        const areaItems = items.filter(i => i.area === area);
-        if (areaItems.length === 0) return;
-        renderedAreas.add(area);
-
-        renderAreaGroupSection(container, area, areaItems);
-      });
-
-      // Render any items with areas outside of current park's standard list
-      const otherItems = items.filter(i => !renderedAreas.has(i.area));
-      const otherAreas = [...new Set(otherItems.map(i => i.area))];
-      otherAreas.forEach(area => {
-        const areaItems = items.filter(i => i.area === area);
-        renderAreaGroupSection(container, area, areaItems);
-      });
-    }
-
-    function renderAreaGroupSection(container, area, areaItems) {
-      const section = document.createElement('div');
-      section.className = 'group-section';
-
-      const emoji = ALL_AREA_EMOJIS[area] || '📍';
-      const sectionHeader = document.createElement('div');
-      sectionHeader.className = 'group-header';
-      sectionHeader.innerHTML = `
-        <div class="group-title">
-          <span>${emoji}</span>
-          <span>${area}</span>
-        </div>
-        <span class="group-count">${areaItems.length}件</span>
-      `;
-      section.appendChild(sectionHeader);
-
-      const grid = document.createElement('div');
-      grid.className = 'cards-grid';
-
-      // Sort: not done first, then high priority, then createdAt
-      areaItems.sort(sortWishlistItems);
-
-      areaItems.forEach(item => {
-        grid.appendChild(createCardElement(item));
-      });
-
-      section.appendChild(grid);
-      container.appendChild(section);
-    }
-
-    // Category-based grouping
-    function renderByCategory(container) {
-      const categories = ['food', 'restaurant', 'attraction'];
-
-      categories.forEach(cat => {
-        const catItems = items.filter(i => i.category === cat);
-        if (catItems.length === 0) return;
-
-        const section = document.createElement('div');
-        section.className = 'group-section';
-
-        const name = CATEGORY_NAMES[cat] || cat;
-        const emoji = CATEGORY_EMOJIS[cat] || '✨';
-
-        const sectionHeader = document.createElement('div');
-        sectionHeader.className = 'group-header';
-        sectionHeader.innerHTML = `
-          <div class="group-title">
-            <span>${emoji}</span>
-            <span>${name}</span>
-          </div>
-          <span class="group-count">${catItems.length}件</span>
-        `;
-        section.appendChild(sectionHeader);
-
-        const grid = document.createElement('div');
-        grid.className = 'cards-grid';
-
-        catItems.sort(sortWishlistItems);
-
-        catItems.forEach(item => {
-          grid.appendChild(createCardElement(item));
-        });
-
-        section.appendChild(grid);
-        container.appendChild(section);
-      });
     }
 
     // Category Icon SVG in Grey for Cards Without Images
@@ -2702,116 +2969,316 @@
       }
     }
 
-    // Create Single Card Element
-    function createCardElement(item) {
-      const priority = item.priority || 'medium';
-      const isHighPriority = priority === 'high';
-      const priLabel = PRIORITY_LABELS[priority] || '✨ できれば';
+    // Create Parent Accordion Spot Card Element
+    function createSpotCardElement(spot, categoryFilter = null) {
+      const spotItems = items.filter(i => i.spotId === spot.id && (!categoryFilter || i.category === categoryFilter));
+      spotItems.sort(sortSpotChildItems);
+
+      const isAllDone = spotItems.length > 0 && spotItems.every(i => i.isDone);
+      const uncompleted = spotItems.filter(i => !i.isDone);
+      const targetForPri = uncompleted.length > 0 ? uncompleted : spotItems;
+
+      let highestPri = 'medium';
+      if (targetForPri.some(i => i.priority === 'high')) {
+        highestPri = 'high';
+      } else if (targetForPri.some(i => i.priority === 'medium')) {
+        highestPri = 'medium';
+      } else if (targetForPri.some(i => i.priority === 'low')) {
+        highestPri = 'low';
+      }
+
+      const isHighPri = highestPri === 'high' && !isAllDone;
+      const priLabel = PRIORITY_LABELS[highestPri] || '✨ できれば';
+      const priEmoji = PRIORITY_EMOJIS[highestPri] || '✨';
+      const areaEmoji = ALL_AREA_EMOJIS[spot.area] || getCurrentPark().emoji;
+      const isCollapsed = collapsedSpotIds.has(spot.id);
 
       const card = document.createElement('div');
-      card.className = `card ${item.isDone ? 'is-done' : ''} priority-${priority}`;
-      card.id = `card-${item.id}`;
+      card.className = `spot-card ${isCollapsed ? 'collapsed' : ''} ${isHighPri ? 'priority-high' : ''} ${isAllDone ? 'all-done' : ''}`;
+      card.id = `spot-${spot.id}`;
 
-      const catEmoji = CATEGORY_EMOJIS[item.category] || '✨';
-      const catName = CATEGORY_NAMES[item.category] || '食べたいもの';
-      const areaEmoji = ALL_AREA_EMOJIS[item.area] || getCurrentPark().emoji;
-
-      // Image or Category Icon in Grey (Optional photo)
-      let photoLayerContent = '';
-      const hasPhoto = Boolean(item.photoDataUrl && item.photoDataUrl.trim());
-      if (hasPhoto) {
-        photoLayerContent = `<img src="${item.photoDataUrl}" alt="${escapeHtml(item.name)}" loading="lazy">`;
-      } else {
-        photoLayerContent = `
-          <div class="no-photo-icon-wrap" title="${catName}">
-            ${getCategoryIconSvg(item.category)}
-          </div>
-        `;
-      }
-
-      const hasMap = Boolean(item.mapPhotoDataUrl && item.mapPhotoDataUrl.trim());
-
-      // Mobile Order badge (if enabled)
-      const moBadgeHtml = item.isMobileOrder
-        ? '<span class="badge badge-mo" title="モバイルオーダー対応">📱 MO</span>'
+      // Mobile Order badge (emoji only: 📱)
+      const moBadgeHtml = spot.isMobileOrder
+        ? '<span class="badge badge-mo" title="モバイルオーダー対応">📱</span>'
         : '';
 
-      // Location note (1 line, reduced font size if >= 17 characters like キャンプ・ウッドチャック・キッチン)
-      let locationHtml = '';
-      if (item.locationMemo && item.locationMemo.trim()) {
-        const trimmedLoc = item.locationMemo.trim();
-        const isLongLoc = trimmedLoc.length >= 17;
-        locationHtml = `<div class="card-location ${isLongLoc ? 'long-text' : ''}" title="${escapeHtml(trimmedLoc)}">📍 ${escapeHtml(trimmedLoc)}</div>`;
-      }
+      // Seats badge
+      const seatsHtml = (spot.seats && spot.seats.trim())
+        ? `<span class="badge badge-seats" title="席数">🪑 ${escapeHtml(spot.seats.trim())}</span>`
+        : '';
 
-      // Memo
-      let memoHtml = '';
-      if (item.memo && item.memo.trim()) {
-        memoHtml = `<div class="card-memo">${escapeHtml(item.memo)}</div>`;
-      }
+      // Map photo button
+      const hasMap = Boolean(spot.mapPhotoDataUrl && spot.mapPhotoDataUrl.trim());
+      const mapBtnHtml = hasMap
+        ? `<button type="button" class="spot-map-btn" onclick="event.stopPropagation(); openMapViewer('${escapeJsString(spot.mapPhotoDataUrl)}')" title="マップ画像を大きく表示">🗺️ マップ</button>`
+        : '';
 
-      // Reference URL link button for footer (only if URL is present)
-      let urlFooterBtnHtml = '';
-      if (item.url && item.url.trim()) {
-        const safeUrl = escapeHtml(formatUrl(item.url));
-        urlFooterBtnHtml = `
-          <a href="${safeUrl}" target="_blank" rel="noopener noreferrer" class="action-icon-btn link-btn" onclick="event.stopPropagation()" title="参考リンクを新しいタブで開く">
-            <span style="font-size: 1.1rem; line-height: 1;">🔗</span>
-          </a>
+      // Items count badge
+      const countBadgeText = spotItems.length > 0
+        ? (isAllDone ? `✓ 全${spotItems.length}品完了` : `${spotItems.length}品`)
+        : '0品';
+
+      // Build Child Items List
+      let childItemsHtml = '';
+      if (spotItems.length === 0) {
+        childItemsHtml = `
+          <div style="padding: 12px 10px; text-align: center; color: var(--text-muted); font-size: 0.85rem;">
+            メニュー・アトラクションがまだ登録されていません
+          </div>
         `;
+      } else {
+        childItemsHtml = spotItems.map(item => {
+          const itemPri = item.priority || 'medium';
+          const itemCat = item.category || 'food';
+          const catEmoji = CATEGORY_EMOJIS[itemCat] || '🍿';
+          const catName = CATEGORY_NAMES[itemCat] || '食べたいもの';
+          const priItemEmoji = PRIORITY_EMOJIS[itemPri] || '✨';
+          const title = item.title || item.name || '';
+
+          // Image or Icon
+          let imgContent = '';
+          if (item.photoDataUrl && item.photoDataUrl.trim()) {
+            imgContent = `<img src="${item.photoDataUrl}" alt="${escapeHtml(title)}" loading="lazy">`;
+          } else {
+            imgContent = getCategoryIconSvg(itemCat);
+          }
+
+          // Price badge
+          let priceHtml = '';
+          if (item.price && item.price.trim()) {
+            priceHtml = `<span class="child-item-price">${escapeHtml(item.price.trim())}</span>`;
+          }
+
+          return `
+            <div class="child-item-row ${item.isDone ? 'is-done' : ''}" id="item-${item.id}">
+              <div class="child-item-img ${item.photoDataUrl ? '' : 'no-photo'}">
+                ${imgContent}
+              </div>
+              <div class="child-item-info">
+                <div class="child-item-title" onclick="copyItemName('${escapeJsString(title)}')" title="タップして名前をコピー（公式アプリ検索用）">
+                  <span>${escapeHtml(title)}</span>
+                  <span class="copy-hint-icon">📋</span>
+                </div>
+                <div class="child-item-meta">
+                  <span class="badge badge-icon-only badge-priority-${itemPri}" title="${PRIORITY_LABELS[itemPri] || ''}">${priItemEmoji}</span>
+                  <span class="badge badge-icon-only badge-category ${itemCat}" title="${catName}">${catEmoji}</span>
+                  ${priceHtml}
+                </div>
+              </div>
+              <div class="child-item-actions">
+                <div class="done-toggle" onclick="toggleItemDone('${item.id}')" title="行った！を切り替え">
+                  <div class="custom-check">${item.isDone ? '✓' : ''}</div>
+                  <span style="font-size: 0.78rem;">行った！</span>
+                </div>
+                <button type="button" class="action-icon-btn" onclick="openEditItemModal('${item.id}')" title="編集">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                  </svg>
+                </button>
+                <button type="button" class="action-icon-btn delete-btn" onclick="deleteItemConfirm('${item.id}')" title="削除">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
       }
 
       card.innerHTML = `
-        <div class="card-top">
-          <div class="card-img-wrap ${hasPhoto ? '' : 'no-photo'}" onclick="handleCardImageClick(event, '${item.id}')" title="${hasMap ? 'タップでマップ画像を大きく表示' : ''}">
-            ${photoLayerContent}
-          </div>
-          <div class="card-body">
-            <div class="card-tags">
-              <span class="badge badge-icon-only badge-priority-${priority}" title="${priLabel}">${PRIORITY_EMOJIS[priority] || '✨'}</span>
-              <span class="badge badge-icon-only badge-category ${item.category}" title="${catName}">${catEmoji}</span>
-              <span class="badge badge-area">${areaEmoji} ${escapeHtml(item.area)}</span>
-              ${moBadgeHtml}
+        <div class="spot-header" onclick="toggleSpotAccordion('${spot.id}')" role="button" aria-expanded="${!isCollapsed}">
+          <div class="spot-header-top">
+            <div class="spot-title-area">
+              <div class="spot-name">
+                <span>📍</span>
+                <span>${escapeHtml(spot.locationName)}</span>
+              </div>
+              <div class="spot-meta-row">
+                <span class="badge badge-icon-only badge-priority-${highestPri}" title="最高優先度: ${priLabel}">${priEmoji}</span>
+                <span class="badge badge-area">${areaEmoji} ${escapeHtml(spot.area)}</span>
+                ${moBadgeHtml}
+                ${seatsHtml}
+                <span class="badge badge-count">${countBadgeText}</span>
+              </div>
             </div>
 
-            <!-- Tap Name to Copy (公式アプリ検索用) -->
-            <button class="card-name-btn" onclick="copyItemName('${escapeJsString(item.name)}')" title="名前をタップでコピー（公式アプリ検索用）">
-              <span class="card-name">${escapeHtml(item.name)}</span>
-              <span class="copy-hint-icon">📋</span>
-            </button>
-
-            ${locationHtml}
-            ${memoHtml}
+            <div class="spot-header-actions">
+              ${mapBtnHtml}
+              <button type="button" class="action-icon-btn" onclick="event.stopPropagation(); openEditSpotModal('${spot.id}')" title="場所の情報を編集">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+              </button>
+              <button type="button" class="action-icon-btn delete-btn" onclick="event.stopPropagation(); deleteSpotConfirm('${spot.id}')" title="場所を削除">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                </svg>
+              </button>
+              <div class="spot-chevron" title="${isCollapsed ? '展開する' : '折りたたむ'}">
+                <span class="spot-chevron-arrow">${isCollapsed ? '▼' : '▲'}</span>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="card-footer">
-          <div class="done-toggle" onclick="toggleItemDone('${item.id}')">
-            <div class="custom-check">
-              ${item.isDone ? '✓' : ''}
-            </div>
-            <span>行った！</span>
-          </div>
-
-          <div class="card-action-btns">
-            ${urlFooterBtnHtml}
-            <button class="action-icon-btn" onclick="openEditItemModal('${item.id}')" title="編集">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+        <div class="spot-body">
+          <div class="child-items-list">
+            ${childItemsHtml}
+            <button type="button" class="spot-add-menu-btn" onclick="openAddMenuItemModal('${spot.id}')">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
               </svg>
-            </button>
-            <button class="action-icon-btn delete-btn" onclick="deleteItemConfirm('${item.id}')" title="削除">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="3 6 5 6 21 6"></polyline>
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-              </svg>
+              <span>この場所にメニューを追加</span>
             </button>
           </div>
         </div>
       `;
 
       return card;
+    }
+
+    // Toggle spot accordion expansion
+    window.toggleSpotAccordion = function(spotId) {
+      if (collapsedSpotIds.has(spotId)) {
+        collapsedSpotIds.delete(spotId);
+      } else {
+        collapsedSpotIds.add(spotId);
+      }
+      const spotCard = document.getElementById(`spot-${spotId}`);
+      if (spotCard) {
+        const isCollapsed = collapsedSpotIds.has(spotId);
+        spotCard.classList.toggle('collapsed', isCollapsed);
+        spotCard.querySelector('.spot-header')?.setAttribute('aria-expanded', !isCollapsed);
+        const arrow = spotCard.querySelector('.spot-chevron-arrow');
+        if (arrow) {
+          arrow.textContent = isCollapsed ? '▼' : '▲';
+        }
+      }
+    };
+
+    // Area-based grouping
+    function renderByArea(container) {
+      const park = getCurrentPark();
+      const areaOrder = park.areas;
+      const renderedAreas = new Set();
+
+      areaOrder.forEach(area => {
+        const areaSpots = spots.filter(s => s.area === area);
+        if (areaSpots.length === 0) return;
+        renderedAreas.add(area);
+        renderAreaGroupSection(container, area, areaSpots);
+      });
+
+      // Render any spots with areas outside of current park's standard list
+      const otherSpots = spots.filter(s => !renderedAreas.has(s.area));
+      const otherAreas = [...new Set(otherSpots.map(s => s.area))];
+      otherAreas.forEach(area => {
+        const areaSpots = spots.filter(s => s.area === area);
+        renderAreaGroupSection(container, area, areaSpots);
+      });
+    }
+
+    function renderAreaGroupSection(container, area, areaSpots) {
+      const section = document.createElement('div');
+      section.className = 'group-section';
+
+      const emoji = ALL_AREA_EMOJIS[area] || '📍';
+      const totalAreaItems = areaSpots.reduce((sum, sp) => sum + items.filter(i => i.spotId === sp.id).length, 0);
+
+      const sectionHeader = document.createElement('div');
+      sectionHeader.className = 'group-header';
+      sectionHeader.innerHTML = `
+        <div class="group-title">
+          <span>${emoji}</span>
+          <span>${area}</span>
+        </div>
+        <span class="group-count">${areaSpots.length}ヶ所 (${totalAreaItems}品)</span>
+      `;
+      section.appendChild(sectionHeader);
+
+      areaSpots.sort(sortSpots);
+      areaSpots.forEach(spot => {
+        section.appendChild(createSpotCardElement(spot));
+      });
+
+      container.appendChild(section);
+    }
+
+    // Category-based grouping
+    function renderByCategory(container) {
+      const categories = ['food', 'attraction'];
+
+      categories.forEach(cat => {
+        const catItems = items.filter(i => i.category === cat);
+        if (catItems.length === 0) return;
+
+        const spotIds = [...new Set(catItems.map(i => i.spotId))];
+        const catSpots = spots.filter(s => spotIds.includes(s.id));
+
+        const section = document.createElement('div');
+        section.className = 'group-section';
+
+        const name = CATEGORY_NAMES[cat] || cat;
+        const emoji = CATEGORY_EMOJIS[cat] || '✨';
+
+        const sectionHeader = document.createElement('div');
+        sectionHeader.className = 'group-header';
+        sectionHeader.innerHTML = `
+          <div class="group-title">
+            <span>${emoji}</span>
+            <span>${name}</span>
+          </div>
+          <span class="group-count">${catSpots.length}ヶ所 (${catItems.length}品)</span>
+        `;
+        section.appendChild(sectionHeader);
+
+        catSpots.sort(sortSpots);
+        catSpots.forEach(spot => {
+          section.appendChild(createSpotCardElement(spot, cat));
+        });
+
+        container.appendChild(section);
+      });
+    }
+
+    // --- Render Items ---
+    function renderItems() {
+      const container = document.getElementById('itemsContainer');
+      const statsChip = document.getElementById('statsChip');
+      const park = getCurrentPark();
+
+      const totalItems = items.length;
+      const doneItems = items.filter(i => i.isDone).length;
+      const remainingCount = totalItems - doneItems;
+
+      statsChip.innerHTML = `<span>残り ${remainingCount} / 全 ${totalItems}品 (${spots.length}ヶ所)</span>`;
+
+      if (spots.length === 0 && totalItems === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <span class="empty-emoji">${park.emoji}</span>
+            <h3 class="empty-title">行きたいものがまだありません</h3>
+            <p class="empty-desc">
+              下の「＋ 行きたいを追加」ボタンから、${park.name}で食べたいものや乗りたいアトラクションを登録しましょう！
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = '';
+
+      if (currentViewMode === 'area') {
+        renderByArea(container);
+      } else {
+        renderByCategory(container);
+      }
     }
 
     // Toggle Done
@@ -2823,8 +3290,9 @@
       await dbPut('items', item);
       renderItems();
 
+      const title = item.title || item.name || '';
       if (item.isDone) {
-        showToast(`「${item.name}」を行きました！🎉`, '🎉');
+        showToast(`「${title}」を行きました！🎉`, '🎉');
       }
     };
 
@@ -2833,79 +3301,151 @@
       copyToClipboard(name);
     };
 
-    // Edit Item
-    window.openEditItemModal = function(itemId) {
-      const item = items.find(i => i.id === itemId);
-      if (!item) return;
+    // Open Modal to add menu item directly to a specific spot
+    window.openAddMenuItemModal = function(spotId) {
+      const spot = spots.find(s => s.id === spotId);
+      if (!spot) return;
 
-      document.getElementById('itemModalTitle').textContent = '行きたいものを編集';
-      document.getElementById('itemId').value = item.id;
-      document.getElementById('itemName').value = item.name;
-      populateAreaOptions(item.area);
-      document.getElementById('itemLocation').value = item.locationMemo || '';
-      document.getElementById('itemMemo').value = item.memo || '';
-      document.getElementById('itemUrl').value = item.url || '';
+      document.getElementById('itemModalTitle').textContent = `「${spot.locationName}」にメニューを追加`;
+      document.getElementById('itemForm').reset();
+      document.getElementById('editItemId').value = '';
+      document.getElementById('editSpotId').value = spot.id;
 
-      const catRadios = document.querySelectorAll('input[name="itemCategory"]');
-      let matchedCategory = false;
-      catRadios.forEach(radio => {
-        if (radio.value === item.category) {
-          radio.checked = true;
-          matchedCategory = true;
-        } else {
-          radio.checked = false;
-        }
-      });
-      // If legacy item was 'restaurant', default to 'food' in the form
-      if (!matchedCategory && catRadios.length > 0) {
-        catRadios[0].checked = true;
-      }
+      populateSpotSelect(spot.id);
+      document.getElementById('spotLocationName').value = spot.locationName;
+      populateAreaOptions(spot.area);
+      document.getElementById('itemMobileOrder').checked = Boolean(spot.isMobileOrder);
+      document.getElementById('spotSeats').value = spot.seats || '';
+      currentMapPhotoData = spot.mapPhotoDataUrl || '';
+      updateMapPhotoPreviewUI();
 
-      // Priority radio
-      const priRadios = document.querySelectorAll('input[name="itemPriority"]');
-      const curPri = item.priority || 'medium';
-      priRadios.forEach(radio => {
-        radio.checked = radio.value === curPri;
-      });
-
-      // Mobile Order
-      document.getElementById('itemMobileOrder').checked = Boolean(item.isMobileOrder);
-
-      // Photo preview
-      currentResizedPhotoData = item.photoDataUrl || '';
+      // Reset menu fields
+      document.getElementById('itemTitle').value = '';
+      document.getElementById('itemPrice').value = '';
+      const defFood = document.querySelector('input[name="itemCategory"][value="food"]');
+      if (defFood) defFood.checked = true;
+      const defPri = document.querySelector('input[name="itemPriority"][value="medium"]');
+      if (defPri) defPri.checked = true;
+      currentResizedPhotoData = '';
       updatePhotoPreviewUI();
 
-      // Map photo preview
-      currentMapPhotoData = item.mapPhotoDataUrl || '';
+      openModal('itemModal');
+      setTimeout(() => document.getElementById('itemTitle').focus(), 150);
+    };
+
+    // Open Modal to edit spot information
+    window.openEditSpotModal = function(spotId) {
+      const spot = spots.find(s => s.id === spotId);
+      if (!spot) return;
+
+      document.getElementById('itemModalTitle').textContent = '場所・レストラン情報を編集';
+      document.getElementById('itemForm').reset();
+      document.getElementById('editItemId').value = '';
+      document.getElementById('editSpotId').value = spot.id;
+
+      populateSpotSelect(spot.id);
+      document.getElementById('spotLocationName').value = spot.locationName;
+      populateAreaOptions(spot.area);
+      document.getElementById('itemMobileOrder').checked = Boolean(spot.isMobileOrder);
+      document.getElementById('spotSeats').value = spot.seats || '';
+      currentMapPhotoData = spot.mapPhotoDataUrl || '';
       updateMapPhotoPreviewUI();
+
+      // Menu fields empty (optional when only updating spot info)
+      document.getElementById('itemTitle').value = '';
+      document.getElementById('itemPrice').value = '';
+      currentResizedPhotoData = '';
+      updatePhotoPreviewUI();
 
       openModal('itemModal');
     };
 
-    window.viewOrEditItem = function(itemId) {
-      openEditItemModal(itemId);
-    };
-
-    // Card Image Click: If map registered, show map large; otherwise gentle bounce
-    window.handleCardImageClick = function(event, itemId) {
-      if (event) event.stopPropagation();
+    // Open Modal to edit child menu/attraction item
+    window.openEditItemModal = function(itemId) {
       const item = items.find(i => i.id === itemId);
-      if (!item || !item.mapPhotoDataUrl || !item.mapPhotoDataUrl.trim()) {
-        // No map photo: gentle bounce animation on image thumbnail
-        const card = document.getElementById(`card-${itemId}`);
-        if (card) {
-          const imgWrap = card.querySelector('.card-img-wrap');
-          if (imgWrap) {
-            imgWrap.classList.remove('no-map-bounce');
-            void imgWrap.offsetWidth; // Force reflow
-            imgWrap.classList.add('no-map-bounce');
-          }
-        }
-        return;
+      if (!item) return;
+
+      const spot = spots.find(s => s.id === item.spotId);
+
+      document.getElementById('itemModalTitle').textContent = 'メニュー・アイテムを編集';
+      document.getElementById('itemForm').reset();
+      document.getElementById('editItemId').value = item.id;
+      document.getElementById('editSpotId').value = spot ? spot.id : '';
+
+      populateSpotSelect(spot ? spot.id : 'new');
+      if (spot) {
+        document.getElementById('spotLocationName').value = spot.locationName;
+        populateAreaOptions(spot.area);
+        document.getElementById('itemMobileOrder').checked = Boolean(spot.isMobileOrder);
+        document.getElementById('spotSeats').value = spot.seats || '';
+        currentMapPhotoData = spot.mapPhotoDataUrl || '';
+        updateMapPhotoPreviewUI();
+      } else {
+        document.getElementById('spotLocationName').value = item.locationMemo || '';
+        populateAreaOptions(item.area);
+        document.getElementById('itemMobileOrder').checked = Boolean(item.isMobileOrder);
+        document.getElementById('spotSeats').value = '';
+        currentMapPhotoData = item.mapPhotoDataUrl || '';
+        updateMapPhotoPreviewUI();
       }
 
-      // Show map image large (in its original size/proportions)
-      openMapViewer(item.mapPhotoDataUrl);
+      document.getElementById('itemTitle').value = item.title || item.name || '';
+      document.getElementById('itemPrice').value = item.price || '';
+
+      const catRadios = document.querySelectorAll('input[name="itemCategory"]');
+      catRadios.forEach(r => {
+        r.checked = r.value === item.category;
+      });
+
+      const priRadios = document.querySelectorAll('input[name="itemPriority"]');
+      const curPri = item.priority || 'medium';
+      priRadios.forEach(r => {
+        r.checked = r.value === curPri;
+      });
+
+      currentResizedPhotoData = item.photoDataUrl || '';
+      updatePhotoPreviewUI();
+
+      openModal('itemModal');
+      setTimeout(() => document.getElementById('itemTitle').focus(), 150);
+    };
+
+    // Delete Spot and all its child items
+    window.deleteSpotConfirm = async function(spotId) {
+      const spot = spots.find(s => s.id === spotId);
+      if (!spot) return;
+
+      const count = items.filter(i => i.spotId === spotId).length;
+      const msg = count > 0
+        ? `場所「${spot.locationName}」と、含まれる${count}件のメニューをすべて削除しますか？`
+        : `場所「${spot.locationName}」を削除しますか？`;
+
+      if (window.confirm(msg)) {
+        const childItems = items.filter(i => i.spotId === spotId);
+        for (const it of childItems) {
+          await dbDelete('items', it.id);
+        }
+        await dbDelete('spots', spotId);
+
+        items = items.filter(i => i.spotId !== spotId);
+        spots = spots.filter(s => s.id !== spotId);
+        renderItems();
+        showToast('場所とメニューを削除しました', '🗑️');
+      }
+    };
+
+    // Delete Single Item
+    window.deleteItemConfirm = async function(itemId) {
+      const item = items.find(i => i.id === itemId);
+      if (!item) return;
+
+      const title = item.title || item.name || '項目';
+      if (window.confirm(`「${title}」を削除してもよろしいですか？`)) {
+        await dbDelete('items', itemId);
+        items = items.filter(i => i.id !== itemId);
+        renderItems();
+        showToast('削除しました', '🗑️');
+      }
     };
 
     // Open Large Map Viewer (Lightbox)
@@ -2939,19 +3479,6 @@
         }
       }
     });
-
-    // Delete Item
-    window.deleteItemConfirm = async function(itemId) {
-      const item = items.find(i => i.id === itemId);
-      if (!item) return;
-
-      if (window.confirm(`「${item.name}」を削除してもよろしいですか？`)) {
-        await dbDelete('items', itemId);
-        items = items.filter(i => i.id !== itemId);
-        renderItems();
-        showToast('削除しました', '🗑️');
-      }
-    };
 
     // --- Modal Helpers ---
     function openModal(modalId) {
@@ -3017,21 +3544,54 @@
         renderItems();
       };
 
-      // Add item modal open
+      // Spot Selector dropdown change in item modal
+      const spotSelectEl = document.getElementById('spotSelect');
+      if (spotSelectEl) {
+        spotSelectEl.onchange = (e) => {
+          const val = e.target.value;
+          if (val === 'new') {
+            document.getElementById('editSpotId').value = '';
+            document.getElementById('spotLocationName').value = '';
+            document.getElementById('spotSeats').value = '';
+            document.getElementById('itemMobileOrder').checked = false;
+            currentMapPhotoData = '';
+            updateMapPhotoPreviewUI();
+            document.getElementById('spotLocationName').focus();
+          } else {
+            const s = spots.find(sp => sp.id === val);
+            if (s) {
+              document.getElementById('editSpotId').value = s.id;
+              document.getElementById('spotLocationName').value = s.locationName;
+              document.getElementById('itemArea').value = s.area;
+              document.getElementById('spotSeats').value = s.seats || '';
+              document.getElementById('itemMobileOrder').checked = Boolean(s.isMobileOrder);
+              currentMapPhotoData = s.mapPhotoDataUrl || '';
+              updateMapPhotoPreviewUI();
+            }
+          }
+        };
+      }
+
+      // Add item modal open (FAB button)
       document.getElementById('openAddModalBtn').onclick = () => {
         document.getElementById('itemModalTitle').textContent = '行きたいものを追加';
         document.getElementById('itemForm').reset();
-        document.getElementById('itemId').value = '';
-        document.getElementById('itemUrl').value = '';
+        document.getElementById('editItemId').value = '';
+        document.getElementById('editSpotId').value = '';
+        populateSpotSelect('new');
         populateAreaOptions();
-        const defaultPriRadio = document.querySelector('input[name="itemPriority"][value="medium"]');
-        if (defaultPriRadio) defaultPriRadio.checked = true;
         document.getElementById('itemMobileOrder').checked = false;
-        currentResizedPhotoData = '';
-        updatePhotoPreviewUI();
+        document.getElementById('spotSeats').value = '';
         currentMapPhotoData = '';
         updateMapPhotoPreviewUI();
+        const defaultPriRadio = document.querySelector('input[name="itemPriority"][value="medium"]');
+        if (defaultPriRadio) defaultPriRadio.checked = true;
+        const defaultCatRadio = document.querySelector('input[name="itemCategory"][value="food"]');
+        if (defaultCatRadio) defaultCatRadio.checked = true;
+        currentResizedPhotoData = '';
+        updatePhotoPreviewUI();
         openModal('itemModal');
+        setTimeout(() => document.getElementById('spotLocationName').focus(), 150);
       };
 
       // Close Item Modal
@@ -3074,7 +3634,7 @@
         document.getElementById('mapPhotoInput').click();
       };
 
-      // Map photo input change (no resizing as requested: keep high-res map screenshot)
+      // Map photo input change (no resizing: keep high-res map screenshot)
       document.getElementById('mapPhotoInput').onchange = (e) => {
         const file = e.target.files && e.target.files[0];
         if (!file) return;
@@ -3101,67 +3661,105 @@
         updateMapPhotoPreviewUI();
       };
 
-      // Save Item (Form Submit or Button Click)
+      // Save Item & Spot (Form Submit or Button Click)
       async function handleSaveItem() {
-        const nameInput = document.getElementById('itemName');
-        const name = nameInput.value.trim();
-        if (!name) {
-          nameInput.focus();
+        const locNameInput = document.getElementById('spotLocationName');
+        const locationName = locNameInput.value.trim();
+        if (!locationName) {
+          alert('場所名・レストラン名を入力してください');
+          locNameInput.focus();
           return;
         }
 
-        const itemId = document.getElementById('itemId').value;
+        const editItemId = document.getElementById('editItemId').value;
+        const editSpotId = document.getElementById('editSpotId').value;
         const area = document.getElementById('itemArea').value;
-        const locationMemo = document.getElementById('itemLocation').value.trim();
-        const memo = document.getElementById('itemMemo').value.trim();
-        const url = document.getElementById('itemUrl').value.trim();
+        const isMobileOrder = Boolean(document.getElementById('itemMobileOrder').checked);
+        const seats = document.getElementById('spotSeats').value.trim();
+        const mapPhotoData = currentMapPhotoData || '';
+
+        const titleInput = document.getElementById('itemTitle');
+        const itemTitle = titleInput.value.trim();
+        const price = document.getElementById('itemPrice').value.trim();
         const categoryRadio = document.querySelector('input[name="itemCategory"]:checked');
         const category = categoryRadio ? categoryRadio.value : 'food';
         const priorityRadio = document.querySelector('input[name="itemPriority"]:checked');
         const priority = priorityRadio ? priorityRadio.value : 'medium';
-        const isMobileOrder = Boolean(document.getElementById('itemMobileOrder').checked);
-        // Photos are completely optional
         const photoData = currentResizedPhotoData || '';
-        const mapPhotoData = currentMapPhotoData || '';
 
-        if (itemId) {
-          // Update existing
-          const item = items.find(i => i.id === itemId);
+        // 1. Save or Update Spot
+        let targetSpot = null;
+        if (editSpotId) {
+          targetSpot = spots.find(s => s.id === editSpotId);
+        }
+
+        if (targetSpot) {
+          targetSpot.locationName = locationName;
+          targetSpot.area = area;
+          targetSpot.isMobileOrder = isMobileOrder;
+          targetSpot.seats = seats;
+          targetSpot.mapPhotoDataUrl = mapPhotoData;
+          await dbPut('spots', targetSpot);
+        } else {
+          // Check if spot with same locationName exists in current list
+          targetSpot = spots.find(s => s.listId === currentListId && s.locationName === locationName);
+          if (targetSpot) {
+            targetSpot.area = area;
+            targetSpot.isMobileOrder = isMobileOrder;
+            targetSpot.seats = seats;
+            if (mapPhotoData) targetSpot.mapPhotoDataUrl = mapPhotoData;
+            await dbPut('spots', targetSpot);
+          } else {
+            targetSpot = {
+              id: 'spot-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
+              listId: currentListId,
+              locationName: locationName,
+              area: area,
+              isMobileOrder: isMobileOrder,
+              seats: seats,
+              mapPhotoDataUrl: mapPhotoData,
+              createdAt: Date.now()
+            };
+            await dbPut('spots', targetSpot);
+            spots.push(targetSpot);
+          }
+        }
+
+        // 2. Save or Update Child Item
+        if (editItemId) {
+          const item = items.find(i => i.id === editItemId);
           if (item) {
-            item.name = name;
+            item.spotId = targetSpot.id;
+            item.title = itemTitle || item.title || item.name;
+            item.name = item.title;
+            item.area = area;
             item.category = category;
             item.priority = priority;
-            item.area = area;
-            item.locationMemo = locationMemo;
-            item.memo = memo;
-            item.url = url;
+            item.price = price;
             item.photoDataUrl = photoData;
-            item.mapPhotoDataUrl = mapPhotoData;
-            item.isMobileOrder = isMobileOrder;
             await dbPut('items', item);
             showToast('更新しました！', '✨');
           }
-        } else {
-          // Create new item
+        } else if (itemTitle) {
           const newItem = {
-            id: 'item-' + Date.now(),
+            id: 'item-' + Date.now() + '-' + Math.random().toString(36).substr(2, 5),
             listId: currentListId,
-            name: name,
+            spotId: targetSpot.id,
+            title: itemTitle,
+            name: itemTitle,
+            area: area,
             category: category,
             priority: priority,
-            area: area,
-            locationMemo: locationMemo,
-            memo: memo,
-            url: url,
+            price: price,
             photoDataUrl: photoData,
-            mapPhotoDataUrl: mapPhotoData,
-            isMobileOrder: isMobileOrder,
             isDone: false,
             createdAt: Date.now()
           };
           await dbPut('items', newItem);
           items.push(newItem);
           showToast('行きたいリストに追加しました！', '🎉');
+        } else {
+          showToast('場所の情報を更新しました！', '✨');
         }
 
         closeModal('itemModal');
@@ -3215,7 +3813,7 @@
 
         closeModal('listModal');
         applyTheme();
-        await loadItems();
+        await loadData();
         renderListBar();
         renderItems();
         renderManageLists();
@@ -3267,12 +3865,14 @@
         let jsonStr = '';
         try {
           const allLists = await dbGetAll('lists');
+          const allSpots = await dbGetAll('spots');
           const allItems = await dbGetAll('items');
 
           const backup = {
             version: APP_VERSION,
             exportedAt: new Date().toISOString(),
             lists: allLists,
+            spots: allSpots,
             items: allItems
           };
 
@@ -3480,7 +4080,15 @@
       const list = lists.find(l => l.id === listId);
       if (!list) return;
 
-      if (window.confirm(`リスト「${list.name}」と、中に登録されているすべての行きたい項目を削除しますか？`)) {
+      if (window.confirm(`リスト「${list.name}」と、中に登録されているすべての場所・行きたい項目を削除しますか？`)) {
+        // Delete all spots of this list
+        const allSpots = await dbGetAll('spots');
+        for (const spot of allSpots) {
+          if (spot.listId === listId) {
+            await dbDelete('spots', spot.id);
+          }
+        }
+
         // Delete all items of this list
         const allItems = await dbGetAll('items');
         for (const item of allItems) {
@@ -3508,7 +4116,7 @@
       try {
         const data = JSON.parse(text);
 
-        if (!data.lists || !data.items || !Array.isArray(data.lists) || !Array.isArray(data.items)) {
+        if (!data.lists || !Array.isArray(data.lists)) {
           throw new Error('形式が正しくありません');
         }
 
@@ -3516,12 +4124,19 @@
           for (const l of data.lists) {
             await dbPut('lists', l);
           }
-          for (const it of data.items) {
-            await dbPut('items', it);
+          if (data.spots && Array.isArray(data.spots)) {
+            for (const sp of data.spots) {
+              await dbPut('spots', sp);
+            }
+          }
+          if (data.items && Array.isArray(data.items)) {
+            for (const it of data.items) {
+              await dbPut('items', it);
+            }
           }
 
           lists = await dbGetAll('lists');
-          await loadItems();
+          await loadData();
           renderListBar();
           renderItems();
           closeModal('importModal');
