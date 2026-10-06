@@ -339,6 +339,94 @@
       gap: 12px;
     }
 
+    /* Restaurant Group Section (in "食べたい" tab) */
+    .restaurant-group-section {
+      margin-bottom: 22px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.45);
+      border: 1px solid rgba(255, 142, 170, 0.2);
+      padding: 10px 10px 12px;
+    }
+
+    [data-theme="sea"] .restaurant-group-section {
+      background: rgba(255, 255, 255, 0.55);
+      border: 1px solid rgba(30, 144, 232, 0.2);
+    }
+
+    .restaurant-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 12px;
+      margin-bottom: 10px;
+      border-radius: 12px;
+      background: #FFFFFF;
+      border-left: 4px solid var(--theme-primary);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+      gap: 8px;
+    }
+
+    .restaurant-header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 0;
+    }
+
+    .restaurant-title-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .restaurant-icon {
+      font-size: 1.15rem;
+      line-height: 1;
+    }
+
+    .restaurant-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text-main);
+      letter-spacing: -0.2px;
+      word-break: break-word;
+    }
+
+    .restaurant-seats-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #6B5549;
+      background: #F8F1EB;
+      padding: 2px 8px;
+      border-radius: 8px;
+      width: fit-content;
+      line-height: 1.2;
+    }
+
+    [data-theme="sea"] .restaurant-seats-badge {
+      background: #EEF4F8;
+      color: #385265;
+    }
+
+    .card-restaurant-name {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #7A4B3A;
+      margin-top: 2px;
+      line-height: 1.25;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    [data-theme="sea"] .card-restaurant-name {
+      color: #24587E;
+    }
+
     /* Item Card */
     .card {
       background: var(--bg-card);
@@ -1768,6 +1856,22 @@
             </div>
           </div>
 
+          <!-- Restaurant Extra Fields (Only for Food) -->
+          <div id="foodExtraFields" class="food-extra-fields">
+            <!-- Restaurant Name -->
+            <div class="form-group">
+              <label class="form-label" for="itemRestaurantName">レストラン名 <span class="opt">（任意・同じ店名でまとまります）</span></label>
+              <input type="text" id="itemRestaurantName" class="form-input" placeholder="例：グランマ・サラのキッチン、プラザパビリオン" list="restaurantNamesList">
+              <datalist id="restaurantNamesList"></datalist>
+            </div>
+
+            <!-- Seats Info -->
+            <div class="form-group">
+              <label class="form-label" for="itemSeats">席数 <span class="opt">（任意・自由テキスト）</span></label>
+              <input type="text" id="itemSeats" class="form-input" placeholder="例：80席、屋外のみ、立ち食い など">
+            </div>
+          </div>
+
           <!-- Priority Selection -->
           <div class="form-group">
             <label class="form-label">優先度 <span class="req">※必須</span></label>
@@ -1931,7 +2035,7 @@
           <div class="settings-section-title">アプリ情報</div>
           <div class="settings-row">
             <span class="settings-label">バージョン</span>
-            <span class="settings-val" id="appVersion">v2.8.0</span>
+            <span class="settings-val" id="appVersion">v2.9.0</span>
           </div>
           <div class="settings-row">
             <span class="settings-label">ストレージ</span>
@@ -1955,7 +2059,13 @@
           <div class="accordion-body" id="versionHistoryBody" style="display: none;">
             <div style="font-size: 0.88rem; color: var(--text-sub); line-height: 1.6; padding-top: 10px;">
               <div style="margin-bottom: 8px;">
-                <strong style="color: var(--theme-primary);">v2.8.0（最新）</strong><br>
+                <strong style="color: var(--theme-primary);">v2.9.0（最新）</strong><br>
+                ・食べたいカードに「レストラン名」と「席数」入力欄を追加<br>
+                ・「食べたい」タブで同じレストランのカードをヘッダー（店名・席数・📱MO）付きでまとめてグループ表示<br>
+                ・同じレストラン名のカード間で地図画像（マップ）を共有し、どのメニュー画像タップからでも地図を大きく表示可能に強化
+              </div>
+              <div style="margin-bottom: 8px;">
+                <strong style="color: var(--text-muted);">v2.8.0</strong><br>
                 ・タブを「エリア」「食べたい」「乗りたい」の3タブ構成にリニューアル<br>
                 ・「食べたい」「乗りたい」カードのエリアタグをタップすると、エリアタブの該当エリアへスムーズに移動する機能を追加<br>
                 ・モバイルオーダーのバッジを絵文字のみ（📱）にスッキリ変更<br>
@@ -2140,11 +2250,11 @@
     /**
      * @license
      * SPDX-License-Identifier: Apache-2.0
-     * TDRおでかけメモ PWA v2.8.0
+     * TDRおでかけメモ PWA v2.9.0
      */
 
     // --- State Constants ---
-    const APP_VERSION = 'v2.8.0';
+    const APP_VERSION = 'v2.9.0';
     const DB_NAME = 'DisneylandWishlistDB';
     const DB_VERSION = 1;
 
@@ -2896,6 +3006,24 @@
       container.appendChild(section);
     }
 
+    // Get effective map photo: shares map image across cards with the same restaurant name
+    function getEffectiveMapPhoto(item) {
+      if (!item) return '';
+      if (item.mapPhotoDataUrl && item.mapPhotoDataUrl.trim()) {
+        return item.mapPhotoDataUrl;
+      }
+      const rName = (item.restaurantName || '').trim();
+      if (rName) {
+        const peer = items.find(i =>
+          (i.restaurantName || '').trim() === rName &&
+          i.mapPhotoDataUrl &&
+          i.mapPhotoDataUrl.trim()
+        );
+        if (peer) return peer.mapPhotoDataUrl;
+      }
+      return '';
+    }
+
     // Category-filtered cards ("食べたい" or "乗りたい")
     function renderFilteredCards(container, categoryType) {
       const isFood = categoryType === 'food';
@@ -2916,16 +3044,81 @@
         return;
       }
 
+      if (isFood) {
+        // Group food items by restaurant name
+        const restaurantMap = new Map();
+        const standaloneItems = [];
+
+        filtered.forEach(item => {
+          const rName = (item.restaurantName || '').trim();
+          if (rName) {
+            if (!restaurantMap.has(rName)) {
+              restaurantMap.set(rName, []);
+            }
+            restaurantMap.get(rName).push(item);
+          } else {
+            standaloneItems.push(item);
+          }
+        });
+
+        // 1. Render each restaurant group with header (restaurant name, seats, 📱 MO badge)
+        restaurantMap.forEach((groupItems, restName) => {
+          const groupSection = document.createElement('div');
+          groupSection.className = 'group-section restaurant-group-section';
+
+          const hasMO = groupItems.some(i => i.isMobileOrder);
+          const seatsItem = groupItems.find(i => (i.seats || '').trim());
+          const seatsText = seatsItem ? seatsItem.seats.trim() : '';
+
+          groupItems.sort(sortWishlistItems);
+
+          const header = document.createElement('div');
+          header.className = 'group-header restaurant-header';
+          header.innerHTML = `
+            <div class="restaurant-header-left">
+              <div class="restaurant-title-row">
+                <span class="restaurant-icon">🍽️</span>
+                <span class="restaurant-title">${escapeHtml(restName)}</span>
+                ${hasMO ? '<span class="badge badge-mo" title="モバイルオーダー対応">📱</span>' : ''}
+              </div>
+              ${seatsText ? `<span class="restaurant-seats-badge">🪑 ${escapeHtml(seatsText)}</span>` : ''}
+            </div>
+            <div class="restaurant-header-right">
+              <span class="group-count">${groupItems.length}品</span>
+            </div>
+          `;
+          groupSection.appendChild(header);
+
+          const grid = document.createElement('div');
+          grid.className = 'cards-grid';
+          groupItems.forEach(item => {
+            grid.appendChild(createCardElement(item));
+          });
+          groupSection.appendChild(grid);
+
+          container.appendChild(groupSection);
+        });
+
+        // 2. Render standalone items without restaurant name directly
+        if (standaloneItems.length > 0) {
+          standaloneItems.sort(sortWishlistItems);
+          const grid = document.createElement('div');
+          grid.className = 'cards-grid';
+          standaloneItems.forEach(item => {
+            grid.appendChild(createCardElement(item));
+          });
+          container.appendChild(grid);
+        }
+        return;
+      }
+
+      // For Attractions
       const grid = document.createElement('div');
       grid.className = 'cards-grid';
-
-      // Sort: not done first, then high priority, then createdAt
       filtered.sort(sortWishlistItems);
-
       filtered.forEach(item => {
         grid.appendChild(createCardElement(item));
       });
-
       container.appendChild(grid);
     }
 
@@ -2990,12 +3183,19 @@
         `;
       }
 
-      const hasMap = Boolean(item.mapPhotoDataUrl && item.mapPhotoDataUrl.trim());
+      const effectiveMapPhoto = getEffectiveMapPhoto(item);
+      const hasMap = Boolean(effectiveMapPhoto && effectiveMapPhoto.trim());
 
       // Mobile Order badge (if enabled, emoji only as requested)
       const moBadgeHtml = item.isMobileOrder
         ? '<span class="badge badge-mo" title="モバイルオーダー対応">📱</span>'
         : '';
+
+      // Restaurant name tag (shown when not in "食べたい" tab where it is already grouped)
+      let restaurantTagHtml = '';
+      if (item.restaurantName && item.restaurantName.trim() && currentViewMode !== 'food') {
+        restaurantTagHtml = `<div class="card-restaurant-name" title="店舗: ${escapeHtml(item.restaurantName.trim())}">🍽️ ${escapeHtml(item.restaurantName.trim())}</div>`;
+      }
 
       // Location note (1 line, reduced font size if >= 17 characters like キャンプ・ウッドチャック・キッチン)
       let locationHtml = '';
@@ -3040,6 +3240,7 @@
               <span class="card-name">${escapeHtml(item.name)}</span>
             </div>
 
+            ${restaurantTagHtml}
             ${locationHtml}
             ${memoHtml}
           </div>
@@ -3131,6 +3332,11 @@
       // Mobile Order
       document.getElementById('itemMobileOrder').checked = Boolean(item.isMobileOrder);
 
+      // Restaurant & Seats fields
+      document.getElementById('itemRestaurantName').value = item.restaurantName || '';
+      document.getElementById('itemSeats').value = item.seats || '';
+      updateCategoryExtraFieldsVisibility(item.category !== 'attraction');
+
       // Photo preview
       currentResizedPhotoData = item.photoDataUrl || '';
       updatePhotoPreviewUI();
@@ -3146,11 +3352,12 @@
       openEditItemModal(itemId);
     };
 
-    // Card Image Click: If map registered, show map large; otherwise gentle bounce
+    // Card Image Click: If map registered (or shared across restaurant items), show map large; otherwise gentle bounce
     window.handleCardImageClick = function(event, itemId) {
       if (event) event.stopPropagation();
       const item = items.find(i => i.id === itemId);
-      if (!item || !item.mapPhotoDataUrl || !item.mapPhotoDataUrl.trim()) {
+      const mapSrc = getEffectiveMapPhoto(item);
+      if (!mapSrc) {
         // No map photo: gentle bounce animation on image thumbnail
         const card = document.getElementById(`card-${itemId}`);
         if (card) {
@@ -3165,7 +3372,7 @@
       }
 
       // Show map image large (in its original size/proportions)
-      openMapViewer(item.mapPhotoDataUrl);
+      openMapViewer(mapSrc);
     };
 
     // Open Large Map Viewer (Lightbox)
@@ -3260,8 +3467,46 @@
       }
     }
 
+    // Update category extra fields (Restaurant Name & Seats) visibility
+    function updateCategoryExtraFieldsVisibility(isFood) {
+      const el = document.getElementById('foodExtraFields');
+      if (el) {
+        el.style.display = isFood ? 'block' : 'none';
+      }
+      updateRestaurantDatalist();
+    }
+
+    function updateRestaurantDatalist() {
+      const datalist = document.getElementById('restaurantNamesList');
+      if (!datalist) return;
+      const uniqueNames = [...new Set(items.map(i => (i.restaurantName || '').trim()).filter(Boolean))];
+      datalist.innerHTML = uniqueNames.map(n => `<option value="${escapeHtml(n)}">`).join('');
+    }
+
     // --- Setup Event Listeners ---
     function setupEventListeners() {
+      // Category selection toggle for restaurant name & seats
+      document.querySelectorAll('input[name="itemCategory"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+          updateCategoryExtraFieldsVisibility(radio.value !== 'attraction');
+        });
+      });
+
+      // Auto-suggest seats if existing restaurant name is typed
+      const restNameInput = document.getElementById('itemRestaurantName');
+      if (restNameInput) {
+        restNameInput.addEventListener('input', (e) => {
+          const val = e.target.value.trim();
+          const seatsInput = document.getElementById('itemSeats');
+          if (val && seatsInput && !seatsInput.value.trim()) {
+            const match = items.find(i => (i.restaurantName || '').trim() === val && (i.seats || '').trim());
+            if (match) {
+              seatsInput.value = match.seats.trim();
+            }
+          }
+        });
+      }
+
       // View switcher (3 tabs: area | food | attraction)
       document.getElementById('viewAreaBtn').onclick = () => {
         switchViewMode('area');
@@ -3281,6 +3526,9 @@
         document.getElementById('itemForm').reset();
         document.getElementById('itemId').value = '';
         document.getElementById('itemUrl').value = '';
+        document.getElementById('itemRestaurantName').value = '';
+        document.getElementById('itemSeats').value = '';
+        updateCategoryExtraFieldsVisibility(true);
         populateAreaOptions();
         const defaultPriRadio = document.querySelector('input[name="itemPriority"][value="medium"]');
         if (defaultPriRadio) defaultPriRadio.checked = true;
@@ -3378,6 +3626,9 @@
         const priorityRadio = document.querySelector('input[name="itemPriority"]:checked');
         const priority = priorityRadio ? priorityRadio.value : 'medium';
         const isMobileOrder = Boolean(document.getElementById('itemMobileOrder').checked);
+        const isFood = (category !== 'attraction');
+        const restaurantName = isFood ? document.getElementById('itemRestaurantName').value.trim() : '';
+        const seats = isFood ? document.getElementById('itemSeats').value.trim() : '';
         // Photos are completely optional
         const photoData = currentResizedPhotoData || '';
         const mapPhotoData = currentMapPhotoData || '';
@@ -3393,6 +3644,8 @@
             item.locationMemo = locationMemo;
             item.memo = memo;
             item.url = url;
+            item.restaurantName = restaurantName;
+            item.seats = seats;
             item.photoDataUrl = photoData;
             item.mapPhotoDataUrl = mapPhotoData;
             item.isMobileOrder = isMobileOrder;
@@ -3411,6 +3664,8 @@
             locationMemo: locationMemo,
             memo: memo,
             url: url,
+            restaurantName: restaurantName,
+            seats: seats,
             photoDataUrl: photoData,
             mapPhotoDataUrl: mapPhotoData,
             isMobileOrder: isMobileOrder,
