@@ -1800,7 +1800,7 @@
           <div class="settings-section-title">アプリ情報</div>
           <div class="settings-row">
             <span class="settings-label">バージョン</span>
-            <span class="settings-val" id="appVersion">v2.4.0</span>
+            <span class="settings-val" id="appVersion">v2.5.0</span>
           </div>
           <div class="settings-row">
             <span class="settings-label">ストレージ</span>
@@ -1824,7 +1824,12 @@
           <div class="accordion-body" id="versionHistoryBody" style="display: none;">
             <div style="font-size: 0.88rem; color: var(--text-sub); line-height: 1.6; padding-top: 10px;">
               <div style="margin-bottom: 8px;">
-                <strong style="color: var(--theme-primary);">v2.4.0（最新）</strong><br>
+                <strong style="color: var(--theme-primary);">v2.5.0（最新）</strong><br>
+                ・バックアップをテキストコピー方式からJSONファイルの直接ダウンロード方式（tdrodekake-backup-YYYYMMDD.json）に変更<br>
+                ・非対応ブラウザ向けに自動でテキストコピー方式へ切り替える安心のフォールバック機能を搭載
+              </div>
+              <div style="margin-bottom: 8px;">
+                <strong style="color: var(--text-muted);">v2.4.0</strong><br>
                 ・マップ画像の切替インジケーターを削除し、カードデザインをすっきり整理<br>
                 ・カードの画像タップでマップ画像だけを元のサイズ（高解像度）で画面いっぱいに大きく表示し、マップ画像タップで元のカード表示に戻る直感操作に対応
               </div>
@@ -1909,7 +1914,7 @@
         <div class="settings-section">
           <div class="settings-section-title">データとバックアップ</div>
           <button type="button" class="settings-action-btn" id="exportDataBtn">
-            <span>📤 JSONバックアップを書き出し</span>
+            <span>📥 JSONバックアップをダウンロード</span>
           </button>
           <button type="button" class="settings-action-btn" id="openImportModalBtn">
             <span>📥 バックアップを取り込み・復元</span>
@@ -1919,20 +1924,20 @@
     </div>
   </div>
 
-  <!-- JSON Export Modal (iOS Safari friendly) -->
+  <!-- JSON Export Modal (Fallback for environments without download support) -->
   <div class="modal-overlay" id="exportModal">
     <div class="modal-sheet">
       <div class="sheet-header">
-        <h2 class="sheet-title">バックアップの書き出し</h2>
+        <h2 class="sheet-title">バックアップのテキストコピー</h2>
         <button type="button" class="sheet-close-btn" id="closeExportModalBtn">✕</button>
       </div>
 
       <div class="sheet-content">
-        <p style="font-size: 0.92rem; color: var(--text-main); font-weight: 600; margin-bottom: 8px; line-height: 1.5;">
-          このテキストをコピーして、メモアプリなどに貼り付けて保存してください
-        </p>
-        <p style="font-size: 0.8rem; color: var(--text-sub); margin-bottom: 12px;">
-          ※iPhoneのSafariでも確実にデータを保管できるよう、テキスト形式で書き出しています。
+        <div style="background: #FFF8E1; border: 1px solid #FFE082; border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; color: #795548; font-size: 0.85rem; line-height: 1.5;">
+          ⚠️ お使いの環境ではファイルの直接ダウンロードが制限されています。以下のテキストをすべてコピーして、メモアプリなどに貼り付けて保存してください。
+        </div>
+        <p style="font-size: 0.8rem; color: var(--text-sub); margin-bottom: 10px;">
+          ※復元する時は「バックアップを取り込み・復元」からこのテキストを貼り付けることで復元できます。
         </p>
 
         <textarea id="exportJsonTextarea" class="form-textarea" readonly rows="8" style="font-family: monospace; font-size: 0.78rem; background: #F8F9FA; word-break: break-all; resize: none; user-select: all; -webkit-user-select: all;"></textarea>
@@ -1987,11 +1992,11 @@
     /**
      * @license
      * SPDX-License-Identifier: Apache-2.0
-     * TDRおでかけメモ PWA v2.4.0
+     * TDRおでかけメモ PWA v2.5.0
      */
 
     // --- State Constants ---
-    const APP_VERSION = 'v2.4.0';
+    const APP_VERSION = 'v2.5.0';
     const DB_NAME = 'DisneylandWishlistDB';
     const DB_VERSION = 1;
 
@@ -3144,22 +3149,61 @@
         openCreateListModal();
       };
 
-      // Export JSON Modal Open
+      // Export JSON File Download (with fallback to text copy)
       document.getElementById('exportDataBtn').onclick = async () => {
-        const allLists = await dbGetAll('lists');
-        const allItems = await dbGetAll('items');
+        let jsonStr = '';
+        try {
+          const allLists = await dbGetAll('lists');
+          const allItems = await dbGetAll('items');
 
-        const backup = {
-          version: APP_VERSION,
-          exportedAt: new Date().toISOString(),
-          lists: allLists,
-          items: allItems
-        };
+          const backup = {
+            version: APP_VERSION,
+            exportedAt: new Date().toISOString(),
+            lists: allLists,
+            items: allItems
+          };
 
-        const jsonStr = JSON.stringify(backup, null, 2);
-        document.getElementById('exportJsonTextarea').value = jsonStr;
-        closeModal('settingsModal');
-        openModal('exportModal');
+          jsonStr = JSON.stringify(backup, null, 2);
+
+          // Generate filename: tdrodekake-backup-YYYYMMDD.json
+          const now = new Date();
+          const y = now.getFullYear();
+          const m = String(now.getMonth() + 1).padStart(2, '0');
+          const d = String(now.getDate()).padStart(2, '0');
+          const filename = `tdrodekake-backup-${y}${m}${d}.json`;
+
+          // Detect if <a> download is supported in current browser/environment
+          const isDownloadSupported = 'download' in HTMLAnchorElement.prototype;
+          if (!isDownloadSupported) {
+            throw new Error('ブラウザがファイルの直接ダウンロードに対応していません');
+          }
+
+          // Create Blob and trigger download
+          const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.style.display = 'none';
+          a.href = url;
+          a.download = filename;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+
+          // Free memory
+          setTimeout(() => {
+            URL.revokeObjectURL(url);
+          }, 1500);
+
+          showToast(`「${filename}」をダウンロードしました！📥`, '📥');
+        } catch (err) {
+          console.warn('JSON file download failed or not supported, switching to text copy:', err);
+          alert('お使いの環境ではダウンロードできません。テキストコピーを使ってください');
+          if (jsonStr) {
+            document.getElementById('exportJsonTextarea').value = jsonStr;
+          }
+          closeModal('settingsModal');
+          openModal('exportModal');
+        }
       };
 
       document.getElementById('closeExportModalBtn').onclick = () => closeModal('exportModal');
