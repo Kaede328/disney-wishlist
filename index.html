@@ -231,15 +231,15 @@
       background: var(--theme-light-active);
     }
 
-    /* Sub Navigation Controls */
+    /* Sub Navigation Controls (Fixed within Header) */
     .view-controls {
       max-width: 600px;
-      margin: 14px auto 8px;
-      padding: 0 16px;
+      margin: 9px auto 0;
+      padding: 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
+      gap: 8px;
     }
 
     .toggle-group {
@@ -355,34 +355,27 @@
 
     .restaurant-header {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
+      flex-direction: column;
+      gap: 6px;
       padding: 9px 12px;
       margin-bottom: 10px;
       border-radius: 12px;
       background: #FFFFFF;
       border-left: 4px solid var(--theme-primary);
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-      gap: 8px;
-    }
-
-    .restaurant-header-left {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-      min-width: 0;
     }
 
     .restaurant-title-row {
       display: flex;
       align-items: center;
       gap: 6px;
-      flex-wrap: wrap;
+      width: 100%;
     }
 
     .restaurant-icon {
       font-size: 1.15rem;
       line-height: 1;
+      flex-shrink: 0;
     }
 
     .restaurant-title {
@@ -391,25 +384,42 @@
       color: var(--text-main);
       letter-spacing: -0.2px;
       word-break: break-word;
+      line-height: 1.3;
+    }
+
+    .restaurant-meta-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
     }
 
     .restaurant-seats-badge {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 3px;
       font-size: 0.78rem;
       font-weight: 600;
       color: #6B5549;
       background: #F8F1EB;
-      padding: 2px 8px;
-      border-radius: 8px;
-      width: fit-content;
+      padding: 2px 7px;
+      border-radius: 6px;
       line-height: 1.2;
     }
 
     [data-theme="sea"] .restaurant-seats-badge {
       background: #EEF4F8;
       color: #385265;
+    }
+
+    .restaurant-count-badge {
+      font-size: 0.78rem;
+      background: var(--theme-light);
+      color: var(--theme-primary);
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-weight: 700;
+      line-height: 1.2;
     }
 
     .card-restaurant-name {
@@ -1720,26 +1730,26 @@
         </button>
       </div>
     </div>
+
+    <!-- Secondary controls (Display mode: Area vs Food vs Attraction - Fixed at top with header) -->
+    <div class="view-controls">
+      <div class="toggle-group" role="tablist">
+        <button class="toggle-btn active" id="viewAreaBtn" role="tab" aria-selected="true">
+          <span>エリア</span>
+        </button>
+        <button class="toggle-btn" id="viewFoodBtn" role="tab" aria-selected="false">
+          <span>食べたい</span>
+        </button>
+        <button class="toggle-btn" id="viewAttractionBtn" role="tab" aria-selected="false">
+          <span>乗りたい</span>
+        </button>
+      </div>
+
+      <div class="stats-chip" id="statsChip" title="未完了 / 全件数">
+        <span>0/0</span>
+      </div>
+    </div>
   </header>
-
-  <!-- Secondary controls (Display mode: Area vs Food vs Attraction) -->
-  <div class="view-controls">
-    <div class="toggle-group" role="tablist">
-      <button class="toggle-btn active" id="viewAreaBtn" role="tab" aria-selected="true">
-        <span>エリア</span>
-      </button>
-      <button class="toggle-btn" id="viewFoodBtn" role="tab" aria-selected="false">
-        <span>食べたい</span>
-      </button>
-      <button class="toggle-btn" id="viewAttractionBtn" role="tab" aria-selected="false">
-        <span>乗りたい</span>
-      </button>
-    </div>
-
-    <div class="stats-chip" id="statsChip" title="未完了 / 全件数">
-      <span>0/0</span>
-    </div>
-  </div>
 
   <!-- Main Card View Container -->
   <main id="mainContainer">
@@ -2035,7 +2045,7 @@
           <div class="settings-section-title">アプリ情報</div>
           <div class="settings-row">
             <span class="settings-label">バージョン</span>
-            <span class="settings-val" id="appVersion">v2.9.0</span>
+            <span class="settings-val" id="appVersion">v2.10.0</span>
           </div>
           <div class="settings-row">
             <span class="settings-label">ストレージ</span>
@@ -2059,7 +2069,12 @@
           <div class="accordion-body" id="versionHistoryBody" style="display: none;">
             <div style="font-size: 0.88rem; color: var(--text-sub); line-height: 1.6; padding-top: 10px;">
               <div style="margin-bottom: 8px;">
-                <strong style="color: var(--theme-primary);">v2.9.0（最新）</strong><br>
+                <strong style="color: var(--theme-primary);">v2.10.0（最新）</strong><br>
+                ・「エリア」「食べたい」「乗りたい」タブを上部に固定し、スクロールしても常に見える状態に改善<br>
+                ・同じレストランのグループヘッダーを「1行目：レストラン名」「2行目：📱MOアイコン・席数・メニュー数」の2段構成に整理
+              </div>
+              <div style="margin-bottom: 8px;">
+                <strong style="color: var(--text-muted);">v2.9.0</strong><br>
                 ・食べたいカードに「レストラン名」と「席数」入力欄を追加<br>
                 ・「食べたい」タブで同じレストランのカードをヘッダー（店名・席数・📱MO）付きでまとめてグループ表示<br>
                 ・同じレストラン名のカード間で地図画像（マップ）を共有し、どのメニュー画像タップからでも地図を大きく表示可能に強化
@@ -2250,11 +2265,11 @@
     /**
      * @license
      * SPDX-License-Identifier: Apache-2.0
-     * TDRおでかけメモ PWA v2.9.0
+     * TDRおでかけメモ PWA v2.10.0
      */
 
     // --- State Constants ---
-    const APP_VERSION = 'v2.9.0';
+    const APP_VERSION = 'v2.10.0';
     const DB_NAME = 'DisneylandWishlistDB';
     const DB_VERSION = 1;
 
@@ -2722,6 +2737,7 @@
       renderItems();
       setupEventListeners();
       setupPWA();
+      syncHeaderHeight();
     }
 
     function applyTheme() {
@@ -2923,7 +2939,7 @@
           document.querySelector(`.group-section[data-area="${areaName}"]`);
         if (areaSection) {
           const headerEl = document.querySelector('header');
-          const headerOffset = (headerEl ? headerEl.offsetHeight : 64) + 65;
+          const headerOffset = (headerEl ? headerEl.offsetHeight : 110) + 10;
           const elementPosition = areaSection.getBoundingClientRect().top;
           const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
 
@@ -3075,16 +3091,14 @@
           const header = document.createElement('div');
           header.className = 'group-header restaurant-header';
           header.innerHTML = `
-            <div class="restaurant-header-left">
-              <div class="restaurant-title-row">
-                <span class="restaurant-icon">🍽️</span>
-                <span class="restaurant-title">${escapeHtml(restName)}</span>
-                ${hasMO ? '<span class="badge badge-mo" title="モバイルオーダー対応">📱</span>' : ''}
-              </div>
-              ${seatsText ? `<span class="restaurant-seats-badge">🪑 ${escapeHtml(seatsText)}</span>` : ''}
+            <div class="restaurant-title-row">
+              <span class="restaurant-icon">🍽️</span>
+              <span class="restaurant-title">${escapeHtml(restName)}</span>
             </div>
-            <div class="restaurant-header-right">
-              <span class="group-count">${groupItems.length}品</span>
+            <div class="restaurant-meta-row">
+              ${hasMO ? '<span class="badge badge-mo" title="モバイルオーダー対応">📱</span>' : ''}
+              ${seatsText ? `<span class="restaurant-seats-badge">🪑 ${escapeHtml(seatsText)}</span>` : ''}
+              <span class="restaurant-count-badge">${groupItems.length}品</span>
             </div>
           `;
           groupSection.appendChild(header);
