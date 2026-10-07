@@ -2045,7 +2045,7 @@
           <div class="settings-section-title">アプリ情報</div>
           <div class="settings-row">
             <span class="settings-label">バージョン</span>
-            <span class="settings-val" id="appVersion">v2.11.0</span>
+            <span class="settings-val" id="appVersion">v2.12.0</span>
           </div>
           <div class="settings-row">
             <span class="settings-label">ストレージ</span>
@@ -2069,7 +2069,11 @@
           <div class="accordion-body" id="versionHistoryBody" style="display: none;">
             <div style="font-size: 0.88rem; color: var(--text-sub); line-height: 1.6; padding-top: 10px;">
               <div style="margin-bottom: 8px;">
-                <strong style="color: var(--theme-primary);">v2.11.0（最新）</strong><br>
+                <strong style="color: var(--theme-primary);">v2.12.0（最新）</strong><br>
+                ・JSONバックアップ復元処理の信頼性を強化（リスト→カード順の確実な書き込み完了待ち、復元件数【リスト〇件、カード〇件】の明示、書き込み完了後の安全な画面再読み込みに対応）
+              </div>
+              <div style="margin-bottom: 8px;">
+                <strong style="color: var(--text-muted);">v2.11.0</strong><br>
                 ・アプリアイコンを最新デザイン画像に更新・統一（favicon、apple-touch-icon、PWA用アイコン、ヘッダー表示をすべて新しいアイコンに刷新）
               </div>
               <div style="margin-bottom: 8px;">
@@ -2269,11 +2273,11 @@
     /**
      * @license
      * SPDX-License-Identifier: Apache-2.0
-     * TDRおでかけメモ PWA v2.11.0
+     * TDRおでかけメモ PWA v2.12.0
      */
 
     // --- State Constants ---
-    const APP_VERSION = 'v2.11.0';
+    const APP_VERSION = 'v2.12.0';
     const DB_NAME = 'DisneylandWishlistDB';
     const DB_VERSION = 1;
 
@@ -2529,40 +2533,49 @@
     }
 
     function dbPut(storeName, value) {
-      if (useFallbackStorage || !db) {
-        if (storeName === 'settings') {
-          fallbackStore.settings[value.key] = value;
-          saveToLocalStorage('settings');
+      // Synchronously mirror to fallbackStore (localStorage) for dual-layer safety
+      if (storeName === 'settings') {
+        fallbackStore.settings[value.key] = value;
+        saveToLocalStorage('settings');
+      } else {
+        if (!Array.isArray(fallbackStore[storeName])) fallbackStore[storeName] = [];
+        const idx = fallbackStore[storeName].findIndex(i => i.id === value.id);
+        if (idx >= 0) {
+          fallbackStore[storeName][idx] = value;
         } else {
-          if (!Array.isArray(fallbackStore[storeName])) fallbackStore[storeName] = [];
-          const idx = fallbackStore[storeName].findIndex(i => i.id === value.id);
-          if (idx >= 0) {
-            fallbackStore[storeName][idx] = value;
-          } else {
-            fallbackStore[storeName].push(value);
-          }
-          saveToLocalStorage(storeName);
+          fallbackStore[storeName].push(value);
         }
+        saveToLocalStorage(storeName);
+      }
+
+      if (useFallbackStorage || !db) {
         return Promise.resolve(value.id || value.key);
       }
+
       return new Promise((resolve) => {
         try {
           const tx = db.transaction(storeName, 'readwrite');
           const store = tx.objectStore(storeName);
           const req = store.put(value);
-          req.onsuccess = () => resolve(req.result);
-          req.onerror = () => {
-            console.warn(`IndexedDB put(${storeName}) notice, mirrored to fallback`);
-            if (storeName === 'settings') {
-              fallbackStore.settings[value.key] = value;
-              saveToLocalStorage('settings');
-            } else {
-              const idx = fallbackStore[storeName].findIndex(i => i.id === value.id);
-              if (idx >= 0) fallbackStore[storeName][idx] = value;
-              else fallbackStore[storeName].push(value);
-              saveToLocalStorage(storeName);
-            }
-            resolve(value.id || value.key);
+          let resultVal = value.id || value.key;
+
+          req.onsuccess = () => {
+            resultVal = req.result;
+          };
+
+          // Wait for transaction commit to disk before resolving
+          tx.oncomplete = () => {
+            resolve(resultVal);
+          };
+
+          tx.onerror = (e) => {
+            console.warn(`IndexedDB put(${storeName}) tx error:`, e);
+            resolve(resultVal);
+          };
+
+          tx.onabort = (e) => {
+            console.warn(`IndexedDB put(${storeName}) tx abort:`, e);
+            resolve(resultVal);
           };
         } catch (err) {
           console.warn(`IndexedDB put(${storeName}) exception:`, err);
@@ -2572,25 +2585,27 @@
     }
 
     function dbDelete(storeName, key) {
-      if (useFallbackStorage || !db) {
-        if (storeName === 'settings') {
-          delete fallbackStore.settings[key];
-          saveToLocalStorage('settings');
-        } else {
-          if (Array.isArray(fallbackStore[storeName])) {
-            fallbackStore[storeName] = fallbackStore[storeName].filter(i => i.id !== key);
-            saveToLocalStorage(storeName);
-          }
+      if (storeName === 'settings') {
+        delete fallbackStore.settings[key];
+        saveToLocalStorage('settings');
+      } else {
+        if (Array.isArray(fallbackStore[storeName])) {
+          fallbackStore[storeName] = fallbackStore[storeName].filter(i => i.id !== key);
+          saveToLocalStorage(storeName);
         }
+      }
+
+      if (useFallbackStorage || !db) {
         return Promise.resolve();
       }
       return new Promise((resolve) => {
         try {
           const tx = db.transaction(storeName, 'readwrite');
           const store = tx.objectStore(storeName);
-          const req = store.delete(key);
-          req.onsuccess = () => resolve();
-          req.onerror = () => resolve();
+          store.delete(key);
+          tx.oncomplete = () => resolve();
+          tx.onerror = () => resolve();
+          tx.onabort = () => resolve();
         } catch (err) {
           console.warn(`IndexedDB delete(${storeName}) exception:`, err);
           resolve();
@@ -2742,6 +2757,16 @@
       setupEventListeners();
       setupPWA();
       syncHeaderHeight();
+
+      // Check for pending toast from restore or reload
+      try {
+        const pending = sessionStorage.getItem('pendingToast');
+        if (pending) {
+          sessionStorage.removeItem('pendingToast');
+          const { msg, icon } = JSON.parse(pending);
+          showToast(msg, icon || '🎉');
+        }
+      } catch (_) {}
     }
 
     function applyTheme() {
@@ -3899,6 +3924,7 @@
         if (!file) return;
         try {
           const text = await file.text();
+          e.target.value = '';
           await processImportData(text);
         } catch (err) {
           alert('ファイルの読み込みに失敗しました。');
@@ -4037,30 +4063,121 @@
     // --- Data Import Processing (Text or File) ---
     async function processImportData(text) {
       try {
-        const data = JSON.parse(text);
-
-        if (!data.lists || !data.items || !Array.isArray(data.lists) || !Array.isArray(data.items)) {
-          throw new Error('形式が正しくありません');
+        if (!text || typeof text !== 'string') {
+          throw new Error('読み込むデータが空です');
         }
 
-        if (window.confirm('バックアップを復元しますか？\n（現在のデータに追加・上書き保存されます）')) {
-          for (const l of data.lists) {
+        let data;
+        try {
+          data = JSON.parse(text);
+        } catch (jsonErr) {
+          throw new Error('JSONの解析に失敗しました。バックアップの内容を確認してください。');
+        }
+
+        // Support standard formats and alternative schemas
+        let targetLists = [];
+        let targetItems = [];
+
+        if (Array.isArray(data)) {
+          // If JSON contains just a list of items
+          targetItems = data;
+        } else if (data && typeof data === 'object') {
+          if (Array.isArray(data.lists)) {
+            targetLists = data.lists;
+          } else if (data.list && typeof data.list === 'object') {
+            targetLists = [data.list];
+          }
+
+          if (Array.isArray(data.items)) {
+            targetItems = data.items;
+          } else if (Array.isArray(data.cards)) {
+            targetItems = data.cards;
+          }
+        }
+
+        // Handle case where items exist without lists
+        if (targetLists.length === 0 && targetItems.length > 0) {
+          const listIds = [...new Set(targetItems.map(it => it.listId).filter(Boolean))];
+          if (listIds.length > 0) {
+            targetLists = listIds.map((lid, idx) => ({
+              id: lid,
+              name: `復元リスト ${idx + 1}`,
+              park: 'land',
+              createdAt: Date.now()
+            }));
+          } else {
+            const fallbackListId = 'list-' + Date.now();
+            targetLists = [{
+              id: fallbackListId,
+              name: '復元リスト',
+              park: 'land',
+              createdAt: Date.now()
+            }];
+            targetItems.forEach(it => { it.listId = fallbackListId; });
+          }
+        }
+
+        if (targetLists.length === 0 && targetItems.length === 0) {
+          throw new Error('復元可能なリストやカードが見つかりませんでした。');
+        }
+
+        const confirmMsg = `バックアップを復元しますか？\n・リスト: ${targetLists.length}件\n・カード: ${targetItems.length}件\n\n（現在のデータに追加・上書き保存され、書き込み完了後に画面が再読み込みされます）`;
+        if (!window.confirm(confirmMsg)) {
+          return;
+        }
+
+        showToast('復元データを保存中...', '⏳');
+
+        // Step 1: 復元処理はリスト→カードの順に、awaitで確実に完了を待つ
+        let restoredListsCount = 0;
+        for (const l of targetLists) {
+          if (l && l.id) {
+            if (!l.park) l.park = 'land';
             await dbPut('lists', l);
+            restoredListsCount++;
           }
-          for (const it of data.items) {
-            await dbPut('items', it);
-          }
-
-          lists = await dbGetAll('lists');
-          await loadItems();
-          renderListBar();
-          renderItems();
-          closeModal('importModal');
-          showToast('バックアップを復元しました！🎉', '🎉');
         }
+
+        // Step 2: カードを1件ずつawaitで確実に書き込み完了を待つ
+        let restoredItemsCount = 0;
+        for (const it of targetItems) {
+          if (it && it.id) {
+            await dbPut('items', it);
+            restoredItemsCount++;
+          }
+        }
+
+        // Step 3: 復元したリストを現在のアクティブリストに設定・保存
+        if (targetLists.length > 0 && targetLists[0].id) {
+          currentListId = targetLists[0].id;
+          await dbPut('settings', { key: 'currentListId', value: targetLists[0].id });
+        }
+
+        // Step 4: 書き込み完了の確認（DBから件数を再取得して検証）
+        const verifiedLists = await dbGetAll('lists');
+        const verifiedItems = await dbGetAll('items');
+        console.log(`[Restore] Completed! Verified lists in DB: ${verifiedLists.length}, items: ${verifiedItems.length}`);
+
+        // Step 5: 復元件数（リスト数・カード数）を成功メッセージに含める
+        const successMsg = `復元完了：リスト${restoredListsCount}件、カード${restoredItemsCount}件`;
+
+        // ページ再読み込み後にも成功メッセージが表示されるようにsessionStorageに保存
+        try {
+          sessionStorage.setItem('pendingToast', JSON.stringify({ msg: successMsg, icon: '🎉' }));
+        } catch (_) {}
+
+        // モーダルを閉じ、成功メッセージを表示
+        closeModal('importModal');
+        showToast(successMsg, '🎉');
+
+        // Step 6: IndexedDBへのすべての書き込みが完全に完了してから、ページを再読み込みする
+        setTimeout(() => {
+          window.location.reload();
+        }, 800);
+
       } catch (err) {
-        console.error(err);
-        alert('読み込みに失敗しました。コピーしたバックアップJSONテキストの内容が正しいか確認してください。');
+        console.error('[Restore Error]:', err);
+        alert(`読み込みに失敗しました。\n${err.message || 'ファイルまたはテキストの内容を確認してください。'}`);
       }
     }
 
