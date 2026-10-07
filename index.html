@@ -8,12 +8,17 @@
   <meta property="og:title" content="TDRおでかけメモ">
   <meta property="og:description" content="東京ディズニーリゾート（ランド・シー）専用の行きたい・食べたい・乗りたいを写真付きで記録するPWAアプリ">
   <meta property="og:type" content="website">
+  <meta property="og:image" content="./icon.jpg">
   <meta name="theme-color" content="#FF8EAA">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="おでかけメモ">
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
+  <link rel="shortcut icon" href="./favicon.ico">
+  <link rel="icon" type="image/jpeg" href="./icon.jpg">
   <link rel="icon" type="image/svg+xml" href="./icon.svg">
   <style>
     :root {
@@ -161,6 +166,8 @@
       height: 36px;
       border-radius: 10px;
       flex-shrink: 0;
+      object-fit: cover;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
     }
 
     .brand-titles {
@@ -1704,14 +1711,7 @@
   <header>
     <div class="header-top">
       <div class="brand" id="headerBrandTitle" title="タップしてリストを選ぶ">
-        <svg class="brand-icon" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect width="512" height="512" rx="128" fill="var(--theme-primary)"/>
-          <circle cx="175" cy="210" r="65" fill="#FFFFFF"/>
-          <circle cx="337" cy="210" r="65" fill="#FFFFFF"/>
-          <circle cx="256" cy="305" r="105" fill="#FFFFFF"/>
-          <polygon points="256,190 268,230 244,230" fill="var(--theme-primary)"/>
-          <rect x="251" y="230" width="10" height="40" fill="var(--theme-primary)"/>
-        </svg>
+        <img src="./apple-touch-icon.png" alt="TDRおでかけメモ" class="brand-icon" width="36" height="36">
         <div class="brand-titles">
           <span class="brand-subtitle">TDRおでかけメモ</span>
           <div class="brand-current-list" id="headerCurrentListName">
@@ -2045,7 +2045,7 @@
           <div class="settings-section-title">アプリ情報</div>
           <div class="settings-row">
             <span class="settings-label">バージョン</span>
-            <span class="settings-val" id="appVersion">v2.10.0</span>
+            <span class="settings-val" id="appVersion">v2.11.0</span>
           </div>
           <div class="settings-row">
             <span class="settings-label">ストレージ</span>
@@ -2069,7 +2069,11 @@
           <div class="accordion-body" id="versionHistoryBody" style="display: none;">
             <div style="font-size: 0.88rem; color: var(--text-sub); line-height: 1.6; padding-top: 10px;">
               <div style="margin-bottom: 8px;">
-                <strong style="color: var(--theme-primary);">v2.10.0（最新）</strong><br>
+                <strong style="color: var(--theme-primary);">v2.11.0（最新）</strong><br>
+                ・アプリアイコンを最新デザイン画像に更新・統一（favicon、apple-touch-icon、PWA用アイコン、ヘッダー表示をすべて新しいアイコンに刷新）
+              </div>
+              <div style="margin-bottom: 8px;">
+                <strong style="color: var(--text-muted);">v2.10.0</strong><br>
                 ・「エリア」「食べたい」「乗りたい」タブを上部に固定し、スクロールしても常に見える状態に改善<br>
                 ・同じレストランのグループヘッダーを「1行目：レストラン名」「2行目：📱MOアイコン・席数・メニュー数」の2段構成に整理
               </div>
@@ -2265,11 +2269,11 @@
     /**
      * @license
      * SPDX-License-Identifier: Apache-2.0
-     * TDRおでかけメモ PWA v2.10.0
+     * TDRおでかけメモ PWA v2.11.0
      */
 
     // --- State Constants ---
-    const APP_VERSION = 'v2.10.0';
+    const APP_VERSION = 'v2.11.0';
     const DB_NAME = 'DisneylandWishlistDB';
     const DB_VERSION = 1;
 

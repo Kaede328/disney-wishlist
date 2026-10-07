@@ -1,12 +1,18 @@
-const CACHE_NAME = 'disney-wishlist-v2.10.0';
+const CACHE_NAME = 'disney-wishlist-v2.11.0';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './manifest.webmanifest',
+  './icon.jpg',
+  './icon.png',
   './icon.svg',
   './icon-192.png',
   './icon-512.png',
-  './apple-touch-icon.png'
+  './icon-maskable-512.png',
+  './apple-touch-icon.png',
+  './favicon-32x32.png',
+  './favicon-16x16.png',
+  './favicon.ico'
 ];
 
 self.addEventListener('install', (event) => {
