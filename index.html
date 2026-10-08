@@ -696,6 +696,26 @@
       line-height: 1.1;
     }
 
+    .badge-seats {
+      background: #FFF4EB;
+      color: #945B2F;
+      border: 1px solid rgba(148, 91, 47, 0.18);
+      font-size: 0.72rem;
+      padding: 1px 6px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      line-height: 1.1;
+      height: 21px;
+    }
+
+    [data-theme="sea"] .badge-seats {
+      background: #EEF4F8;
+      color: #385265;
+      border: 1px solid rgba(56, 82, 101, 0.18);
+    }
+
     @keyframes highlightPulse {
       0% {
         background-color: rgba(255, 142, 170, 0.45);
@@ -2042,7 +2062,7 @@
           <div class="settings-section-title">アプリ情報</div>
           <div class="settings-row">
             <span class="settings-label">バージョン</span>
-            <span class="settings-val" id="appVersion">v2.14.0</span>
+            <span class="settings-val" id="appVersion">v2.15.0</span>
           </div>
           <div class="settings-row">
             <span class="settings-label">ストレージ</span>
@@ -2066,7 +2086,11 @@
           <div class="accordion-body" id="versionHistoryBody" style="display: none;">
             <div style="font-size: 0.88rem; color: var(--text-sub); line-height: 1.6; padding-top: 10px;">
               <div style="margin-bottom: 8px;">
-                <strong style="color: var(--theme-primary);">v2.14.0（最新）</strong><br>
+                <strong style="color: var(--theme-primary);">v2.15.0（最新）</strong><br>
+                ・「食べたい」タブのレストラングループ表示を改善（同じ店名のカードが1枚だけの場合はグループヘッダーを表示せず、カード内に店名・席数・MOを表示。2品以上の場合はグループヘッダー表示を維持）
+              </div>
+              <div style="margin-bottom: 8px;">
+                <strong style="color: var(--text-muted);">v2.14.0</strong><br>
                 ・「食べたい」タブと「乗りたい」タブでカードの種類バッジ（食べ物・アトラクションの絵文字バッジ）を非表示に改善（「エリア」タブでは今まで通り表示）
               </div>
               <div style="margin-bottom: 8px;">
@@ -2278,11 +2302,11 @@
     /**
      * @license
      * SPDX-License-Identifier: Apache-2.0
-     * TDRおでかけメモ PWA v2.14.0
+     * TDRおでかけメモ PWA v2.15.0
      */
 
     // --- State Constants ---
-    const APP_VERSION = 'v2.14.0';
+    const APP_VERSION = 'v2.15.0';
     const DB_NAME = 'DisneylandWishlistDB';
     const DB_VERSION = 1;
 
@@ -3074,6 +3098,24 @@
       return '';
     }
 
+    // Get effective seats: shares seats info across cards with the same restaurant name
+    function getEffectiveSeats(item) {
+      if (!item) return '';
+      if (item.seats && item.seats.trim()) {
+        return item.seats.trim();
+      }
+      const rName = (item.restaurantName || '').trim();
+      if (rName) {
+        const peer = items.find(i =>
+          (i.restaurantName || '').trim() === rName &&
+          i.seats &&
+          i.seats.trim()
+        );
+        if (peer) return peer.seats.trim();
+      }
+      return '';
+    }
+
     // Category-filtered cards ("食べたい" or "乗りたい")
     function renderFilteredCards(container, categoryType) {
       const isFood = categoryType === 'food';
@@ -3111,8 +3153,20 @@
           }
         });
 
-        // 1. Render each restaurant group with header (restaurant name, seats, 📱 MO badge)
+        const multiItemGroups = [];
+        const singleRestaurantItems = [];
+
         restaurantMap.forEach((groupItems, restName) => {
+          if (groupItems.length >= 2) {
+            multiItemGroups.push({ restName, items: groupItems });
+          } else {
+            // 1-item restaurant (no group header, show restaurant info on the card)
+            singleRestaurantItems.push(...groupItems);
+          }
+        });
+
+        // 1. Render multi-item restaurant groups (2品以上) with group header
+        multiItemGroups.forEach(({ restName, items: groupItems }) => {
           const groupSection = document.createElement('div');
           groupSection.className = 'group-section restaurant-group-section';
 
@@ -3140,20 +3194,21 @@
           const grid = document.createElement('div');
           grid.className = 'cards-grid';
           groupItems.forEach(item => {
-            grid.appendChild(createCardElement(item));
+            grid.appendChild(createCardElement(item, { isInsideRestaurantGroup: true }));
           });
           groupSection.appendChild(grid);
 
           container.appendChild(groupSection);
         });
 
-        // 2. Render standalone items without restaurant name directly
-        if (standaloneItems.length > 0) {
-          standaloneItems.sort(sortWishlistItems);
+        // 2. Render 1-item restaurants & standalone items directly without header
+        const standaloneCards = [...singleRestaurantItems, ...standaloneItems];
+        if (standaloneCards.length > 0) {
+          standaloneCards.sort(sortWishlistItems);
           const grid = document.createElement('div');
           grid.className = 'cards-grid';
-          standaloneItems.forEach(item => {
-            grid.appendChild(createCardElement(item));
+          standaloneCards.forEach(item => {
+            grid.appendChild(createCardElement(item, { isInsideRestaurantGroup: false }));
           });
           container.appendChild(grid);
         }
@@ -3165,7 +3220,7 @@
       grid.className = 'cards-grid';
       filtered.sort(sortWishlistItems);
       filtered.forEach(item => {
-        grid.appendChild(createCardElement(item));
+        grid.appendChild(createCardElement(item, { isInsideRestaurantGroup: false }));
       });
       container.appendChild(grid);
     }
@@ -3205,7 +3260,8 @@
     }
 
     // Create Single Card Element
-    function createCardElement(item) {
+    function createCardElement(item, options = {}) {
+      const isInsideRestaurantGroup = Boolean(options.isInsideRestaurantGroup);
       const priority = item.priority || 'medium';
       const isHighPriority = priority === 'high';
       const priLabel = PRIORITY_LABELS[priority] || '✨ できれば';
@@ -3245,9 +3301,17 @@
         ? '<span class="badge badge-mo" title="モバイルオーダー対応">📱</span>'
         : '';
 
-      // Restaurant name tag (shown when not in "食べたい" tab where it is already grouped)
+      // Seats badge: shown in card badge row when not inside a multi-item restaurant group header
+      let seatsBadgeHtml = '';
+      const effectiveSeats = getEffectiveSeats(item);
+      if (effectiveSeats && !isInsideRestaurantGroup) {
+        const displaySeats = effectiveSeats.startsWith('🪑') ? effectiveSeats : `🪑 ${effectiveSeats}`;
+        seatsBadgeHtml = `<span class="badge badge-seats" title="席数: ${escapeHtml(effectiveSeats)}">${escapeHtml(displaySeats)}</span>`;
+      }
+
+      // Restaurant name tag (shown under card name when not inside a multi-item restaurant group header)
       let restaurantTagHtml = '';
-      if (item.restaurantName && item.restaurantName.trim() && currentViewMode !== 'food') {
+      if (item.restaurantName && item.restaurantName.trim() && !isInsideRestaurantGroup) {
         restaurantTagHtml = `<div class="card-restaurant-name" title="店舗: ${escapeHtml(item.restaurantName.trim())}">🍽️ ${escapeHtml(item.restaurantName.trim())}</div>`;
       }
 
@@ -3287,6 +3351,7 @@
               ${catBadgeHtml}
               <span class="badge badge-area clickable" onclick="jumpToArea('${escapeJsString(item.area)}')" title="「${escapeHtml(item.area)}」エリアに移動">${areaEmoji} ${escapeHtml(item.area)}</span>
               ${moBadgeHtml}
+              ${seatsBadgeHtml}
             </div>
 
             <!-- Card Item Name (Tap copy removed) -->
