@@ -2088,7 +2088,7 @@
           <div class="settings-section-title">アプリ情報</div>
           <div class="settings-row">
             <span class="settings-label">バージョン</span>
-            <span class="settings-val" id="appVersion">v2.16.0</span>
+            <span class="settings-val" id="appVersion">v2.17.0</span>
           </div>
           <div class="settings-row">
             <span class="settings-label">ストレージ</span>
@@ -2112,7 +2112,11 @@
           <div class="accordion-body" id="versionHistoryBody" style="display: none;">
             <div style="font-size: 0.88rem; color: var(--text-sub); line-height: 1.6; padding-top: 10px;">
               <div style="margin-bottom: 8px;">
-                <strong style="color: var(--theme-primary);">v2.16.0（最新）</strong><br>
+                <strong style="color: var(--theme-primary);">v2.17.0（最新）</strong><br>
+                ・「エリア」タブでもカードの種類バッジ（食べたいもの・アトラクションの絵文字バッジ）を非表示にし、全タブでカードのバッジ表示をすっきり整理
+              </div>
+              <div style="margin-bottom: 8px;">
+                <strong style="color: var(--text-muted);">v2.16.0</strong><br>
                 ・優先度表示を絵文字アイコンからカード枠線カラー（高：ピンク、中：優しいイエロー、低：淡いグリーン）に変更し、カード内の優先度アイコンを削除してすっきり整理
               </div>
               <div style="margin-bottom: 8px;">
@@ -2332,11 +2336,11 @@
     /**
      * @license
      * SPDX-License-Identifier: Apache-2.0
-     * TDRおでかけメモ PWA v2.16.0
+     * TDRおでかけメモ PWA v2.17.0
      */
 
     // --- State Constants ---
-    const APP_VERSION = 'v2.16.0';
+    const APP_VERSION = 'v2.17.0';
     const DB_NAME = 'DisneylandWishlistDB';
     const DB_VERSION = 1;
 
@@ -3320,11 +3324,8 @@
       const effectiveMapPhoto = getEffectiveMapPhoto(item);
       const hasMap = Boolean(effectiveMapPhoto && effectiveMapPhoto.trim());
 
-      // Category badge: shown only in "エリア" tab, hidden in "食べたい" and "乗りたい" tabs
-      const showCategoryBadge = currentViewMode === 'area';
-      const catBadgeHtml = showCategoryBadge
-        ? `<span class="badge badge-icon-only badge-category ${item.category}" title="${catName}">${catEmoji}</span>`
-        : '';
+      // Category badge: hidden across all tabs (area, food, attraction) as requested
+      const catBadgeHtml = '';
 
       // Mobile Order badge (if enabled, emoji only as requested)
       const moBadgeHtml = item.isMobileOrder
