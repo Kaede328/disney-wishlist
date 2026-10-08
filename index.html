@@ -2042,7 +2042,7 @@
           <div class="settings-section-title">アプリ情報</div>
           <div class="settings-row">
             <span class="settings-label">バージョン</span>
-            <span class="settings-val" id="appVersion">v2.13.0</span>
+            <span class="settings-val" id="appVersion">v2.14.0</span>
           </div>
           <div class="settings-row">
             <span class="settings-label">ストレージ</span>
@@ -2066,7 +2066,11 @@
           <div class="accordion-body" id="versionHistoryBody" style="display: none;">
             <div style="font-size: 0.88rem; color: var(--text-sub); line-height: 1.6; padding-top: 10px;">
               <div style="margin-bottom: 8px;">
-                <strong style="color: var(--theme-primary);">v2.13.0（最新）</strong><br>
+                <strong style="color: var(--theme-primary);">v2.14.0（最新）</strong><br>
+                ・「食べたい」タブと「乗りたい」タブでカードの種類バッジ（食べ物・アトラクションの絵文字バッジ）を非表示に改善（「エリア」タブでは今まで通り表示）
+              </div>
+              <div style="margin-bottom: 8px;">
+                <strong style="color: var(--text-muted);">v2.13.0</strong><br>
                 ・アプリアイコンの読み込み先をGitHub外部URLに統一（GitHub上で画像を更新するとアプリ側にも即座に自動反映されるよう改善、ローカル画像ファイルを整理・Service Workerキャッシュから除外）
               </div>
               <div style="margin-bottom: 8px;">
@@ -2274,11 +2278,11 @@
     /**
      * @license
      * SPDX-License-Identifier: Apache-2.0
-     * TDRおでかけメモ PWA v2.13.0
+     * TDRおでかけメモ PWA v2.14.0
      */
 
     // --- State Constants ---
-    const APP_VERSION = 'v2.13.0';
+    const APP_VERSION = 'v2.14.0';
     const DB_NAME = 'DisneylandWishlistDB';
     const DB_VERSION = 1;
 
@@ -3230,6 +3234,12 @@
       const effectiveMapPhoto = getEffectiveMapPhoto(item);
       const hasMap = Boolean(effectiveMapPhoto && effectiveMapPhoto.trim());
 
+      // Category badge: shown only in "エリア" tab, hidden in "食べたい" and "乗りたい" tabs
+      const showCategoryBadge = currentViewMode === 'area';
+      const catBadgeHtml = showCategoryBadge
+        ? `<span class="badge badge-icon-only badge-category ${item.category}" title="${catName}">${catEmoji}</span>`
+        : '';
+
       // Mobile Order badge (if enabled, emoji only as requested)
       const moBadgeHtml = item.isMobileOrder
         ? '<span class="badge badge-mo" title="モバイルオーダー対応">📱</span>'
@@ -3274,7 +3284,7 @@
           <div class="card-body">
             <div class="card-tags">
               <span class="badge badge-icon-only badge-priority-${priority}" title="${priLabel}">${PRIORITY_EMOJIS[priority] || '✨'}</span>
-              <span class="badge badge-icon-only badge-category ${item.category}" title="${catName}">${catEmoji}</span>
+              ${catBadgeHtml}
               <span class="badge badge-area clickable" onclick="jumpToArea('${escapeJsString(item.area)}')" title="「${escapeHtml(item.area)}」エリアに移動">${areaEmoji} ${escapeHtml(item.area)}</span>
               ${moBadgeHtml}
             </div>
