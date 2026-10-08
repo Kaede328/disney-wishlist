@@ -1,4 +1,4 @@
-const CACHE_NAME = 'disney-wishlist-v2.15.0';
+const CACHE_NAME = 'disney-wishlist-v2.16.0';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',

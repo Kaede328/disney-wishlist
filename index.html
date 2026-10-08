@@ -824,34 +824,60 @@
       font-weight: 600;
     }
 
-    /* Card priority emphasis */
-    .card.priority-high {
-      border: 2px solid #FF7C9C;
-      box-shadow: 0 6px 20px rgba(255, 94, 126, 0.22);
-      background: linear-gradient(180deg, #FFF9FA 0%, #FFFFFF 100%);
+    /* Card priority border & accent styles */
+    .card.priority-high,
+    .card.priority-medium,
+    .card.priority-low {
+      border-width: 2px;
+      border-style: solid;
+      position: relative;
     }
 
-    .card.priority-high::before {
+    .card.priority-high::before,
+    .card.priority-medium::before,
+    .card.priority-low::before {
       content: '';
       position: absolute;
       left: 0;
       top: 0;
       bottom: 0;
       width: 5px;
-      background: linear-gradient(180deg, #FF456E 0%, #FF8EAA 100%);
       border-radius: var(--radius-md) 0 0 var(--radius-md);
       z-index: 2;
     }
 
-    .card.priority-high .card-name {
-      color: #221019;
+    /* 優先度【高】：ピンク色（既存のテーマカラー） */
+    .card.priority-high {
+      border-color: #FF7C9C;
+      box-shadow: 0 4px 16px rgba(255, 124, 156, 0.2);
+      background: linear-gradient(180deg, #FFF9FA 0%, #FFFFFF 100%);
+    }
+    .card.priority-high::before {
+      background: linear-gradient(180deg, #FF456E 0%, #FF8EAA 100%);
     }
 
-    .priority-flame-icon {
-      display: inline-block;
-      margin-right: 4px;
-      font-size: 1.05rem;
-      filter: drop-shadow(0 1px 2px rgba(255, 69, 110, 0.3));
+    /* 優先度【中】：優しいイエロー（見やすいパステルイエロー） */
+    .card.priority-medium {
+      border-color: #FFD166;
+      box-shadow: 0 4px 16px rgba(255, 209, 102, 0.2);
+      background: linear-gradient(180deg, #FFFCF5 0%, #FFFFFF 100%);
+    }
+    .card.priority-medium::before {
+      background: linear-gradient(180deg, #F8B84E 0%, #FFD166 100%);
+    }
+
+    /* 優先度【低】：淡いグリーン（優しく落ち着いたパステルグリーン） */
+    .card.priority-low {
+      border-color: #81C784;
+      box-shadow: 0 4px 16px rgba(129, 199, 132, 0.2);
+      background: linear-gradient(180deg, #F7FCF8 0%, #FFFFFF 100%);
+    }
+    .card.priority-low::before {
+      background: linear-gradient(180deg, #66BB6A 0%, #81C784 100%);
+    }
+
+    .card.priority-high .card-name {
+      color: #221019;
     }
 
     /* Pill radio styles for priority */
@@ -2062,7 +2088,7 @@
           <div class="settings-section-title">アプリ情報</div>
           <div class="settings-row">
             <span class="settings-label">バージョン</span>
-            <span class="settings-val" id="appVersion">v2.15.0</span>
+            <span class="settings-val" id="appVersion">v2.16.0</span>
           </div>
           <div class="settings-row">
             <span class="settings-label">ストレージ</span>
@@ -2086,7 +2112,11 @@
           <div class="accordion-body" id="versionHistoryBody" style="display: none;">
             <div style="font-size: 0.88rem; color: var(--text-sub); line-height: 1.6; padding-top: 10px;">
               <div style="margin-bottom: 8px;">
-                <strong style="color: var(--theme-primary);">v2.15.0（最新）</strong><br>
+                <strong style="color: var(--theme-primary);">v2.16.0（最新）</strong><br>
+                ・優先度表示を絵文字アイコンからカード枠線カラー（高：ピンク、中：優しいイエロー、低：淡いグリーン）に変更し、カード内の優先度アイコンを削除してすっきり整理
+              </div>
+              <div style="margin-bottom: 8px;">
+                <strong style="color: var(--text-muted);">v2.15.0</strong><br>
                 ・「食べたい」タブのレストラングループ表示を改善（同じ店名のカードが1枚だけの場合はグループヘッダーを表示せず、カード内に店名・席数・MOを表示。2品以上の場合はグループヘッダー表示を維持）
               </div>
               <div style="margin-bottom: 8px;">
@@ -2302,11 +2332,11 @@
     /**
      * @license
      * SPDX-License-Identifier: Apache-2.0
-     * TDRおでかけメモ PWA v2.15.0
+     * TDRおでかけメモ PWA v2.16.0
      */
 
     // --- State Constants ---
-    const APP_VERSION = 'v2.15.0';
+    const APP_VERSION = 'v2.16.0';
     const DB_NAME = 'DisneylandWishlistDB';
     const DB_VERSION = 1;
 
@@ -3347,7 +3377,6 @@
           </div>
           <div class="card-body">
             <div class="card-tags">
-              <span class="badge badge-icon-only badge-priority-${priority}" title="${priLabel}">${PRIORITY_EMOJIS[priority] || '✨'}</span>
               ${catBadgeHtml}
               <span class="badge badge-area clickable" onclick="jumpToArea('${escapeJsString(item.area)}')" title="「${escapeHtml(item.area)}」エリアに移動">${areaEmoji} ${escapeHtml(item.area)}</span>
               ${moBadgeHtml}
