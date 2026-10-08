@@ -8,17 +8,14 @@
   <meta property="og:title" content="TDRおでかけメモ">
   <meta property="og:description" content="東京ディズニーリゾート（ランド・シー）専用の行きたい・食べたい・乗りたいを写真付きで記録するPWAアプリ">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="./icon.jpg">
+  <meta property="og:image" content="https://raw.githubusercontent.com/Kaede328/app-images/refs/heads/main/disney-wishlist/Icon.jpg">
   <meta name="theme-color" content="#FF8EAA">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="おでかけメモ">
   <link rel="manifest" href="./manifest.webmanifest">
-  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
-  <link rel="shortcut icon" href="./favicon.ico">
-  <link rel="icon" type="image/jpeg" href="./icon.jpg">
+  <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/Kaede328/app-images/refs/heads/main/disney-wishlist/Icon.jpg">
+  <link rel="icon" type="image/jpeg" href="https://raw.githubusercontent.com/Kaede328/app-images/refs/heads/main/disney-wishlist/Icon.jpg">
   <link rel="icon" type="image/svg+xml" href="./icon.svg">
   <style>
     :root {
@@ -1711,7 +1708,7 @@
   <header>
     <div class="header-top">
       <div class="brand" id="headerBrandTitle" title="タップしてリストを選ぶ">
-        <img src="./apple-touch-icon.png" alt="TDRおでかけメモ" class="brand-icon" width="36" height="36">
+        <img src="https://raw.githubusercontent.com/Kaede328/app-images/refs/heads/main/disney-wishlist/Icon.jpg" alt="TDRおでかけメモ" class="brand-icon" width="36" height="36">
         <div class="brand-titles">
           <span class="brand-subtitle">TDRおでかけメモ</span>
           <div class="brand-current-list" id="headerCurrentListName">
@@ -2045,7 +2042,7 @@
           <div class="settings-section-title">アプリ情報</div>
           <div class="settings-row">
             <span class="settings-label">バージョン</span>
-            <span class="settings-val" id="appVersion">v2.12.0</span>
+            <span class="settings-val" id="appVersion">v2.13.0</span>
           </div>
           <div class="settings-row">
             <span class="settings-label">ストレージ</span>
@@ -2069,7 +2066,11 @@
           <div class="accordion-body" id="versionHistoryBody" style="display: none;">
             <div style="font-size: 0.88rem; color: var(--text-sub); line-height: 1.6; padding-top: 10px;">
               <div style="margin-bottom: 8px;">
-                <strong style="color: var(--theme-primary);">v2.12.0（最新）</strong><br>
+                <strong style="color: var(--theme-primary);">v2.13.0（最新）</strong><br>
+                ・アプリアイコンの読み込み先をGitHub外部URLに統一（GitHub上で画像を更新するとアプリ側にも即座に自動反映されるよう改善、ローカル画像ファイルを整理・Service Workerキャッシュから除外）
+              </div>
+              <div style="margin-bottom: 8px;">
+                <strong style="color: var(--text-muted);">v2.12.0</strong><br>
                 ・JSONバックアップ復元処理の信頼性を強化（リスト→カード順の確実な書き込み完了待ち、復元件数【リスト〇件、カード〇件】の明示、書き込み完了後の安全な画面再読み込みに対応）
               </div>
               <div style="margin-bottom: 8px;">
@@ -2273,11 +2274,11 @@
     /**
      * @license
      * SPDX-License-Identifier: Apache-2.0
-     * TDRおでかけメモ PWA v2.12.0
+     * TDRおでかけメモ PWA v2.13.0
      */
 
     // --- State Constants ---
-    const APP_VERSION = 'v2.12.0';
+    const APP_VERSION = 'v2.13.0';
     const DB_NAME = 'DisneylandWishlistDB';
     const DB_VERSION = 1;
 
